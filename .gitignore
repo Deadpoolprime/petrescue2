@@ -1,0 +1,23 @@
+# .gitignore
+
+# Virtual Environment
+venv/
+/venv/
+.venv/
+/.venv/
+
+# Django instance files
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+
+# Local settings (if you create a local_settings.py file)
+local_settings.py
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
