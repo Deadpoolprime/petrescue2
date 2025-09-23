@@ -6,6 +6,9 @@ class Profile(models.Model):
     ROLE_CHOICES = (('admin', 'Admin'), ('user', 'User'))
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
+    age = models.PositiveIntegerField(null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
     profile_picture = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics/', null=True, blank=True)
     def __str__(self): return f"{self.user.username} Profile"
 
