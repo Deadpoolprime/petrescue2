@@ -9,14 +9,13 @@ from .serializers import ProfileSerializer, PetReportSerializer, PetForAdoptionS
 
 # New view for user registration
 class RegisterView(APIView):
-    permission_classes = [AllowAny] # Anyone can access this view to register
+    permission_classes = [AllowAny]
 
     def post(self, request):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
         
-        # Basic validation
         if not username or not password or not email:
             return Response({'error': 'Username, email, and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(username=username).exists():
@@ -27,12 +26,13 @@ class RegisterView(APIView):
         # Create User
         user = User.objects.create_user(username=username, email=email, password=password)
         
-        # Create Profile with additional data
-        profile = Profile.objects.get(user=user)
-        profile.age = request.data.get('age')
-        profile.city = request.data.get('city')
-        profile.phone_number = request.data.get('phone_number')
-        profile.save()
+        # **FIX**: Explicitly create the Profile for the new user
+        Profile.objects.create(
+            user=user,
+            age=request.data.get('age'),
+            city=request.data.get('city'),
+            phone_number=request.data.get('phone_number')
+        )
 
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
