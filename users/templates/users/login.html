@@ -1,0 +1,45 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Login to PawFinder{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-box">
+        <h2 class="auth-title">Welcome Back!</h2>
+        <p class="auth-subtitle">Login to your PawFinder account.</p>
+
+        <form method="post" action="{% url 'login' %}">  {# Assuming you'll have a 'login' URL pattern for this view #}
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p><strong>Error:</strong> {{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="username">Username or Email:</label>
+                <input type="text" id="username" name="username" required> {# Name will match your Django form field #}
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Login</button>
+        </form>
+
+        <div class="auth-switch">
+            <p>New user? <a href="{% url 'register' %}" class="btn btn-secondary btn-small">Register Here</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

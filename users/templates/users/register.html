@@ -1,0 +1,71 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Register with PawFinder{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-box">
+        <h2 class="auth-title">Create Your PawFinder Account</h2>
+        <p class="auth-subtitle">Join our community to help pets find homes!</p>
+
+        <form id="registrationForm" method="post" action="{% url 'register' %}"> {# Action points to your Django register view #}
+            {% csrf_token %}
+
+            {# Display form errors here if any #}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p><strong>Error:</strong> {{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_username">Username:</label>
+                <input type="text" id="id_username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="id_email">Email:</label>
+                <input type="email" id="id_email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="id_first_name">Full Name:</label>
+                <input type="text" id="id_first_name" name="first_name">
+            </div>
+            <div class="form-group">
+                <label for="id_age">Age:</label>
+                <input type="number" id="id_age" name="age" min="0">
+            </div>
+            <div class="form-group">
+                <label for="id_city">City:</label>
+                <input type="text" id="id_city" name="city">
+            </div>
+            <div class="form-group">
+                <label for="id_phone_number">Phone Number:</label>
+                <input type="tel" id="id_phone_number" name="phone_number">
+            </div>
+            <div class="form-group">
+                <label for="id_password1">Password:</label>
+                <input type="password" id="id_password1" name="password" required>
+                <small class="password-rules">Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char.</small>
+            </div>
+            <div class="form-group">
+                <label for="id_password2">Confirm Password:</label>
+                <input type="password" id="id_password2" name="password2" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Register</button>
+        </form>
+
+        <div class="auth-switch">
+            <p>Already have an account? <a href="{% url 'login' %}" class="btn btn-secondary btn-small">Login Here</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
