@@ -8,7 +8,7 @@ from users.views import (
     ProfileViewSet, PetReportViewSet, PetForAdoptionViewSet, NotificationViewSet, RegisterView
 )
 # --- Import the users app's URLs module for HTML routes ---
-from users import urls as users_html_urls # This contains only HTML routes and has app_name='users'
+from users import urls as users_html_urls # This file has app_name = 'users'
 
 # --- Import DefaultRouter ---
 from rest_framework.routers import DefaultRouter
@@ -24,23 +24,22 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # --- API Endpoints ---
-    # This includes the router's URLs under /api/.
-    # We are not using include(router.urls, namespace='api') directly.
-    # Instead, we are including the router.urls and applying the 'api' namespace to the *entire* block.
-    # This makes API URLs like http://127.0.0.1:8000/api/profiles/
-    # and they will be namespaced as 'api:profiles', 'api:petreports', etc.
-    path('api/', include(api_router.urls), name='api_root'), # No namespace argument here for router.urls
+    # Include the router's URLs under /api/.
+    # We are applying the 'api' namespace to this block of URLs.
+    # So, API URLs like 'profiles/' will become '/api/profiles/' and be namespaced as 'api:profiles'.
+    # Note: We are NOT trying to namespace 'api_router.urls' with app_name here,
+    # but rather applying a project-level namespace for API routes.
+    path('api/', include(api_router.urls), name='api_root'), # No namespace argument on include for router.urls
 
-    # API Registration endpoint (if it's not part of the router)
-    # Make sure this is also under the /api/ prefix if it's an API endpoint.
+    # API Registration endpoint
     path('api/register/', RegisterView.as_view(), name='api_register'),
 
     # --- HTML Rendering URLs ---
     # Include the users app's URL patterns (HTML routes only) at the root ('').
-    # These are namespaced as 'users' (because of app_name='users' in users.urls).
-    # This makes HTML URLs like http://127.0.0.1:8000/login/
-    # and they'll be namespaced as 'users:login'.
-    path('', include(users_html_urls, namespace='users')), # This is correct for HTML routes
+    # Django will automatically pick up app_name='users' from users_html_urls
+    # and use it as the namespace for these routes.
+    # This makes HTML URLs like http://127.0.0.1:8000/login/ accessible as 'users:login'.
+    path('', include(users_html_urls)), # No namespace argument here; app_name from users.urls is used.
 ]
 
 # Serve media files during development

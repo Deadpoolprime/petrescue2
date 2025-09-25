@@ -168,7 +168,7 @@ def register_view(request):
             )
             # Log the user in after registration
             auth_login(request, user)
-            return redirect('home') # Redirect to home or a success page
+            return redirect('users:home') # Redirect to home or a success page
     else:
         # GET request: show the registration form
         form = RegistrationForm()
