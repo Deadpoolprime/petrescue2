@@ -9,25 +9,19 @@
         <h2 class="auth-title">Welcome Back!</h2>
         <p class="auth-subtitle">Login to your PawFinder account.</p>
 
-        <form method="post" action="{% url 'login' %}">  {# Assuming you'll have a 'login' URL pattern for this view #}
+        {# Action correctly points to the login URL #}
+        <form method="post" action="{% url 'users:login' %}"> {# Corrected namespace #}
             {% csrf_token %}
 
-            {% if form.errors %}
+            {% if error_message %}
                 <div class="alert alert-danger">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <p><strong>Error:</strong> {{ error }}</p>
-                    {% endfor %}
+                    <p>{{ error_message }}</p>
                 </div>
             {% endif %}
 
             <div class="form-group">
                 <label for="username">Username or Email:</label>
-                <input type="text" id="username" name="username" required> {# Name will match your Django form field #}
+                <input type="text" id="username" name="username" required>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
@@ -38,7 +32,7 @@
         </form>
 
         <div class="auth-switch">
-            <p>New user? <a href="{% url 'register' %}" class="btn btn-secondary btn-small">Register Here</a></p>
+            <p>New user? <a href="{% url 'users:register' %}" class="btn btn-secondary btn-small">Register Here</a></p> {# Corrected namespace #}
         </div>
     </div>
 </section>

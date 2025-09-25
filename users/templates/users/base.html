@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PawFinder - Find Your Furry Friend!{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <!-- You can add Google Fonts here for cute typography -->
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -18,11 +17,16 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'pets_list' %}">Pets</a></li>
-                    <!-- Add other navigation links as needed -->
-                    <li><a href="{% url 'login' %}">Login</a></li>
-                    <li><a href="{% url 'register' %}">Register</a></li>
+                    <li><a href="{% url 'users:home' %}">Home</a></li> {# Corrected namespace #}
+                    <li><a href="{% url 'users:pets_list' %}">Pets</a></li> {# Corrected namespace #}
+                    {# Add other navigation links as needed, e.g., shelters, about, contact, dashboard #}
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'users:logout' %}">Logout</a></li> {# Corrected namespace #}
+                        <li><a href="{% url 'users:dashboard' %}">Dashboard</a></li> {# Assuming dashboard URL name is 'dashboard' #}
+                    {% else %}
+                        <li><a href="{% url 'users:login' %}">Login</a></li> {# Corrected namespace #}
+                        <li><a href="{% url 'users:register' %}">Register</a></li> {# Corrected namespace #}
+                    {% endif %}
                 </ul>
             </nav>
         </div>

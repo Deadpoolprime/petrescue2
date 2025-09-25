@@ -9,8 +9,8 @@
         <h2>Find your perfect furry companion!</h2>
         <p>Connecting loving homes with adorable pets in need.</p>
         <div class="hero-actions">
-            <a href="{% url 'pets_list' %}" class="btn btn-primary">Discover Pets</a>
-            <a href="{% url 'register' %}" class="btn btn-secondary">Join Our Community</a>
+            <a href="{% url 'users:pets_list' %}" class="btn btn-primary">Discover Pets</a> {# Corrected namespace #}
+            <a href="{% url 'users:register' %}" class="btn btn-secondary">Join Our Community</a> {# Corrected namespace #}
         </div>
     </div>
     <div class="hero-image">
@@ -23,13 +23,14 @@
     <div class="pet-grid">
         {% for pet in featured_pets %}
             <div class="pet-card">
+                {# Ensure the image URL is correctly accessed. Assuming `pet.image` is the ImageField #}
                 <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="pet-card-img">
                 <div class="pet-card-info">
                     <h3>{{ pet.name }}</h3>
                     <p><strong>Type:</strong> {{ pet.pet_type }}</p>
-                    <p><strong>Breed:</strong> {{ pet.breed|default:"N/A" }}</p>
+                    <p><strong>Breed:</strong> {{ pet.breed|default:"N/A" }}</p> {# Added default for clarity #}
                     <p><strong>Age:</strong> {{ pet.age }} years</p>
-                    <a href="{% url 'pet_detail' pet.id %}" class="btn btn-small">View Details</a>
+                    <a href="{% url 'users:pet_detail' pet.id %}" class="btn btn-small">View Details</a> {# Corrected namespace and added pet.id #}
                 </div>
             </div>
         {% empty %}

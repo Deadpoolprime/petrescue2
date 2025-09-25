@@ -9,7 +9,8 @@
         <h2 class="auth-title">Create Your PawFinder Account</h2>
         <p class="auth-subtitle">Join our community to help pets find homes!</p>
 
-        <form id="registrationForm" method="post" action="{% url 'register' %}"> {# Action points to your Django register view #}
+        {# Action correctly points to the register URL #}
+        <form id="registrationForm" method="post" action="{% url 'users:register' %}"> {# Corrected namespace #}
             {% csrf_token %}
 
             {# Display form errors here if any #}
@@ -26,29 +27,30 @@
                 </div>
             {% endif %}
 
+            {# Added value attributes to retain user input on validation error #}
             <div class="form-group">
                 <label for="id_username">Username:</label>
-                <input type="text" id="id_username" name="username" required>
+                <input type="text" id="id_username" name="username" value="{{ form.username.value|default:'' }}" required>
             </div>
             <div class="form-group">
                 <label for="id_email">Email:</label>
-                <input type="email" id="id_email" name="email" required>
+                <input type="email" id="id_email" name="email" value="{{ form.email.value|default:'' }}" required>
             </div>
             <div class="form-group">
                 <label for="id_first_name">Full Name:</label>
-                <input type="text" id="id_first_name" name="first_name">
+                <input type="text" id="id_first_name" name="first_name" value="{{ form.first_name.value|default:'' }}">
             </div>
             <div class="form-group">
                 <label for="id_age">Age:</label>
-                <input type="number" id="id_age" name="age" min="0">
+                <input type="number" id="id_age" name="age" min="0" value="{{ form.age.value|default:'' }}">
             </div>
             <div class="form-group">
                 <label for="id_city">City:</label>
-                <input type="text" id="id_city" name="city">
+                <input type="text" id="id_city" name="city" value="{{ form.city.value|default:'' }}">
             </div>
             <div class="form-group">
                 <label for="id_phone_number">Phone Number:</label>
-                <input type="tel" id="id_phone_number" name="phone_number">
+                <input type="tel" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value|default:'' }}">
             </div>
             <div class="form-group">
                 <label for="id_password1">Password:</label>
@@ -64,7 +66,7 @@
         </form>
 
         <div class="auth-switch">
-            <p>Already have an account? <a href="{% url 'login' %}" class="btn btn-secondary btn-small">Login Here</a></p>
+            <p>Already have an account? <a href="{% url 'users:login' %}" class="btn btn-secondary btn-small">Login Here</a></p> {# Corrected namespace #}
         </div>
     </div>
 </section>
