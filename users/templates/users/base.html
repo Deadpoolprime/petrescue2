@@ -17,16 +17,7 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="{% url 'users:login' %}">Home</a></li> {# Corrected namespace #}
-                    <li><a href="{% url 'users:pets_list' %}">Pets</a></li> {# Corrected namespace #}
-                    {# Add other navigation links as needed, e.g., shelters, about, contact, dashboard #}
-                    {% if user.is_authenticated %}
-                        <li><a href="{% url 'users:logout' %}">Logout</a></li> {# Corrected namespace #}
-                        <li><a href="{% url 'users:login' %}">Dashboard</a></li> {# Assuming dashboard URL name is 'dashboard' #}
-                    {% else %}
-                        <li><a href="{% url 'users:login' %}">Login</a></li> {# Corrected namespace #}
-                        <li><a href="{% url 'users:register' %}">Register</a></li> {# Corrected namespace #}
-                    {% endif %}
+                    
                 </ul>
             </nav>
         </div>
