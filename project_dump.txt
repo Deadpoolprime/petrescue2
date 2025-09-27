@@ -1,508 +1,1030 @@
 
-
-
 ================================================================================
-File: .\petrescue\urls.py
+File: .\static\css\style.css
 ================================================================================
 
-from django.contrib import admin
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
+/* static/css/style.css */
 
-from users.views import (
-    ProfileViewSet, PetReportViewSet, PetForAdoptionViewSet, NotificationViewSet, RegisterView
-)
-from users import urls as users_html_urls
+/* --- Basic Reset --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-from rest_framework.routers import DefaultRouter
+/* --- Variables (Design System) --- */
+:root {
+  --background: hsl(35, 20%, 98%);
+  --foreground: hsl(25, 15%, 15%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(25, 15%, 15%);
+  --popover: 0 0% 100%;
+  --popover-foreground: 25 15% 15%;
+  --primary: hsl(25, 85%, 55%); /* Orange-ish primary */
+  --primary-foreground: 0 0% 100%;
+  --secondary: hsl(120, 25%, 92%); /* Light green/teal secondary */
+  --secondary-foreground: 25 15% 15%;
+  --muted: 35 15% 95%;
+  --muted-foreground: 25 10% 50%;
+  --border: hsl(35, 20%, 90%);
+  --input: hsl(35, 20%, 96%);
+  --ring: 25 85% 55%;
 
-api_router = DefaultRouter()
-api_router.register(r'profiles', ProfileViewSet)
-api_router.register(r'petreports', PetReportViewSet)
-api_router.register(r'petsforadoption', PetForAdoptionViewSet)
-api_router.register(r'notifications', NotificationViewSet)
+  /* PawFinder brand colors - using HSL values for flexibility */
+  --primary-warm: 25 85% 55%;     /* Warm orange for primary actions */
+  --primary-soft: 35 40% 88%;     /* Softer peach/orange for backgrounds */
+  --success-green: 120 45% 55%;   /* Nice green for success messages */
+  --earth-brown: 25 25% 35%;      /* Darker brown/earth tone */
+  --accent-purple: 255 40% 55%;   /* A nice purple for accents */
+  --accent-purple-soft: 255 40% 88%; /* Lighter purple */
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include(api_router.urls), name='api_root'), 
-    path('api/register/', RegisterView.as_view(), name='api_register'),
-    path('', include('users.urls')),
-]
+  /* Gradients */
+  --gradient-warm: linear-gradient(135deg, hsl(var(--primary-warm)), hsl(var(--primary-soft)));
+  --gradient-hero: linear-gradient(135deg, hsl(var(--primary-warm) / 0.1), hsl(var(--success-green) / 0.1));
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  /* Shadows */
+  --shadow-soft: 0 4px 20px hsl(var(--primary-warm) / 0.1);
+  --shadow-warm: 0 8px 30px hsl(var(--primary-warm) / 0.15);
+
+  --radius: 0.5rem; /* Default border radius */
+
+  /* Sidebar specific, if needed, otherwise can be removed or adapted */
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
+}
+
+/* Tailwind-like directives - If you are actually using Tailwind, this would be processed by its build tool.
+   For direct CSS, these are treated as comments or potentially unusual syntax.
+   Assuming these are descriptive comments or if they come from a pre-processor like PostCSS.
+*/
+/* @layer base { */
+/*  * { @apply border-border; } */
+/*  body { @apply bg-background text-foreground; } */
+/* } */
+
+/* --- General Body Styling --- */
+body {
+  font-family: 'Quicksand', sans-serif; /* Cute and readable font */
+  line-height: 1.6;
+  color: var(--foreground); /* Using variable for text color */
+  background-color: var(--background); /* Using variable */
+  min-height: 100vh; /* Ensure footer stays at bottom */
+  display: flex;
+  flex-direction: column; /* Structure for footer at bottom */
+}
+
+/* --- Typography --- */
+h1, h2, h3 {
+  font-family: 'Pacifico', cursive; /* Cute title font */
+  color: var(--primary-warm); /* Using brand warm color */
+}
+
+.site-title {
+  font-size: 2.5em;
+  margin-left: 10px;
+  color: var(--primary-warm); /* Inherit or set specific color */
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2em;
+  color: var(--primary-warm);
+}
+
+/* --- Layout & Containers --- */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* --- Header --- */
+.site-header {
+  background-color: var(--card); /* White card background */
+  padding: 10px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.site-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+}
+
+.site-header nav ul {
+  list-style: none;
+  display: flex;
+}
+
+.site-header nav li {
+  margin-left: 25px;
+}
+
+.site-header nav a {
+  text-decoration: none;
+  color: var(--muted-foreground); /* Muted color for links */
+  font-weight: bold;
+  font-size: 1.1em;
+  transition: color 0.3s ease;
+}
+
+.site-header nav a:hover {
+  color: var(--primary-warm); /* Warm primary color on hover */
+}
+
+/* --- Main Content Area --- */
+main {
+  padding-top: 30px;
+  flex-grow: 1; /* Allows main to take available space, pushing footer down */
+}
+
+/* --- Hero Section (for HomePage, can be adapted) --- */
+.hero-section {
+  background-color: var(--primary-soft); /* Soft primary color */
+  padding: 60px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 15px;
+  margin-bottom: 40px;
+  overflow: hidden;
+}
+
+.hero-content {
+  flex: 1;
+  padding-right: 30px;
+}
+
+.hero-content h2 {
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: var(--sidebar-primary); /* Using a darker accent for contrast */
+}
+
+.hero-content p {
+  font-size: 1.3em;
+  margin-bottom: 30px;
+  color: var(--foreground);
+}
+
+.hero-image img {
+  max-width: 100%;
+  height: 350px;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 20px;
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-block;
+  padding: 12px 25px;
+  border: none;
+  border-radius: var(--radius); /* Using variable for radius */
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease; /* Transition for hover and active effects */
+  font-size: 1.1em;
+  box-shadow: var(--shadow-soft); /* Using shadow variable */
+}
+
+.btn-primary {
+  background: var(--gradient-warm); /* Using gradient variable */
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%)); /* Darker gradient on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25); /* Stronger shadow on hover */
+}
+
+.btn-primary:active {
+    transform: translateY(0); /* Remove transform on click */
+    box-shadow: var(--shadow-soft); /* Restore shadow */
+}
+
+.btn-secondary {
+  background: var(--primary-soft); /* Soft primary background */
+  color: var(--primary-warm); /* Warm primary text */
+  border: 2px solid var(--primary-warm);
+}
+
+.btn-secondary:hover {
+  background: hsl(35, 40%, 80%); /* Lighter background on hover */
+  border-color: hsl(25, 85%, 50%); /* Darker border on hover */
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    background: hsl(35, 40%, 85%);
+}
+
+.btn-small {
+  padding: 8px 15px;
+  font-size: 0.9em;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* --- Pet Cards (for lists) --- */
+.featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
+  margin-bottom: 50px;
+  padding: 30px 0;
+}
+
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.pet-card {
+  background-color: var(--card); /* Using card color variable */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft); /* Using soft shadow variable */
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+}
+
+.pet-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.pet-card-info {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pet-card-info h3 {
+  font-family: 'Pacifico', cursive;
+  color: var(--foreground); /* Using general foreground color */
+  margin-bottom: 10px;
+  font-size: 1.6em;
+}
+
+.pet-card-info p {
+  margin-bottom: 8px;
+  color: var(--muted-foreground); /* Muted color for details */
+}
+
+.pet-card-info .btn-small {
+  margin-top: 15px;
+}
+
+/* --- About Section --- */
+.about-pawfinder-section {
+  background-color: var(--accent); /* Using accent for background */
+  padding: 50px 0;
+  text-align: center;
+  border-radius: var(--radius);
+  margin-bottom: 40px;
+}
+
+.about-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-icon {
+  height: 50px;
+  width: auto;
+  margin-bottom: 20px;
+  opacity: 0.7; /* Slightly faded icon */
+}
+
+.about-content p {
+  font-size: 1.1em;
+  color: var(--foreground);
+}
+
+/* --- Authentication Forms (Login & Register) --- */
+.auth-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 0;
+}
+
+.auth-box {
+  background: var(--card); /* Using card background variable */
+  backdrop-filter: blur(8px); /* Frosted glass effect */
+  border: 1px solid var(--border); /* Using border variable */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-warm); /* Using shadow variable */
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: var(--foreground);
+}
+
+.auth-subtitle {
+  font-size: 1.1em;
+  color: var(--muted-foreground);
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500; /* Slightly less bold than headings */
+  color: var(--foreground);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group input[type="tel"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border); /* Using border variable */
+  border-radius: var(--radius);
+  background: var(--input); /* Using input background variable */
+  color: var(--foreground);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--primary); /* Primary color on focus */
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2); /* Ring effect on focus */
+}
+
+.password-rules {
+  display: block;
+  font-size: 0.8em;
+  color: var(--muted-foreground);
+  margin-top: 5px;
+}
+
+.auth-switch {
+  margin-top: 25px;
+  font-size: 0.95em;
+}
+
+.auth-switch a {
+  margin-left: 5px;
+  color: var(--primary); /* Primary color for links */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+  color: hsl(25, 85%, 50%); /* Darker primary on hover */
+}
+
+/* Alerts */
+.messages { /* Changed from '.alert' to '.messages' for consistency with Django messages */
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.messages li {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: var(--radius);
+    font-size: 0.9em;
+    text-align: center;
+    border: 1px solid transparent; /* Base border */
+}
+
+/* Specific message type styling (matches Django's default tags) */
+.messages li.success {
+    background-color: hsl(120, 45%, 90%); /* Soft success green */
+    color: hsl(120, 45%, 35%); /* Darker success green text */
+    border-color: hsl(120, 45%, 70%);
+}
+
+.messages li.error {
+    background-color: hsl(0, 62%, 90%); /* Soft error red */
+    color: hsl(0, 62%, 30%); /* Darker error red text */
+    border-color: hsl(0, 62%, 70%);
+}
+
+.messages li.info {
+    background-color: hsl(210, 45%, 90%); /* Soft info blue */
+    color: hsl(210, 45%, 35%);
+    border-color: hsl(210, 45%, 70%);
+}
+
+.messages li.warning {
+    background-color: hsl(40, 85%, 90%); /* Soft warning yellow */
+    color: hsl(40, 85%, 30%);
+    border-color: hsl(40, 85%, 70%);
+}
 
 
+/* --- Dashboard Section --- */
+.dashboard-section {
+    padding: 40px 0;
+    background-color: var(--background); /* Light background */
+}
 
-================================================================================
-File: .\users\models.py
-================================================================================
+.dashboard-section .section-title {
+    color: var(--primary-warm); /* Orange title */
+    margin-bottom: 40px;
+}
 
-from django.db import models
-from django.contrib.auth.models import User
+.user-info-box {
+    background-color: var(--card);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
 
-# This model extends Django's User to add the 'role' field.
-class Profile(models.Model):
-    ROLE_CHOICES = (('admin', 'Admin'), ('user', 'User'))
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
-    age = models.PositiveIntegerField(null=True, blank=True)
-    city = models.CharField(max_length=100, null=True, blank=True)
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
-    profile_picture = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics/', null=True, blank=True)
-    def __str__(self): return f"{self.user.username} Profile"
+.user-info-box h3 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: var(--foreground);
+}
 
-# This table handles both LOST and FOUND pet "incidents".
-class PetReport(models.Model):
-    REPORT_TYPE_CHOICES = (('Lost', 'I lost my pet'), ('Found', 'I found a pet'))
-    STATUS_CHOICES = (('Open', 'Open'), ('Closed', 'Closed'))
-    GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown')) # Add gender choices here
+.user-info-box p {
+    margin-bottom: 10px;
+    color: var(--muted-foreground);
+    font-size: 1.1em;
+}
 
-    report_type = models.CharField(max_length=10, choices=REPORT_TYPE_CHOICES)
-    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pet_reports')
+.user-info-box .profile-pic-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 20px;
+    border: 3px solid var(--primary-warm); /* Warm primary border */
+}
 
-    # NEW FIELDS ADDED:
-    name = models.CharField(max_length=100, blank=True, null=True, help_text="Pet's name (if known)") # Optional name
-    age = models.PositiveIntegerField(null=True, blank=True, help_text="Pet's age in years (if known)") # Optional age
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown', help_text="Pet's gender") # Gender field
+.dashboard-actions {
+    background-color: var(--accent); /* Soft accent color for actions */
+    padding: 30px;
+    border-radius: var(--radius);
+    margin-bottom: 40px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+}
 
-    pet_type = models.CharField(max_length=50, help_text="e.g., Dog, Cat, Bird")
-    breed = models.CharField(max_length=100, blank=True, null=True)
-    color = models.CharField(max_length=50)
-    pet_image = models.ImageField(upload_to='pet_images/')
-    location = models.CharField(max_length=255, help_text="Area where the pet was lost or found.")
-    contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Open')
-    date_reported = models.DateTimeField(auto_now_add=True)
+.dashboard-actions h2 {
+    font-size: 2.2em;
+    margin-bottom: 25px;
+    color: var(--sidebar-primary); /* Dark accent for heading */
+}
 
-    def __str__(self):
-        # Updated __str__ to include name if available
-        pet_name = self.name if self.name else "Unnamed Pet"
-        return f"{self.get_report_type_display()}: {pet_name} ({self.pet_type}) by {self.reporter.username}"
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
 
-# This separate table is a catalog for pets available for ADOPTION.
-class PetForAdoption(models.Model):
-    GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown'))
-    ADOPTION_STATUS_CHOICES = (('Available', 'Available'), ('Pending', 'Adoption Pending'), ('Adopted', 'Adopted'))
-    name = models.CharField(max_length=100)
-    age = models.PositiveIntegerField(help_text="Age in years.")
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown')
-    pet_type = models.CharField(max_length=50)
-    breed = models.CharField(max_length=100, blank=True, null=True)
-    color = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='adoption_images/')
-    description = models.TextField(help_text="Describe the pet's personality, story, and needs.")
-    lister = models.ForeignKey(User, on_delete=models.CASCADE, related_name='adoption_listings')
-    status = models.CharField(max_length=10, choices=ADOPTION_STATUS_CHOICES, default='Available')
-    date_listed = models.DateTimeField(auto_now_add=True)
-    def __str__(self): return f"{self.name} ({self.pet_type}) - {self.get_status_display()}"
+.action-buttons .btn {
+    min-width: 200px;
+    background: var(--gradient-warm); /* Use gradient for primary action buttons */
+    color: var(--primary-foreground);
+    border: none; /* Ensure no extra border */
+}
 
-# This table handles notifications from the system/admins to users.
-class Notification(models.Model):
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    pet_report = models.ForeignKey(PetReport, on_delete=models.CASCADE, null=True, blank=True)
-    message = models.TextField()
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    def __str__(self): return f"Notification for {self.recipient.username}: {self.message[:30]}..."
+.action-buttons .btn:hover {
+    background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%));
+    transform: translateY(-2px);
+}
 
+.action-buttons .btn-secondary {
+    background: var(--primary-soft);
+    color: var(--primary-warm);
+    border: 2px solid var(--primary-warm);
+}
 
+.action-buttons .btn-secondary:hover {
+    background: hsl(35, 40%, 80%);
+    border-color: hsl(25, 85%, 50%);
+}
 
+.user-reports-box {
+    background-color: var(--input); /* Using input background for a lighter box */
+    padding: 25px;
+    border-radius: var(--radius);
+    margin-top: 30px;
+}
 
+.user-reports-box h3 {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    color: var(--foreground);
+}
 
-================================================================================
-File: .\users\urls.py
-================================================================================
+.user-reports-box ul {
+    list-style: none;
+    padding: 0;
+}
 
-# users/urls.py
-from django.urls import path
-from .views import (
-   login_view, logout_view, register_view,
-    pets_list_view, pet_detail_view, about_view, contact_view, dashboard_view, create_pet_report_view, # Make sure this is imported
-    pet_report_detail_view
-)
+.user-reports-box li {
+    background-color: var(--card); /* Card background for list items */
+    padding: 15px;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
 
-app_name = 'users' 
+.user-reports-box li strong {
+    color: var(--primary-warm); /* Orange for emphasis */
+}
 
-urlpatterns = [
-    # --- HTML Rendering URLs ---
-    path('', login_view, name='login'), 
-    path('logout/', logout_view, name='logout'),
-    path('register/', register_view, name='register'),
-    path('pets/', pets_list_view, name='pets_list'),
-    path('pets/<int:pet_id>/', pet_detail_view, name='pet_detail'),
-    path('about/', about_view, name='about'),
-    path('contact/', contact_view, name='contact'),
-    path('dashboard/', dashboard_view, name='dashboard'),
-    path('report/pet/<str:report_type>/', create_pet_report_view, name='create_pet_report'),
-    path('report/<int:report_id>/', pet_report_detail_view, name='pet_report_detail'), 
-]
+.user-reports-box li a {
+    color: var(--primary); /* Primary color for links */
+    text-decoration: none;
+    font-weight: 500;
+}
 
+.user-reports-box li a:hover {
+    text-decoration: underline;
+    color: hsl(25, 85%, 50%); /* Darker primary on hover */
+}
 
-================================================================================
-File: .\users\views.py
-================================================================================
+/* --- Pets List Section --- */
+.featured-pets-section, .dashboard-pets-section {
+    margin-bottom: 50px;
+    padding: 30px 0;
+}
 
-# users/views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django import forms
-from django.urls import reverse
-from django.contrib import messages
+.pets-adoption-section .section-title,
+.featured-pets-section .section-title,
+.dashboard-pets-section .section-title { /* Applied to multiple sections */
+    color: var(--accent-purple); /* Purple for pet section titles */
+}
 
-from .models import Profile, PetReport, PetForAdoption, Notification
-from .serializers import ProfileSerializer, PetReportSerializer, PetForAdoptionSerializer, NotificationSerializer, UserSerializer
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import viewsets, status
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+.pet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px; /* Increased gap */
+}
 
-# --- API ViewSets ---
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    # permission_classes = [IsAuthenticated] # Uncomment if API access should be restricted
+.pet-card {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
 
-class PetReportViewSet(viewsets.ModelViewSet):
-    queryset = PetReport.objects.all()
-    serializer_class = PetReportSerializer
-    # permission_classes = [IsAuthenticated]
+.pet-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
+}
 
-class PetForAdoptionViewSet(viewsets.ModelViewSet):
-    queryset = PetForAdoption.objects.all()
-    serializer_class = PetForAdoptionSerializer
-    # permission_classes = [IsAuthenticated]
+.pet-card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
 
-class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
-    # permission_classes = [IsAuthenticated]
+.pet-card-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-# --- API View for Registration ---
-class RegisterView(APIView):
-    permission_classes = [AllowAny]
-    def post(self, request):
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
+.pet-card-info h3 {
+    font-family: 'Pacifico', cursive;
+    color: var(--foreground);
+    margin-bottom: 10px;
+    font-size: 1.6em;
+}
 
-        if not username or not password or not email:
-            return Response({'error': 'Username, email, and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(username=username).exists():
-            return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(email=email).exists():
-            return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+.pet-card-info p {
+    margin-bottom: 8px;
+    color: var(--muted-foreground);
+}
 
-        user = User.objects.create_user(username=username, email=email, password=password)
-        Profile.objects.create(user=user) # Creates profile with default values
-        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+.pet-card-info .btn-small {
+    margin-top: 15px;
+}
 
+/* --- Report Pet Form Section --- */
+.report-section {
+    padding: 40px 0; /* Increased padding */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-# --- HTML Rendering Views ---
+.report-box {
+    background: var(--card); /* Using card background */
+    backdrop-filter: blur(8px); /* Frosted glass effect */
+    border: 1px solid var(--border); /* Using border variable */
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm); /* Using shadow variable */
+    padding: 40px;
+    width: 100%;
+    max-width: 550px;
+    text-align: center;
+}
 
-# Login View
-def login_view(request):
-    if request.method == 'POST':
-        form_username = request.POST.get('username')
-        form_password = request.POST.get('password')
+.report-box .auth-title {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: var(--foreground);
+}
 
-        user = authenticate(request, username=form_username, password=form_password)
+.report-box .auth-subtitle {
+    font-size: 1.1em;
+    color: var(--muted-foreground);
+    margin-bottom: 30px;
+}
 
-        if user is not None:
-            auth_login(request, user)
-            messages.success(request, "Welcome back! You are logged in.")
-            # Redirect to the dashboard after successful login
-            return redirect('users:dashboard')
-        else:
-            # Authentication failed
-            messages.error(request, "Invalid username or password. Please try again.")
-            return render(request, 'users/login.html') # Re-render login page with error message
-    else:
-        # GET request: show the login form
-        # If user is already authenticated, redirect them away from the login page.
-        if request.user.is_authenticated:
-            return redirect('users:dashboard') # Redirect logged-in users to dashboard
-        return render(request, 'users/login.html')
+/* Re-use form-group and input styling from auth-box */
+.report-box .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
 
-# Logout View
-def logout_view(request):
-    auth_logout(request)
-    messages.info(request, "You have been logged out.")
-    return redirect('users:login') # Redirect to login after logout
+.report-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--foreground);
+}
 
-# Registration Form
-class RegistrationForm(forms.Form):
-    username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
-    first_name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_first_name', 'class': 'form-input'}))
-    age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'id': 'id_age', 'class': 'form-input'}))
-    city = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_city', 'class': 'form-input'}))
-    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'id': 'id_phone_number', 'class': 'form-input'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password1', 'class': 'form-input'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password2', 'class': 'form-input'}), label="Confirm Password")
+.report-box input[type="text"],
+.report-box input[type="email"],
+.report-box input[type="password"],
+.report-box input[type="number"],
+.report-box input[type="tel"],
+.report-box input[type="file"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--input);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if password:
-            if len(password) < 8: raise forms.ValidationError("Password must contain at least 8 characters.")
-            if not any(c.islower() for c in password): raise forms.ValidationError("Password must contain at least one lowercase letter.")
-            if not any(c.isupper() for c in password): raise forms.ValidationError("Password must contain at least one uppercase letter.")
-            if not any(c.isdigit() for c in password): raise forms.ValidationError("Password must contain at least one number.")
-            if not any(not c.isalnum() for c in password): raise forms.ValidationError("Password must contain at least one special character.")
-        return password
+.report-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+}
 
-    def clean_password2(self):
-        password = self.cleaned_data.get("password")
-        password2 = self.cleaned_data.get("password2")
-        if password and password2 and password != password2:
-            raise forms.ValidationError("Passwords do not match.")
-        return password
+.report-box input[type="file"] {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
 
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username already exists.")
-        return username
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already exists.")
-        return email
-
-# Registration View (Modified for correct form handling and redirection)
-def register_view(request):
-    form = RegistrationForm() # Initialize form for GET requests
-
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST) # Use POST data to create the form instance
-        if form.is_valid():
-            user = User.objects.create_user(
-                username=form.cleaned_data['username'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
-                first_name=form.cleaned_data.get('first_name', ''),
-            )
-            Profile.objects.create(
-                user=user,
-                age=form.cleaned_data.get('age'),
-                city=form.cleaned_data.get('city'),
-                phone_number=form.cleaned_data.get('phone_number')
-            )
-            auth_login(request, user)
-            messages.success(request, "🎉 Registration successful! Welcome to PawFinder.")
-            # Redirect to the login page after successful registration and login
-            return redirect('users:login') # Redirect to login page after registration
-        # If form is not valid, 'form' still holds the invalid POST data and errors,
-        # so the render at the end will display it correctly.
-
-    # If GET request OR POST with invalid form, render the template with the form
-    return render(request, 'users/register.html', {'form': form})
+.report-box small {
+    display: block;
+    font-size: 0.8em;
+    color: var(--muted-foreground);
+    margin-top: 5px;
+}
 
 
-# Dashboard View (Modified to show available pets and action buttons)
-@login_required
-def dashboard_view(request):
-    # Fetch available pets for adoption
-    available_pets = PetForAdoption.objects.filter(status='Available')
+/* --- Pet Report Detail Section --- */
+.report-detail-section {
+    padding: 40px 0;
+}
 
-    context = {
-        'available_pets': available_pets
-        # We can also fetch user profile and reports here if needed for dashboard
+.report-detail-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    background-color: var(--card);
+    padding: 40px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
+}
+
+.report-header {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.report-header p {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    color: var(--muted-foreground);
+}
+
+.report-header p strong {
+    color: var(--primary-warm); /* Orange for emphasis */
+}
+
+.report-image-large {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 30px auto;
+    text-align: center; /* Center the image */
+}
+
+.report-image-large img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+.report-details {
+    width: 100%;
+    text-align: left;
+}
+
+.report-details p {
+    margin-bottom: 12px;
+    font-size: 1.15em;
+    color: var(--muted-foreground);
+}
+
+.report-details p strong {
+    color: var(--accent-purple); /* Purple for detail labels */
+}
+
+/* --- Messages Styling --- */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.messages li {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: var(--radius);
+    font-size: 0.9em;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: opacity 0.3s ease;
+}
+
+.messages li.success {
+    background-color: hsl(120, 45%, 90%);
+    color: hsl(120, 45%, 35%);
+    border-color: hsl(120, 45%, 70%);
+}
+
+.messages li.error {
+    background-color: hsl(0, 62%, 90%);
+    color: hsl(0, 62%, 30%);
+    border-color: hsl(0, 62%, 70%);
+}
+
+.messages li.info {
+    background-color: hsl(210, 45%, 90%);
+    color: hsl(210, 45%, 35%);
+    border-color: hsl(210, 45%, 70%);
+}
+
+.messages li.warning {
+    background-color: hsl(40, 85%, 90%);
+    color: hsl(40, 85%, 30%);
+    border-color: hsl(40, 85%, 70%);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .site-header .container, .site-footer .container {
+        flex-direction: column;
+        text-align: center;
     }
-    return render(request, 'users/dashboard.html', context)
-
-
-# New View for Reporting Lost/Found Pet
-# This view will handle both 'Lost' and 'Found' report types.
-def create_pet_report_view(request, report_type):
-    # Ensure user is logged in
-    if not request.user.is_authenticated:
-        messages.error(request, "You need to be logged in to report a pet.")
-        return redirect('users:login')
-
-    if request.method == 'POST':
-        form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
-        if form.is_valid():
-            # Save the PetReport to the database
-            pet_report = PetReport.objects.create(
-                report_type=report_type, # 'Lost' or 'Found' from the URL
-                reporter=request.user,   # The currently logged-in user
-                pet_type=form.cleaned_data['pet_type'],
-                breed=form.cleaned_data.get('breed'), # Use .get for optional fields
-                color=form.cleaned_data['color'],
-                pet_image=form.cleaned_data['pet_image'], # Image is saved to MEDIA_ROOT
-                location=form.cleaned_data['location'],
-                contact_info=form.cleaned_data['contact_info'],
-                age=form.cleaned_data.get('age'),
-                # status defaults to 'Open' as defined in the model
-            )
-            messages.success(request, f"Your '{report_type}' pet report has been submitted successfully!")
-            return redirect('users:dashboard') # Redirect to dashboard after successful submission
-        # If form is not valid, 'form' will hold the errors for rendering.
-    else:
-        # GET request: Initialize an empty form
-        form = PetReportForm()
-
-    context = {
-        'form': form,
-        'report_type': report_type, # Pass to template for dynamic title/heading
+    .site-header nav ul {
+        flex-direction: column;
+        margin-top: 15px;
     }
-    return render(request, 'users/create_pet_report.html', context) # New template
-
-# View to show a single pet report's details
-@login_required # Protect this view
-def pet_report_detail_view(request, report_id):
-    try:
-        report = PetReport.objects.get(pk=report_id)
-        # Optional: Check if the logged-in user is the reporter of this report
-        # if report.reporter != request.user:
-        #     messages.error(request, "You do not have permission to view this report.")
-        #     return redirect('users:dashboard')
-    except PetReport.DoesNotExist:
-        messages.error(request, "Report not found.")
-        return redirect('users:dashboard')
-
-    context = {
-        'report': report
+    .site-header nav li {
+        margin: 5px 0;
     }
-    return render(request, 'users/pet_report_detail.html', context)
-
-# --- Form for Reporting Lost/Found Pet ---
-class PetReportForm(forms.Form):
-    pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
-    breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
-    color = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Brown, Black and White'}))
-    pet_image = forms.ImageField(required=True)
-    location = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Area where the pet was lost or found'}))
-    contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
-    name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
-    age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
-    gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
-
-# --- Placeholder views for About, Contact, etc. ---
-def about_view(request):
-    return render(request, 'users/about.html')
-
-def contact_view(request):
-    return render(request, 'users/contact.html')
-
-# Dashboard View (already modified to fetch available pets)
-@login_required
-def dashboard_view(request):
-    # Fetch available pets for adoption
-    available_pets = PetForAdoption.objects.filter(status='Available')
-
-    context = {
-        'available_pets': available_pets
-        # We can also fetch user profile and reports here if needed for dashboard
+    .logo {
+        margin-bottom: 15px;
     }
-    return render(request, 'users/dashboard.html', context)
-
-def pets_list_view(request):
-    all_pets = PetForAdoption.objects.filter(status='Available')
-    context = {
-        'pets': all_pets
+    /* Hero section adjustments */
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 0;
     }
-    return render(request, 'users/pets_list.html', context)
+    .hero-content {
+        padding-right: 0;
+        margin-bottom: 30px;
+    }
+    .hero-content h2 {
+        font-size: 2.5em; /* Smaller heading on mobile */
+    }
+    .hero-content p {
+        font-size: 1.1em;
+    }
+    .hero-image img {
+        height: 250px; /* Smaller image on mobile */
+    }
+    .hero-actions {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 15px;
+        align-items: center;
+    }
+    .btn {
+        width: 80%; /* Make buttons wider */
+    }
 
-@login_required # Protect this view
-def pet_detail_view(request, report_id):
-    # ... (implementation for pet_report_detail_view) ...
-    pass # Placeholder for now
+    /* Pet Cards */
+    .pet-grid {
+        grid-template-columns: 1fr; /* Stack cards on smaller screens */
+    }
 
+    /* Auth and Report Boxes */
+    .auth-box, .report-box {
+        max-width: 90%;
+        padding: 30px;
+    }
 
+    /* Social Links */
+    .social-links {
+        margin-top: 15px;
+    }
 
+    /* Dashboard Actions */
+    .dashboard-actions h2 {
+        font-size: 1.8em;
+    }
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    .action-buttons .btn {
+        width: 80%;
+    }
+
+    /* Report Detail Page */
+    .report-detail-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .report-image-large {
+        max-width: 80%;
+    }
+    .report-details {
+        text-align: center;
+    }
+}
 
 
 ================================================================================
-File: .\users\templates\users\create_pet_report.html
+File: .\users\templates\users\dashboard.html
 ================================================================================
 
-{# users/templates/users/create_pet_report.html #}
+{# users/templates/users/dashboard.html #}
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}{{ report_type }} Pet Report{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<section class="report-section">
-    <div class="auth-box"> {# Reusing auth-box for form styling #}
-        <h2 class="auth-title">{{ report_type }} Pet Report</h2>
-        <p class="auth-subtitle">Help us reunite pets with their families!</p>
+<section class="dashboard-section">
+    <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
 
-        {# IMPORTANT: enctype="multipart/form-data" is crucial for file uploads #}
-        <form id="petReportForm" method="post" enctype="multipart/form-data" action="">
-            {% csrf_token %}
-
-            {# Display form errors #}
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <p><strong>Error:</strong> {{ error }}</p>
-                    {% endfor %}
-                </div>
+    {# Display User Information - Keep this for context #}
+    {% if profile %}
+        <div class="user-info-box">
+            <h3>Your Account Details</h3>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
+            <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
+            <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
+            <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
+            {% else %}
+                <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
             {% endif %}
+        </div>
+    {% else %}
+        <p></p>
+    {% endif %}
 
-            {# Form fields - NEW FIELDS ADDED #}
-            <div class="form-group">
-                <label for="id_name">Pet's Name (Optional):</label>
-                <input type="text" id="id_name" name="name" value="{{ form.name.value|default:'' }}">
-            </div>
-            <div class="form-group">
-                <label for="id_age">Age (Optional):</label>
-                <input type="number" id="id_age" name="age" min="0" value="{{ form.age.value|default:'' }}">
-            </div>
-            <div class="form-group">
-                <label for="id_gender">Gender:</label>
-                {# Using select for dropdown based on choices #}
-                <select id="id_gender" name="gender">
-                    {% for value, display in form.gender.field.choices %}
-                        <option value="{{ value }}" {% if form.gender.value == value %}selected{% endif %}>{{ display }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            {# Existing Fields #}
-            <div class="form-group">
-                <label for="id_pet_type">Pet Type:</label>
-                <input type="text" id="id_pet_type" name="pet_type" value="{{ form.pet_type.value|default:'' }}" required>
-            </div>
-            <div class="form-group">
-                <label for="id_breed">Breed (Optional):</label>
-                <input type="text" id="id_breed" name="breed" value="{{ form.breed.value|default:'' }}">
-            </div>
-            <div class="form-group">
-                <label for="id_color">Color:</label>
-                <input type="text" id="id_color" name="color" value="{{ form.color.value|default:'' }}" required>
-            </div>
-            <div class="form-group">
-                <label for="id_pet_image">Pet Image:</label>
-                <input type="file" id="id_pet_image" name="pet_image" accept="image/*" required>
-            </div>
-            <div class="form-group">
-                <label for="id_location">Location:</label>
-                <input type="text" id="id_location" name="location" value="{{ form.location.value|default:'' }}" required>
-                <small>e.g., "Central Park, NYC" or "Near Main Street and Elm Avenue"</small>
-            </div>
-            <div class="form-group">
-                <label for="id_contact_info">Contact Info:</label>
-                <input type="text" id="id_contact_info" name="contact_info" value="{{ form.contact_info.value|default:'' }}" required>
-                <small>Your phone number or email address</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Submit Report</button>
-        </form>
+    {# Action Buttons - Links updated #}
+    <div class="dashboard-actions">
+        <h2>What would you like to do?</h2>
+        <div class="action-buttons">
+            {# These buttons now correctly link to the report URLs #}
+            <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
+            <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-secondary">Report a Found Pet</a>
+            <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
+        </div>
     </div>
+
+    {# Display Found Pets Available for Adoption --- This is the new part #}
+    {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
+    {% if available_pets %}
+        <section class="dashboard-pets-section">
+            <h3 class="section-title">Pets Available for Adoption</h3> {# Updated heading #}
+            <div class="pet-grid">
+                {% for pet in available_pets %}
+                    <div class="pet-card">
+                        <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="pet-card-img">
+                        <div class="pet-card-info">
+                            <h3>{{ pet.name }}</h3>
+                            <p><strong>Type:</strong> {{ pet.pet_type }}</p>
+                            <p><strong>Breed:</strong> {{ pet.breed|default:"N/A" }}</p>
+                            <p><strong>Age:</strong> {{ pet.age }} years</p>
+                            <p><strong>Gender:</strong> {{ pet.gender }}</p>
+                            <p><strong>Status:</strong> {{ pet.status }}</p>
+                            <a href="{% url 'users:pet_detail' pet.id %}" class="btn btn-small">View Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% else %}
+        <p class="no-pets-message">No pets are currently available for adoption. Check back soon!</p>
+    {% endif %}
+
+    {# User's Reports (Optional: for dashboard) #}
+    {% if reports %}
+        <div class="user-reports-box">
+            <h3>Your Pet Reports</h3>
+            <ul>
+            {% for report in reports %}
+                <li>
+                    <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
+                    - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
 </section>
 {% endblock %}
 
+{% block scripts %}
+{# Add any dashboard-specific JS here #}
+{% endblock %}
 

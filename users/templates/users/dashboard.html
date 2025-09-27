@@ -35,7 +35,7 @@
         <div class="action-buttons">
             {# These buttons now correctly link to the report URLs #}
             <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
-            <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-secondary">Report a Found Pet</a>
+            <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-primary">Report a Found Pet</a>
             <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
         </div>
     </div>
