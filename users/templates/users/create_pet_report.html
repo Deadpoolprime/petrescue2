@@ -11,7 +11,7 @@
         <p class="auth-subtitle">Help us reunite pets with their families!</p>
 
         {# IMPORTANT: enctype="multipart/form-data" is crucial for file uploads #}
-        <form id="petReportForm" method="post" enctype="multipart/form-data" action=""> {# Action will be handled by the URL #}
+        <form id="petReportForm" method="post" enctype="multipart/form-data" action="">
             {% csrf_token %}
 
             {# Display form errors #}
@@ -28,7 +28,26 @@
                 </div>
             {% endif %}
 
-            {# Form fields using 'value' to retain user input on validation error #}
+            {# Form fields - NEW FIELDS ADDED #}
+            <div class="form-group">
+                <label for="id_name">Pet's Name (Optional):</label>
+                <input type="text" id="id_name" name="name" value="{{ form.name.value|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label for="id_age">Age (Optional):</label>
+                <input type="number" id="id_age" name="age" min="0" value="{{ form.age.value|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label for="id_gender">Gender:</label>
+                {# Using select for dropdown based on choices #}
+                <select id="id_gender" name="gender">
+                    {% for value, display in form.gender.field.choices %}
+                        <option value="{{ value }}" {% if form.gender.value == value %}selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {# Existing Fields #}
             <div class="form-group">
                 <label for="id_pet_type">Pet Type:</label>
                 <input type="text" id="id_pet_type" name="pet_type" value="{{ form.pet_type.value|default:'' }}" required>

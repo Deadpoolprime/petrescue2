@@ -16,8 +16,16 @@ class Profile(models.Model):
 class PetReport(models.Model):
     REPORT_TYPE_CHOICES = (('Lost', 'I lost my pet'), ('Found', 'I found a pet'))
     STATUS_CHOICES = (('Open', 'Open'), ('Closed', 'Closed'))
+    GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown')) # Add gender choices here
+
     report_type = models.CharField(max_length=10, choices=REPORT_TYPE_CHOICES)
     reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pet_reports')
+
+    # NEW FIELDS ADDED:
+    name = models.CharField(max_length=100, blank=True, null=True, help_text="Pet's name (if known)") # Optional name
+    age = models.PositiveIntegerField(null=True, blank=True, help_text="Pet's age in years (if known)") # Optional age
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown', help_text="Pet's gender") # Gender field
+
     pet_type = models.CharField(max_length=50, help_text="e.g., Dog, Cat, Bird")
     breed = models.CharField(max_length=100, blank=True, null=True)
     color = models.CharField(max_length=50)
@@ -26,7 +34,11 @@ class PetReport(models.Model):
     contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Open')
     date_reported = models.DateTimeField(auto_now_add=True)
-    def __str__(self): return f"{self.get_report_type_display()}: {self.pet_type} by {self.reporter.username}"
+
+    def __str__(self):
+        # Updated __str__ to include name if available
+        pet_name = self.name if self.name else "Unnamed Pet"
+        return f"{self.get_report_type_display()}: {pet_name} ({self.pet_type}) by {self.reporter.username}"
 
 # This separate table is a catalog for pets available for ADOPTION.
 class PetForAdoption(models.Model):

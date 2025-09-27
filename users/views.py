@@ -232,7 +232,10 @@ class PetReportForm(forms.Form):
     pet_image = forms.ImageField(required=True)
     location = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Area where the pet was lost or found'}))
     contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
-
+    name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
+    age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
+    gender = forms.ChoiceField(choices=Profile.ROLE_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"})) # Reusing ROLE_CHOICES is an error, should be GENDER_CHOICES
+    gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
 
 # --- Placeholder views for About, Contact, etc. ---
 def about_view(request):
