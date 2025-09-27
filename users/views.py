@@ -417,16 +417,29 @@ def admin_manage_users_view(request):
 @superuser_required # ONLY a superuser can promote another user to admin
 def admin_promote_user_view(request, user_id):
     if request.method == 'POST':
+        # --- NEW LOGIC: Check the current number of admins ---
+        # An "Admin" is a staff member who is NOT a superuser.
+        current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
+        
+        # We allow a maximum of 2 admins.
+        if current_admin_count >= 3:
+            messages.error(request, "Cannot promote user. The maximum number of 3 admins has been reached.")
+            return redirect('users:admin_manage_users')
+        # ---------------------------------------------------
+
         try:
             user_to_promote = User.objects.get(pk=user_id)
 
             if user_to_promote.is_superuser or user_to_promote.is_staff:
                 messages.warning(request, "This user is already a superuser or admin.")
             else:
+                # Promote the user
                 user_to_promote.is_staff = True
                 user_to_promote.save()
+
                 user_to_promote.profile.role = 'admin'
                 user_to_promote.profile.save()
+
                 messages.success(request, f"User '{user_to_promote.username}' has been promoted to Admin.")
 
         except User.DoesNotExist:
