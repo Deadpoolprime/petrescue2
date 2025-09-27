@@ -278,7 +278,7 @@ api_router.register(r'notifications', NotificationViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(api_router.urls), name='api_root'), # Note: no namespace here on include
+    path('api/', include(api_router.urls), name='api_root'), 
     path('api/register/', RegisterView.as_view(), name='api_register'),
     path('', include('users.urls')),
 ]
@@ -745,6 +745,29 @@ main {
     .social-links {
         margin-top: 15px;
     }
+        .flash-messages {
+  margin-bottom: 20px;
+}
+
+.alert {
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.alert.success {
+  background-color: #d4edda; /* light green */
+  color: #155724; /* dark green text */
+  border: 1px solid #c3e6cb;
+}
+
+.alert.error {
+  background-color: #f8d7da; /* light red */
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
 }
 
 
@@ -893,8 +916,8 @@ File: .\users\urls.py
 from django.urls import path
 from .views import (
     # Removed home_view from here, it's no longer the main root
-    login_view, logout_view, register_view,
-    pets_list_view, pet_detail_view, about_view, contact_view
+   login_view, logout_view, register_view,
+    pets_list_view, pet_detail_view, about_view, contact_view, dashboard_view
 )
 
 app_name = 'users' # This is essential
@@ -910,6 +933,11 @@ urlpatterns = [
     path('pets/<int:pet_id>/', pet_detail_view, name='pet_detail'),
     path('about/', about_view, name='about'),
     path('contact/', contact_view, name='contact'),
+    path('dashboard/', dashboard_view, name='dashboard'), # <-- ADDED: URL for the dashboard
+    # Placeholder URLs for reporting (will be implemented later)
+    # path('report/lost/', create_pet_report_view, {'report_type': 'Lost'}, name='create_pet_report'),
+    # path('report/found/', create_pet_report_view, {'report_type': 'Found'}, name='create_pet_report'),
+    # path('report/<int:report_id>/', report_detail_view, name='pet_report_detail'),
 ]
 
 
@@ -924,6 +952,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django import forms
 from django.urls import reverse # Import reverse for url naming
+from django.contrib import messages
 
 from .models import Profile, PetReport, PetForAdoption, Notification
 from .serializers import ProfileSerializer, PetReportSerializer, PetForAdoptionSerializer, NotificationSerializer, UserSerializer
@@ -989,7 +1018,7 @@ def login_view(request):
         if user is not None:
             auth_login(request, user)
             # Redirect to a protected page or a dashboard after login, NOT home (as home is gone)
-            return redirect('users:pets_list') # Redirect to pets list for example
+            return redirect('users:dashboard') # Redirect to pets list for example
         else:
             # Authentication failed
             return render(request, 'users/login.html', {'error_message': "Invalid username or password."})
@@ -1060,10 +1089,12 @@ def register_view(request):
                 phone_number=form.cleaned_data.get('phone_number')
             )
             auth_login(request, user)
+            messages.success(request, "🎉 Registration successful!")
             # Redirect to the pets list page after successful registration and login
-            return redirect('users:pets_list') # <-- MODIFIED: Redirect to pets list
+            return redirect('users:login') # <-- MODIFIED: Redirect to pets list
     else:
         form = RegistrationForm()
+
     return render(request, 'users/register.html', {'form': form})
 
 # Placeholder View for Pets List
@@ -1094,15 +1125,55 @@ def contact_view(request):
 @login_required
 def dashboard_view(request):
     try:
-        user_profile = request.user.profile
+        user_profile = request.user.profile # Access the profile through the user object
     except Profile.DoesNotExist:
-        user_profile = None
-    user_reports = request.user.pet_reports.all()
+        user_profile = None # Handle case where profile might not exist yet
+
+    user_reports = request.user.pet_reports.all() # Get all reports by this user
+
     context = {
         'profile': user_profile,
         'reports': user_reports
+        # You might also fetch adoption listings made by the user here if applicable
     }
     return render(request, 'users/dashboard.html', context)
+
+# Placeholder View for Pets List (This will be our "Found pets for adoption" page)
+# We'll add @login_required here later if needed, but for now, let's make it accessible.
+def pets_list_view(request):
+    # Fetch pets from your database that are available for adoption
+    all_pets = PetForAdoption.objects.filter(status='Available')
+    context = {
+        'pets': all_pets
+    }
+    return render(request, 'users/pets_list.html', context)
+
+# Placeholder View for Pet Detail
+# Add @login_required if pet details should only be seen by logged-in users
+# @login_required
+def pet_detail_view(request, pet_id):
+    pet = get_object_or_404(PetForAdoption, pk=pet_id)
+    context = {
+        'pet': pet
+    }
+    return render(request, 'users/pet_detail.html', context)
+
+# Placeholder View for About Page (Not protected)
+def about_view(request):
+    return render(request, 'users/about.html')
+
+# Placeholder View for Contact Page (Not protected)
+def contact_view(request):
+    return render(request, 'users/contact.html')
+
+# --- Views for Reporting Lost/Found Pets (To be implemented next) ---
+# For now, these are just placeholder URL names for the dashboard links.
+# We'll create the actual views and templates for these later.
+# def create_pet_report(request, report_type):
+#     pass # Placeholder
+#
+# def pet_report_detail(request, report_id):
+#     pass # Placeholder
 
 
 ================================================================================
@@ -1332,6 +1403,76 @@ File: .\users\templates\users\base.html
 
 
 ================================================================================
+File: .\users\templates\users\dashboard.html
+================================================================================
+
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
+
+    {# Display User Information #}
+    {% if profile %}
+        <div class="user-info-box">
+            <h3>Your Account Details</h3>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p> {# Accessing name via profile.user #}
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
+            <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
+            <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
+            <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
+
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
+            {% else %}
+                {# Ensure you have a default image in static/images/ #}
+                <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Your profile information is not fully set up. Please complete your profile.</p>
+        {# You could add a link to a profile editing page here later #}
+    {% endif %}
+
+    {# Action Buttons #}
+    <div class="dashboard-actions">
+        <h3>What would you like to do?</h3>
+        <div class="action-buttons">
+            <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a> {# Assuming a URL pattern 'create_pet_report' with a type argument #}
+            <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-secondary">Report a Found Pet</a> {# Assuming a URL pattern 'create_pet_report' with a type argument #}
+            <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a> {# Link to the pets list page #}
+        </div>
+    </div>
+
+    {# User's Reports (Optional: for dashboard) #}
+    {% if reports %}
+        <div class="user-reports-box">
+            <h3>Your Pet Reports</h3>
+            <ul>
+            {% for report in reports %}
+                <li>
+                    <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
+                    - <a href="{% url 'users:pet_report_detail' report.id %}">View</a> {# Assuming you'll add this URL pattern #}
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+{# Add any dashboard-specific JS here #}
+{% endblock %}
+
+
+================================================================================
 File: .\users\templates\users\home.html
 ================================================================================
 
@@ -1399,6 +1540,15 @@ File: .\users\templates\users\login.html
 <section class="auth-section">
     <div class="auth-box">
         <h2 class="auth-title">Hello!</h2>
+        {% if messages %}
+  <div class="flash-messages">
+    {% for message in messages %}
+      <div class="alert {{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
         <p class="auth-subtitle">Login to your PawFinder account.</p>
 
         {# Action correctly points to the login URL #}

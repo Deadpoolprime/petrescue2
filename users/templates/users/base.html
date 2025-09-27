@@ -1,3 +1,4 @@
+{# users/templates/users/base.html #}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -17,13 +18,37 @@
             </div>
             <nav>
                 <ul>
-                    
+                    {# Conditional Navigation #}
+                    {% if user.is_authenticated %}
+                        {# Links for logged-in users #}
+                        {# Since root is login, we don't show Login/Register here #}
+                        <li><a href="{% url 'users:dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'users:pets_list' %}">Pets for Adoption</a></li>
+                        <li><a href="{% url 'users:logout' %}">Logout</a></li>
+                    {% else %}
+                        {# Links for logged-out users - since root is login, these are mainly for explicit navigation #}
+                        {# If you want Login/Register in the nav bar, uncomment these: #}
+                        {# <li><a href="{% url 'users:login' %}">Login</a></li> #}
+                        {# <li><a href="{% url 'users:register' %}">Register</a></li> #}
+                        {# However, since the root IS login, these might be redundant in the nav bar for logged-out users #}
+                        <li><a href="{% url 'users:register' %}">Register</a></li> {# Keep register accessible if needed #}
+                    {% endif %}
+                    {# Links available to everyone #}
+                    <li><a href="{% url 'users:about' %}">About</a></li>
+                    <li><a href="{% url 'users:contact' %}">Contact</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
     <main class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </main>

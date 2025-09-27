@@ -1,0 +1,30 @@
+{# users/templates/users/dashboard.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    {# Removed the welcome message and user info box for now to focus on the buttons #}
+    {# You can add them back later if you wish #}
+
+    {# Action Buttons as requested #}
+    <div class="dashboard-actions">
+        <h2>What would you like to do?</h2>
+        <div class="action-buttons">
+            {# Buttons with no functionality yet, just links #}
+            <a href="#" class="btn btn-primary">Report a Lost Pet</a> {# Placeholder link #}
+            <a href="#" class="btn btn-secondary">Report a Found Pet</a> {# Placeholder link #}
+            <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a> {# Link to pets list #}
+        </div>
+    </div>
+
+    {# Removed the user reports section for now to keep it simple #}
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+{# Add any dashboard-specific JS here #}
+{% endblock %}

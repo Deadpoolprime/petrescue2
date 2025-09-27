@@ -70,14 +70,19 @@ def login_view(request):
 
         if user is not None:
             auth_login(request, user)
-            # Redirect to a protected page or a dashboard after login, NOT home (as home is gone)
-            return redirect('users:pets_list') # Redirect to pets list for example
+            # Redirect to the dashboard page after successful login
+            return redirect('users:dashboard') # <-- Now redirects to dashboard
         else:
             # Authentication failed
-            return render(request, 'users/login.html', {'error_message': "Invalid username or password."})
+            messages.error(request, "Invalid username or password. Please try again.") # Using messages framework
+            # Re-render login page with error message
+            return render(request, 'users/login.html') # Removed explicit error_message from context
     else:
         # GET request: show the login form
+        if request.user.is_authenticated:
+            return redirect('users:dashboard') # Redirect logged-in users away from login
         return render(request, 'users/login.html')
+
 
 # Logout View
 def logout_view(request):
@@ -177,13 +182,56 @@ def contact_view(request):
 # Example of a protected view (requires login)
 @login_required
 def dashboard_view(request):
+    # This view will now serve as the landing page after login.
+    # It will render the dashboard.html template.
+    # We'll add the three buttons to dashboard.html.
+    # The fetching of user profile and reports is already here and useful.
     try:
         user_profile = request.user.profile
     except Profile.DoesNotExist:
         user_profile = None
+
     user_reports = request.user.pet_reports.all()
+
     context = {
         'profile': user_profile,
         'reports': user_reports
     }
     return render(request, 'users/dashboard.html', context)
+
+# Placeholder View for Pets List (This will be our "Found pets for adoption" page)
+# We'll add @login_required here later if needed, but for now, let's make it accessible.
+def pets_list_view(request):
+    # Fetch pets from your database that are available for adoption
+    all_pets = PetForAdoption.objects.filter(status='Available')
+    context = {
+        'pets': all_pets
+    }
+    return render(request, 'users/pets_list.html', context)
+
+# Placeholder View for Pet Detail
+# Add @login_required if pet details should only be seen by logged-in users
+# @login_required
+def pet_detail_view(request, pet_id):
+    pet = get_object_or_404(PetForAdoption, pk=pet_id)
+    context = {
+        'pet': pet
+    }
+    return render(request, 'users/pet_detail.html', context)
+
+# Placeholder View for About Page (Not protected)
+def about_view(request):
+    return render(request, 'users/about.html')
+
+# Placeholder View for Contact Page (Not protected)
+def contact_view(request):
+    return render(request, 'users/contact.html')
+
+# --- Views for Reporting Lost/Found Pets (To be implemented next) ---
+# For now, these are just placeholder URL names for the dashboard links.
+# We'll create the actual views and templates for these later.
+# def create_pet_report(request, report_type):
+#     pass # Placeholder
+#
+# def pet_report_detail(request, report_id):
+#     pass # Placeholder
