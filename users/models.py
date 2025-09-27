@@ -15,10 +15,10 @@ class Profile(models.Model):
 # This table handles both LOST and FOUND pet "incidents".
 class PetReport(models.Model):
     REPORT_TYPE_CHOICES = (('Lost', 'I lost my pet'), ('Found', 'I found a pet'))
-    STATUS_CHOICES = (('Open', 'Open'), ('Closed', 'Closed'))
+    STATUS_CHOICES = (('Open', 'Open'),('Pending Adoption', 'Pending Adoption'), ('Closed', 'Closed'))
     GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown')) # Add gender choices here
 
-    report_type = models.CharField(max_length=10, choices=REPORT_TYPE_CHOICES)
+    report_type = models.CharField(max_length=20, choices=REPORT_TYPE_CHOICES)
     reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pet_reports')
 
     # NEW FIELDS ADDED:
@@ -32,7 +32,7 @@ class PetReport(models.Model):
     pet_image = models.ImageField(upload_to='pet_images/')
     location = models.CharField(max_length=255, help_text="Area where the pet was lost or found.")
     contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Open')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
     date_reported = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

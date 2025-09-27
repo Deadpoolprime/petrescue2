@@ -1,0 +1,52 @@
+{# users/templates/admin/put_for_adoption_form.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+{% block title %}List Pet for Adoption{% endblock %}
+
+{% block content %}
+<section class="report-section">
+    <div class="auth-box">
+        <h2 class="auth-title">List Pet for Adoption</h2>
+        <p class="auth-subtitle">Finalize details for Found Pet Report #{{ report.id }}</p>
+
+        <div class="original-report-info">
+            <h4>Original Report Details</h4>
+            {% if report.pet_image %}
+            <img src="{{ report.pet_image.url }}" alt="Original pet image" style="max-width: 150px; border-radius: 8px; margin-bottom: 15px;">
+            {% endif %}
+            <p><strong>Type:</strong> {{ report.pet_type }}, <strong>Color:</strong> {{ report.color }}</p>
+            <p><strong>Found At:</strong> {{ report.location }}</p>
+        </div>
+
+        <form method="post" action="">
+            {% csrf_token %}
+            
+            {# Rendering the form fields manually for better control #}
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Pet's New Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.age.id_for_label }}">Estimated Age:</label>
+                {{ form.age }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.gender.id_for_label }}">Gender:</label>
+                {{ form.gender }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Description for Adoption Page:</label>
+                {{ form.description }}
+            </div>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary btn-full">List for Adoption</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

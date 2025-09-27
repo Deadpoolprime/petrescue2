@@ -1,0 +1,45 @@
+{# users/templates/admin/process_adoption.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+{% block title %}Process Pending Adoptions{% endblock %}
+
+{% block content %}
+<section class="manage-users-section"> {# Reusing some styles #}
+    <h2 class="section-title">Pets Pending Adoption</h2>
+    <p class="auth-subtitle">These pets were reported as "Found" more than 15 days ago and are now eligible to be listed for adoption.</p>
+    <div class="admin-nav">
+        <a href="{% url 'users:admin_dashboard' %}">&larr; Back to Admin Dashboard</a>
+    </div>
+
+    <div class="user-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Report ID</th>
+                    <th>Pet Type</th>
+                    <th>Reported On</th>
+                    <th>Location</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in pets_to_process %}
+                <tr>
+                    <td>{{ report.id }}</td>
+                    <td>{{ report.pet_type }}</td>
+                    <td>{{ report.date_reported|date:"Y-m-d" }}</td>
+                    <td>{{ report.location }}</td>
+                    <td>
+                        <a href="{% url 'users:admin_put_for_adoption' report.id %}" class="btn btn-small btn-primary">Process</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">There are no pets pending adoption at this time.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

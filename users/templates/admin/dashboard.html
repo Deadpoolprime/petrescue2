@@ -1,0 +1,40 @@
+{# users/templates/admin/dashboard.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<section class="admin-dashboard-section">
+    <h2 class="section-title">Admin Dashboard</h2>
+    <p class="auth-subtitle">Welcome, {{ request.user.username }}! Here's a summary of the platform.</p>
+        
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <p>{{ user_count }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Pets for Adoption</h3>
+            <p>{{ pets_for_adoption_count }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Open Lost Reports</h3>
+            <p>{{ lost_reports_count }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Open Found Reports</h3>
+            <p>{{ found_reports_count }}</p>
+        </div>
+    </div>
+
+    <div class="admin-actions">
+        <h3>Management Tools</h3>
+        <div class="action-buttons">
+            <a href="{% url 'users:admin_manage_users' %}" class="btn btn-primary">Manage Users</a>
+            <a href="{% url 'users:admin_adoption_processing' %}" class="btn btn-secondary">Process Pending Adoptions</a>
+            {# You can add more admin action buttons here as you build more features #}
+        </div>
+    </div>
+</section>
+{% endblock %}

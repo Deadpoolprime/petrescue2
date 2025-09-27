@@ -1,0 +1,63 @@
+{# users/templates/admin/manage_users.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<section class="manage-users-section">
+    <h2 class="section-title">Manage Users</h2>
+    <div class="admin-nav">
+        <a href="{% url 'users:admin_dashboard' %}">&larr; Back to Admin Dashboard</a>
+    </div>
+
+    <div class="user-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Profile Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_obj in users %}
+                <tr>
+                    <td>{{ user_obj.username }}</td>
+                    <td>{{ user_obj.get_full_name|default:"N/A" }}</td>
+                    <td>{{ user_obj.email }}</td>
+                    <td>
+                        {% if user_obj.profile.role == 'admin' %}
+                            <span class="role-admin">Admin</span>
+                        {% else %}
+                            <span class="role-user">User</span>
+                        {% endif %}
+                    </td>
+                    <td class="action-cell">
+                        {# Promote Button - Only visible to Superusers #}
+                        {% if request.user.is_superuser and user_obj.profile.role != 'admin' %}
+                            <form action="{% url 'users:admin_promote_user' user_obj.id %}" method="post" class="action-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-promote">Promote to Admin</button>
+                            </form>
+                        {% endif %}
+
+                        {# Remove Button - Visible to all staff, but view has logic to block misuse #}
+                        <form action="{% url 'users:admin_remove_user' user_obj.id %}" method="post" onsubmit="return confirm('Are you sure you want to remove this user? This action cannot be undone.');" class="action-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No non-superuser accounts found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

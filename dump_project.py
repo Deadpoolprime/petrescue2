@@ -11,7 +11,7 @@ include_exts = [".py", ".html", ".css", ".js", ".json", ".txt", ".md"]
 
 # 🔧 If you want only specific files, list them here by name
 # Example: only_files = ["views.py", "urls.py", "login.html"]
-only_files = ["dashboard.html", "style.css"]   # put filenames here
+only_files = []   # put filenames here
 
 with open(output_file, "w", encoding="utf-8") as outfile:
     for root, dirs, files in os.walk(project_root):
@@ -39,9 +39,6 @@ with open(output_file, "w", encoding="utf-8") as outfile:
                     outfile.write("\n\n")
             except Exception as e:
                 outfile.write(f"\n[Could not read {filepath}: {e}]\n")
-
-# ✅ Reset the list so next run starts empty
-only_files = []
 
 print(f"✅ File contents saved to {output_file}")
 print("ℹ️  Cleared only_files list after writing.")

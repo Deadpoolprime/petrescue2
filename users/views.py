@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.urls import reverse
 from django.contrib import messages
-
+from .decorators import staff_required, superuser_required
 from .models import Profile, PetReport, PetForAdoption, Notification
 from .serializers import ProfileSerializer, PetReportSerializer, PetForAdoptionSerializer, NotificationSerializer, UserSerializer
 from rest_framework.views import APIView
@@ -312,3 +312,222 @@ def pets_list_view(request):
 def pet_detail_view(request, report_id):
     # ... (implementation for pet_report_detail_view) ...
     pass # Placeholder for now
+
+@staff_required
+def admin_adoption_processing_view(request):
+    """
+    Lists pets that are pending adoption and need admin action.
+    """
+    # Find all PetReports marked as 'Pending Adoption'
+    pets_to_process = PetReport.objects.filter(status='Pending Adoption')
+
+    context = {
+        'pets_to_process': pets_to_process,
+    }
+    return render(request, 'admin/process_adoption.html', context)
+
+# Form for putting a pet up for adoption
+class PutForAdoptionForm(forms.ModelForm):
+    # We can inherit from PetForAdoption and add fields
+    class Meta:
+        model = PetForAdoption
+        fields = ['name', 'age', 'gender', 'description'] # Fields the admin will fill in
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
+
+@staff_required
+def admin_put_for_adoption_view(request, report_id):
+    """
+    Handles the form for an admin to name a pet and put it up for adoption.
+    """
+    try:
+        report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
+    except PetReport.DoesNotExist:
+        messages.error(request, "This pet report was not found or is not pending adoption.")
+        return redirect('users:admin_adoption_processing')
+
+    if request.method == 'POST':
+        form = PutForAdoptionForm(request.POST)
+        if form.is_valid():
+            # Create the new PetForAdoption record
+            new_adoption_pet = form.save(commit=False) # Don't save to DB yet
+            new_adoption_pet.pet_type = report.pet_type
+            new_adoption_pet.breed = report.breed
+            new_adoption_pet.color = report.color
+            new_adoption_pet.image = report.pet_image # Directly assign the image file
+            new_adoption_pet.lister = request.user # The admin is the lister
+            new_adoption_pet.status = 'Available'
+            new_adoption_pet.save()
+
+            # Close the original report
+            report.status = 'Closed'
+            report.save()
+
+            messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
+            return redirect('users:admin_adoption_processing')
+    else:
+        # Pre-populate the form with data from the report
+        initial_data = {
+            'name': report.name or '',
+            'age': report.age or '',
+            'gender': report.gender
+        }
+        form = PutForAdoptionForm(initial=initial_data)
+
+    context = {
+        'form': form,
+        'report': report,
+    }
+    return render(request, 'admin/put_for_adoption_form.html', context)
+
+@staff_required # Only staff (Admins and Superusers) can access this
+def admin_dashboard_view(request):
+    """
+    Displays statistics for the admin dashboard.
+    """
+    user_count = User.objects.count()
+    pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
+    lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
+    found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
+
+    context = {
+        'user_count': user_count,
+        'pets_for_adoption_count': pets_for_adoption_count,
+        'lost_reports_count': lost_reports_count,
+        'found_reports_count': found_reports_count,
+    }
+    return render(request, 'admin/dashboard.html', context)
+
+
+@staff_required # Only staff can manage users
+def admin_manage_users_view(request):
+    """
+    Lists all non-superuser users for management.
+    """
+    # Exclude superusers so they cannot be managed from this interface
+    users_to_manage = User.objects.filter(is_superuser=False).select_related('profile')
+
+    context = {
+        'users': users_to_manage,
+    }
+    return render(request, 'admin/manage_users.html', context)
+
+
+@superuser_required # ONLY a superuser can promote another user to admin
+def admin_promote_user_view(request, user_id):
+    if request.method == 'POST':
+        try:
+            user_to_promote = User.objects.get(pk=user_id)
+
+            if user_to_promote.is_superuser or user_to_promote.is_staff:
+                messages.warning(request, "This user is already a superuser or admin.")
+            else:
+                user_to_promote.is_staff = True
+                user_to_promote.save()
+                user_to_promote.profile.role = 'admin'
+                user_to_promote.profile.save()
+                messages.success(request, f"User '{user_to_promote.username}' has been promoted to Admin.")
+
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+
+    return redirect('users:admin_manage_users')
+
+
+@staff_required # Any staff member can attempt to remove a user
+def admin_remove_user_view(request, user_id):
+    if request.method == 'POST':
+        try:
+            user_to_remove = User.objects.get(pk=user_id)
+
+            # Security check: Prevent non-superusers from removing admins.
+            if user_to_remove.is_staff and not request.user.is_superuser:
+                messages.error(request, "You do not have permission to remove an admin user.")
+                return redirect('users:admin_manage_users')
+
+            # Prevent anyone from removing a superuser via this view
+            if user_to_remove.is_superuser:
+                messages.error(request, "Superusers cannot be removed from this interface.")
+                return redirect('users:admin_manage_users')
+            
+            username = user_to_remove.username
+            user_to_remove.delete()
+            messages.success(request, f"User '{username}' has been removed successfully.")
+
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+
+    return redirect('users:admin_manage_users')
+
+
+@staff_required
+def admin_adoption_processing_view(request):
+    """
+    Lists pets that are pending adoption and need admin action.
+    """
+    pets_to_process = PetReport.objects.filter(status='Pending Adoption')
+    context = {'pets_to_process': pets_to_process}
+    return render(request, 'admin/process_adoption.html', context)
+
+
+# Form for putting a pet up for adoption (can be defined here or with other forms)
+class PutForAdoptionForm(forms.ModelForm):
+    class Meta:
+        model = PetForAdoption
+        fields = ['name', 'age', 'gender', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
+        labels = {
+            'name': "Pet's New Name (for adoption listing)",
+            'age': "Estimated Age",
+            'description': "Adoption Profile Description",
+        }
+
+
+@staff_required
+def admin_put_for_adoption_view(request, report_id):
+    """
+    Handles the form for an admin to name a pet and put it up for adoption.
+    """
+    try:
+        report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
+    except PetReport.DoesNotExist:
+        messages.error(request, "This pet report was not found or is not pending adoption.")
+        return redirect('users:admin_adoption_processing')
+
+    if request.method == 'POST':
+        form = PutForAdoptionForm(request.POST)
+        if form.is_valid():
+            # Create the new PetForAdoption record
+            new_adoption_pet = form.save(commit=False)
+            new_adoption_pet.pet_type = report.pet_type
+            new_adoption_pet.breed = report.breed
+            new_adoption_pet.color = report.color
+            new_adoption_pet.image = report.pet_image # Directly assign the image file
+            new_adoption_pet.lister = request.user # The admin is the lister
+            new_adoption_pet.status = 'Available'
+            new_adoption_pet.save()
+
+            # Close the original report
+            report.status = 'Closed'
+            report.save()
+
+            messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
+            return redirect('users:admin_adoption_processing')
+    else:
+        # Pre-populate the form with data from the report for GET request
+        initial_data = {
+            'name': report.name if report.name else f"Friendly {report.pet_type}",
+            'age': report.age or None,
+            'gender': report.gender,
+            'description': f"This lovely {report.pet_type} was found near {report.location}. We are looking for a forever home for them!"
+        }
+        form = PutForAdoptionForm(initial=initial_data)
+
+    context = {
+        'form': form,
+        'report': report,
+    }
+    return render(request, 'admin/put_for_adoption_form.html', context)
