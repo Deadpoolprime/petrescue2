@@ -142,7 +142,7 @@ def register_view(request):
             )
             auth_login(request, user)
             # Redirect to the pets list page after successful registration and login
-            return redirect('users:pets_list') # <-- MODIFIED: Redirect to pets list
+            return redirect('users:login') # <-- MODIFIED: Redirect to pets list
     else:
         form = RegistrationForm()
     return render(request, 'users/register.html', {'form': form})

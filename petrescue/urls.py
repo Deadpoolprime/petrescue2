@@ -18,7 +18,7 @@ api_router.register(r'notifications', NotificationViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(api_router.urls), name='api_root'), # Note: no namespace here on include
+    path('api/', include(api_router.urls), name='api_root'), 
     path('api/register/', RegisterView.as_view(), name='api_register'),
     path('', include('users.urls')),
 ]
