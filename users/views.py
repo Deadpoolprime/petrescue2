@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django import forms
 from django.urls import reverse # Import reverse for url naming
+from django.contrib import messages
 
 from .models import Profile, PetReport, PetForAdoption, Notification
 from .serializers import ProfileSerializer, PetReportSerializer, PetForAdoptionSerializer, NotificationSerializer, UserSerializer
@@ -141,10 +142,12 @@ def register_view(request):
                 phone_number=form.cleaned_data.get('phone_number')
             )
             auth_login(request, user)
+            messages.success(request, "🎉 Registration successful!")
             # Redirect to the pets list page after successful registration and login
             return redirect('users:login') # <-- MODIFIED: Redirect to pets list
     else:
         form = RegistrationForm()
+
     return render(request, 'users/register.html', {'form': form})
 
 # Placeholder View for Pets List
