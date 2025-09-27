@@ -91,13 +91,38 @@ def logout_view(request):
 class RegistrationForm(forms.Form):
     username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
-    first_name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_first_name', 'class': 'form-input'}))
+    first_name = forms.CharField(label="Full Name",max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_first_name', 'class': 'form-input'}))
     age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'id': 'id_age', 'class': 'form-input'}))
     city = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_city', 'class': 'form-input'}))
     phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'id': 'id_phone_number', 'class': 'form-input'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password1', 'class': 'form-input'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password2', 'class': 'form-input'}), label="Confirm Password")
+    is_admin_registration = forms.BooleanField(required=False, label="Register as Admin")
+    admin_passcode = forms.CharField(
+        widget=forms.PasswordInput,
+        required=False,
+        label="Admin Passcode"
+    )
 
+    # We need a custom validation method to check the passcode
+    def clean(self):
+        cleaned_data = super().clean()
+        is_admin = cleaned_data.get('is_admin_registration')
+        passcode = cleaned_data.get('admin_passcode')
+
+        if is_admin:
+            # If the admin box is checked, the passcode is required
+            if not passcode:
+                raise forms.ValidationError(
+                    "Admin passcode is required when registering as an admin."
+                )
+
+            # Check if the passcode is correct
+            from django.conf import settings
+            if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
+                raise forms.ValidationError("Invalid admin passcode.")
+
+        return cleaned_data
     def clean_password(self):
         password = self.cleaned_data.get("password")
         if password:
@@ -129,33 +154,42 @@ class RegistrationForm(forms.Form):
 
 # Registration View (Modified for correct form handling and redirection)
 def register_view(request):
-    form = RegistrationForm() # Initialize form for GET requests
-
     if request.method == 'POST':
-        form = RegistrationForm(request.POST) # Use POST data to create the form instance
+        form = RegistrationForm(request.POST)
         if form.is_valid():
+            cleaned_data = form.cleaned_data
+            is_admin = cleaned_data.get('is_admin_registration')
+
+            # Step 1: Create the User
             user = User.objects.create_user(
-                username=form.cleaned_data['username'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
-                first_name=form.cleaned_data.get('first_name', ''),
+                username=cleaned_data['username'],
+                email=cleaned_data['email'],
+                password=cleaned_data['password'],
+                first_name=cleaned_data.get('first_name', '')
             )
+
+            if is_admin:
+                user.is_staff = True
+                user.save()
+
+            # Step 2: Explicitly create the Profile with all the form data
+            # This is the crucial part that creates the row in the `users_profile` table.
             Profile.objects.create(
                 user=user,
-                age=form.cleaned_data.get('age'),
-                city=form.cleaned_data.get('city'),
-                phone_number=form.cleaned_data.get('phone_number')
+                role='admin' if is_admin else 'user',
+                age=cleaned_data.get('age'),
+                city=cleaned_data.get('city'),
+                phone_number=cleaned_data.get('phone_number')
             )
+
+            # Step 3: Log in and redirect
             auth_login(request, user)
             messages.success(request, "🎉 Registration successful! Welcome to PawFinder.")
-            # Redirect to the login page after successful registration and login
-            return redirect('users:login') # Redirect to login page after registration
-        # If form is not valid, 'form' still holds the invalid POST data and errors,
-        # so the render at the end will display it correctly.
+            return redirect('users:dashboard')
+    else:
+        form = RegistrationForm()
 
-    # If GET request OR POST with invalid form, render the template with the form
     return render(request, 'users/register.html', {'form': form})
-
 
 # Dashboard View (Modified to show available pets and action buttons)
 @login_required

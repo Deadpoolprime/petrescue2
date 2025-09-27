@@ -1,3 +1,4 @@
+{# users/templates/users/register.html #}
 {% extends 'users/base.html' %}
 {% load static %}
 
@@ -6,68 +7,124 @@
 {% block content %}
 <section class="auth-section">
     <div class="auth-box">
-        <h2 class="auth-title">Create Your PawFinder Account</h2>
+        <h2 class="auth-title">Create Your Account</h2>
         <p class="auth-subtitle">Join our community to help pets find homes!</p>
 
-        {# Action correctly points to the register URL #}
-        <form id="registrationForm" method="post" action="{% url 'users:register' %}"> {# Corrected namespace #}
+        <form id="registrationForm" method="post" action="{% url 'users:register' %}">
             {% csrf_token %}
 
-            {# Display form errors here if any #}
+                        <!-- =================  ERROR DISPLAY BLOCK ================= -->
             {% if form.errors %}
                 <div class="alert alert-danger">
+                    <p><strong>Please correct the errors below:</strong></p>
+                    <ul>
                     {% for field in form %}
                         {% for error in field.errors %}
-                            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
+                            <li>{{ field.label }}: {{ error }}</li>
                         {% endfor %}
                     {% endfor %}
+                    {# This shows errors not tied to a specific field, like passcode mismatch #}
                     {% for error in form.non_field_errors %}
-                        <p><strong>Error:</strong> {{ error }}</p>
+                        <li>{{ error }}</li>
                     {% endfor %}
+                    </ul>
                 </div>
             {% endif %}
+            <!-- ======================================================== -->
 
-            {# Added value attributes to retain user input on validation error #}
+            <!-- --- ALL FORM FIELDS GO HERE --- -->
             <div class="form-group">
-                <label for="id_username">Username:</label>
-                <input type="text" id="id_username" name="username" value="{{ form.username.value|default:'' }}" required>
+                {{ form.username.label_tag }}
+                {{ form.username }}
             </div>
+
             <div class="form-group">
-                <label for="id_email">Email:</label>
-                <input type="email" id="id_email" name="email" value="{{ form.email.value|default:'' }}" required>
+                {{ form.email.label_tag }}
+                {{ form.email }}
             </div>
+
             <div class="form-group">
-                <label for="id_first_name">Full Name:</label>
-                <input type="text" id="id_first_name" name="first_name" value="{{ form.first_name.value|default:'' }}">
+                {{ form.first_name.label_tag }}
+                {{ form.first_name }}
             </div>
+
             <div class="form-group">
-                <label for="id_age">Age:</label>
-                <input type="number" id="id_age" name="age" min="0" value="{{ form.age.value|default:'' }}">
+                {{ form.age.label_tag }} 
+                {{ form.age }}
             </div>
+
             <div class="form-group">
-                <label for="id_city">City:</label>
-                <input type="text" id="id_city" name="city" value="{{ form.city.value|default:'' }}">
+                {{ form.city.label_tag }} 
+                {{ form.city }}
             </div>
+
             <div class="form-group">
-                <label for="id_phone_number">Phone Number:</label>
-                <input type="tel" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value|default:'' }}">
+                {{ form.phone_number.label_tag }} 
+                {{ form.phone_number }}
             </div>
+
             <div class="form-group">
-                <label for="id_password1">Password:</label>
-                <input type="password" id="id_password1" name="password" required>
+                {{ form.password.label_tag }}
+                {{ form.password }}
                 <small class="password-rules">Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char.</small>
             </div>
+
             <div class="form-group">
-                <label for="id_password2">Confirm Password:</label>
-                <input type="password" id="id_password2" name="password2" required>
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
             </div>
+            <!-- ----------------------------------- -->
+
+            <!-- --- Fields for Admin Registration --- -->
+            <div class="form-group admin-toggle">
+                <label for="{{ form.is_admin_registration.id_for_label }}">
+                    {{ form.is_admin_registration }}
+                    {{ form.is_admin_registration.label }}
+                </label>
+            </div>
+
+            <div class="form-group" id="admin_passcode_group" style="display: none;">
+                {{ form.admin_passcode.label_tag }}
+                {{ form.admin_passcode }}
+            </div>
+            <!-- ----------------------------------- -->
 
             <button type="submit" class="btn btn-primary btn-full">Register</button>
         </form>
 
         <div class="auth-switch">
-            <p>Already have an account? <a href="{% url 'users:login' %}" class="btn btn-secondary btn-small">Login Here</a></p> {# Corrected namespace #}
+            <p>Already have an account? <a href="{% url 'users:login' %}" class="btn btn-secondary btn-small">Login Here</a></p>
         </div>
     </div>
 </section>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const adminCheckbox = document.getElementById('{{ form.is_admin_registration.id_for_label }}');
+    const passcodeGroup = document.getElementById('admin_passcode_group');
+
+    // Function to toggle display
+    function togglePasscodeField() {
+        if (adminCheckbox && passcodeGroup) { // Check if elements exist
+            if (adminCheckbox.checked) {
+                passcodeGroup.style.display = 'block';
+            } else {
+                passcodeGroup.style.display = 'none';
+            }
+        }
+    }
+
+    // Initial check in case the form is re-rendered with the box already checked
+    togglePasscodeField();
+
+    // Add event listener if checkbox exists
+    if (adminCheckbox) {
+        adminCheckbox.addEventListener('change', togglePasscodeField);
+    }
+});
+</script>
 {% endblock %}
