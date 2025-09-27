@@ -942,11 +942,14 @@ tbody tr:hover {
     gap: 10px;
     align-items: center;
 }
+
 .action-form {
     margin: 0;
 }
+
+/* Remove Button */
 .btn-danger {
-    background-color: #e74c3c;
+    background-color: rgb(231, 76, 60); /* A strong red */
     color: white;
     border: none;
     padding: 6px 12px;
@@ -954,24 +957,27 @@ tbody tr:hover {
     cursor: pointer;
     font-size: 0.85em;
     font-weight: bold;
+    transition: background-color 0.2s ease; /* Add transition */
 }
 .btn-danger:hover {
-    background-color: #c0392b;
+    background-color: rgb(192, 57, 43); /* Darker red on hover */
 }
+
+/* Promote Button */
 .btn-promote {
-    background-color: var(--success-green);
-    color: white;
+    background-color: rgb(231, 76, 60); /* A strong, clear green */
+    color: white; /* Explicitly set text color to white */
     border: none;
     padding: 6px 12px;
     border-radius: var(--radius);
     cursor: pointer;
     font-size: 0.85em;
     font-weight: bold;
+    transition: background-color 0.2s ease; /* Add transition */
 }
 .btn-promote:hover {
-    background-color: hsl(120, 45%, 45%);
+    background-color: rgb(192, 57,43); /* Darker green on hover */
 }
-
 /* Role badges in the user table */
 .role-admin {
     background-color: var(--primary-warm);
