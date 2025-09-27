@@ -65,13 +65,54 @@
 
 /* --- General Body Styling --- */
 body {
-  font-family: 'Quicksand', sans-serif; /* Cute and readable font */
+  font-family: 'Quicksand', sans-serif;
   line-height: 1.6;
-  color: var(--foreground); /* Using variable for text color */
-  background-color: var(--background); /* Using variable */
-  min-height: 100vh; /* Ensure footer stays at bottom */
+  color: #333;
+  background-color: #f9f9f9; /* Default background for ALL pages */
+  min-height: 100vh;
   display: flex;
-  flex-direction: column; /* Structure for footer at bottom */
+  flex-direction: column;
+  /* REMOVE position: relative; from the general body */
+}
+
+/* --- LOGIN PAGE SPECIFIC BACKGROUND --- */
+body.login-page-background {
+  background-image: url('../images/loginpet.png');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  position: relative; /* Add position: relative; ONLY here */
+}
+
+/* Overlay for the login page background */
+body.login-page-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 0;
+}
+
+
+/* --- Ensure main content appears ABOVE the overlay --- */
+/* This rule needs to be specific to the login page as well */
+body.login-page-background header,
+body.login-page-background main,
+body.login-page-background footer {
+    position: relative;
+    z-index: 1;
+    /* Optional: Make header/footer transparent on login page */
+    /* background-color: transparent; */
+}
+
+
+/* --- You may need to add back a background for headers/footers on OTHER pages --- */
+/* If your header and footer look transparent on other pages now, add this: */
+header, footer {
+    background-color: #ffffff; /* Or var(--card) if you prefer */
 }
 
 /* --- Typography --- */
