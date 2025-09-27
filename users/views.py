@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django import forms
-from django.urls import reverse # Import reverse for url naming
+from django.urls import reverse
 from django.contrib import messages
 
 from .models import Profile, PetReport, PetForAdoption, Notification
@@ -18,7 +18,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    # permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated] # Uncomment if API access should be restricted
 
 class PetReportViewSet(viewsets.ModelViewSet):
     queryset = PetReport.objects.all()
@@ -51,14 +51,11 @@ class RegisterView(APIView):
             return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.create_user(username=username, email=email, password=password)
-        Profile.objects.create(user=user)
+        Profile.objects.create(user=user) # Creates profile with default values
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
 # --- HTML Rendering Views ---
-
-# Removed home_view as it's no longer the root of the project.
-# The login_view will now be rendered by the root URL.
 
 # Login View
 def login_view(request):
@@ -70,23 +67,24 @@ def login_view(request):
 
         if user is not None:
             auth_login(request, user)
-            # Redirect to the dashboard page after successful login
-            return redirect('users:dashboard') # <-- Now redirects to dashboard
+            messages.success(request, "Welcome back! You are logged in.")
+            # Redirect to the dashboard after successful login
+            return redirect('users:dashboard')
         else:
             # Authentication failed
-            messages.error(request, "Invalid username or password. Please try again.") # Using messages framework
-            # Re-render login page with error message
-            return render(request, 'users/login.html') # Removed explicit error_message from context
+            messages.error(request, "Invalid username or password. Please try again.")
+            return render(request, 'users/login.html') # Re-render login page with error message
     else:
         # GET request: show the login form
+        # If user is already authenticated, redirect them away from the login page.
         if request.user.is_authenticated:
-            return redirect('users:dashboard') # Redirect logged-in users away from login
+            return redirect('users:dashboard') # Redirect logged-in users to dashboard
         return render(request, 'users/login.html')
-
 
 # Logout View
 def logout_view(request):
     auth_logout(request)
+    messages.info(request, "You have been logged out.")
     return redirect('users:login') # Redirect to login after logout
 
 # Registration Form
@@ -129,10 +127,12 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("Email already exists.")
         return email
 
-# Registration View
+# Registration View (Modified for correct form handling and redirection)
 def register_view(request):
+    form = RegistrationForm() # Initialize form for GET requests
+
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST) # Use POST data to create the form instance
         if form.is_valid():
             user = User.objects.create_user(
                 username=form.cleaned_data['username'],
@@ -147,91 +147,120 @@ def register_view(request):
                 phone_number=form.cleaned_data.get('phone_number')
             )
             auth_login(request, user)
-            messages.success(request, "🎉 Registration successful!")
-            # Redirect to the pets list page after successful registration and login
-            return redirect('users:login') # <-- MODIFIED: Redirect to pets list
-    else:
-        form = RegistrationForm()
+            messages.success(request, "🎉 Registration successful! Welcome to PawFinder.")
+            # Redirect to the login page after successful registration and login
+            return redirect('users:login') # Redirect to login page after registration
+        # If form is not valid, 'form' still holds the invalid POST data and errors,
+        # so the render at the end will display it correctly.
 
+    # If GET request OR POST with invalid form, render the template with the form
     return render(request, 'users/register.html', {'form': form})
 
-# Placeholder View for Pets List
-def pets_list_view(request):
-    all_pets = PetForAdoption.objects.filter(status='Available')
-    context = {
-        'pets': all_pets
-    }
-    return render(request, 'users/pets_list.html', context)
 
-# Placeholder View for Pet Detail
-def pet_detail_view(request, pet_id):
-    pet = get_object_or_404(PetForAdoption, pk=pet_id)
-    context = {
-        'pet': pet
-    }
-    return render(request, 'users/pet_detail.html', context)
-
-# Placeholder View for About Page
-def about_view(request):
-    return render(request, 'users/about.html')
-
-# Placeholder View for Contact Page
-def contact_view(request):
-    return render(request, 'users/contact.html')
-
-# Example of a protected view (requires login)
+# Dashboard View (Modified to show available pets and action buttons)
 @login_required
 def dashboard_view(request):
-    # This view will now serve as the landing page after login.
-    # It will render the dashboard.html template.
-    # We'll add the three buttons to dashboard.html.
-    # The fetching of user profile and reports is already here and useful.
-    try:
-        user_profile = request.user.profile
-    except Profile.DoesNotExist:
-        user_profile = None
-
-    user_reports = request.user.pet_reports.all()
+    # Fetch available pets for adoption
+    available_pets = PetForAdoption.objects.filter(status='Available')
 
     context = {
-        'profile': user_profile,
-        'reports': user_reports
+        'available_pets': available_pets
+        # We can also fetch user profile and reports here if needed for dashboard
     }
     return render(request, 'users/dashboard.html', context)
 
-# Placeholder View for Pets List (This will be our "Found pets for adoption" page)
-# We'll add @login_required here later if needed, but for now, let's make it accessible.
+
+# New View for Reporting Lost/Found Pet
+# This view will handle both 'Lost' and 'Found' report types.
+def create_pet_report_view(request, report_type):
+    # Ensure user is logged in
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to report a pet.")
+        return redirect('users:login')
+
+    if request.method == 'POST':
+        form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
+        if form.is_valid():
+            # Save the PetReport to the database
+            pet_report = PetReport.objects.create(
+                report_type=report_type, # 'Lost' or 'Found' from the URL
+                reporter=request.user,   # The currently logged-in user
+                pet_type=form.cleaned_data['pet_type'],
+                breed=form.cleaned_data.get('breed'), # Use .get for optional fields
+                color=form.cleaned_data['color'],
+                pet_image=form.cleaned_data['pet_image'], # Image is saved to MEDIA_ROOT
+                location=form.cleaned_data['location'],
+                contact_info=form.cleaned_data['contact_info'],
+                # status defaults to 'Open' as defined in the model
+            )
+            messages.success(request, f"Your '{report_type}' pet report has been submitted successfully!")
+            return redirect('users:dashboard') # Redirect to dashboard after successful submission
+        # If form is not valid, 'form' will hold the errors for rendering.
+    else:
+        # GET request: Initialize an empty form
+        form = PetReportForm()
+
+    context = {
+        'form': form,
+        'report_type': report_type, # Pass to template for dynamic title/heading
+    }
+    return render(request, 'users/create_pet_report.html', context) # New template
+
+# View to show a single pet report's details
+@login_required # Protect this view
+def pet_report_detail_view(request, report_id):
+    try:
+        report = PetReport.objects.get(pk=report_id)
+        # Optional: Check if the logged-in user is the reporter of this report
+        # if report.reporter != request.user:
+        #     messages.error(request, "You do not have permission to view this report.")
+        #     return redirect('users:dashboard')
+    except PetReport.DoesNotExist:
+        messages.error(request, "Report not found.")
+        return redirect('users:dashboard')
+
+    context = {
+        'report': report
+    }
+    return render(request, 'users/pet_report_detail.html', context)
+
+# --- Form for Reporting Lost/Found Pet ---
+class PetReportForm(forms.Form):
+    pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
+    breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
+    color = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Brown, Black and White'}))
+    pet_image = forms.ImageField(required=True)
+    location = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Area where the pet was lost or found'}))
+    contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
+
+
+# --- Placeholder views for About, Contact, etc. ---
+def about_view(request):
+    return render(request, 'users/about.html')
+
+def contact_view(request):
+    return render(request, 'users/contact.html')
+
+# Dashboard View (already modified to fetch available pets)
+@login_required
+def dashboard_view(request):
+    # Fetch available pets for adoption
+    available_pets = PetForAdoption.objects.filter(status='Available')
+
+    context = {
+        'available_pets': available_pets
+        # We can also fetch user profile and reports here if needed for dashboard
+    }
+    return render(request, 'users/dashboard.html', context)
+
 def pets_list_view(request):
-    # Fetch pets from your database that are available for adoption
     all_pets = PetForAdoption.objects.filter(status='Available')
     context = {
         'pets': all_pets
     }
     return render(request, 'users/pets_list.html', context)
 
-# Placeholder View for Pet Detail
-# Add @login_required if pet details should only be seen by logged-in users
-# @login_required
-def pet_detail_view(request, pet_id):
-    pet = get_object_or_404(PetForAdoption, pk=pet_id)
-    context = {
-        'pet': pet
-    }
-    return render(request, 'users/pet_detail.html', context)
-
-# Placeholder View for About Page (Not protected)
-def about_view(request):
-    return render(request, 'users/about.html')
-
-# Placeholder View for Contact Page (Not protected)
-def contact_view(request):
-    return render(request, 'users/contact.html')
-
-# --- Views for Reporting Lost/Found Pets (To be implemented next) ---
-# For now, these are just placeholder URL names for the dashboard links.
-# We'll create the actual views and templates for these later.
-# def create_pet_report(request, report_type):
-#     pass # Placeholder
-#
-# def pet_report_detail(request, report_id):
-#     pass # Placeholder
+@login_required # Protect this view
+def pet_detail_view(request, report_id):
+    # ... (implementation for pet_report_detail_view) ...
+    pass # Placeholder for now

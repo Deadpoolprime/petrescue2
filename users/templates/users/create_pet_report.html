@@ -1,0 +1,63 @@
+{# users/templates/users/create_pet_report.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}{{ report_type }} Pet Report{% endblock %}
+
+{% block content %}
+<section class="report-section">
+    <div class="auth-box"> {# Reusing auth-box for form styling #}
+        <h2 class="auth-title">{{ report_type }} Pet Report</h2>
+        <p class="auth-subtitle">Help us reunite pets with their families!</p>
+
+        {# IMPORTANT: enctype="multipart/form-data" is crucial for file uploads #}
+        <form id="petReportForm" method="post" enctype="multipart/form-data" action=""> {# Action will be handled by the URL #}
+            {% csrf_token %}
+
+            {# Display form errors #}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p><strong>Error:</strong> {{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {# Form fields using 'value' to retain user input on validation error #}
+            <div class="form-group">
+                <label for="id_pet_type">Pet Type:</label>
+                <input type="text" id="id_pet_type" name="pet_type" value="{{ form.pet_type.value|default:'' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="id_breed">Breed (Optional):</label>
+                <input type="text" id="id_breed" name="breed" value="{{ form.breed.value|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label for="id_color">Color:</label>
+                <input type="text" id="id_color" name="color" value="{{ form.color.value|default:'' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="id_pet_image">Pet Image:</label>
+                <input type="file" id="id_pet_image" name="pet_image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="id_location">Location:</label>
+                <input type="text" id="id_location" name="location" value="{{ form.location.value|default:'' }}" required>
+                <small>e.g., "Central Park, NYC" or "Near Main Street and Elm Avenue"</small>
+            </div>
+            <div class="form-group">
+                <label for="id_contact_info">Contact Info:</label>
+                <input type="text" id="id_contact_info" name="contact_info" value="{{ form.contact_info.value|default:'' }}" required>
+                <small>Your phone number or email address</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Submit Report</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

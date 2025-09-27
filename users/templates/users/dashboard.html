@@ -6,21 +6,80 @@
 
 {% block content %}
 <section class="dashboard-section">
-    {# Removed the welcome message and user info box for now to focus on the buttons #}
-    {# You can add them back later if you wish #}
+    <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
 
-    {# Action Buttons as requested #}
+    {# Display User Information - Keep this for context #}
+    {% if profile %}
+        <div class="user-info-box">
+            <h3>Your Account Details</h3>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
+            <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
+            <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
+            <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
+            {% else %}
+                <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
+            {% endif %}
+        </div>
+    {% else %}
+        <p></p>
+    {% endif %}
+
+    {# Action Buttons - Links updated #}
     <div class="dashboard-actions">
         <h2>What would you like to do?</h2>
         <div class="action-buttons">
-            {# Buttons with no functionality yet, just links #}
-            <a href="#" class="btn btn-primary">Report a Lost Pet</a> {# Placeholder link #}
-            <a href="#" class="btn btn-secondary">Report a Found Pet</a> {# Placeholder link #}
-            <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a> {# Link to pets list #}
+            {# These buttons now correctly link to the report URLs #}
+            <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
+            <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-secondary">Report a Found Pet</a>
+            <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
         </div>
     </div>
 
-    {# Removed the user reports section for now to keep it simple #}
+    {# Display Found Pets Available for Adoption --- This is the new part #}
+    {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
+    {% if available_pets %}
+        <section class="dashboard-pets-section">
+            <h3 class="section-title">Pets Available for Adoption</h3> {# Updated heading #}
+            <div class="pet-grid">
+                {% for pet in available_pets %}
+                    <div class="pet-card">
+                        <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="pet-card-img">
+                        <div class="pet-card-info">
+                            <h3>{{ pet.name }}</h3>
+                            <p><strong>Type:</strong> {{ pet.pet_type }}</p>
+                            <p><strong>Breed:</strong> {{ pet.breed|default:"N/A" }}</p>
+                            <p><strong>Age:</strong> {{ pet.age }} years</p>
+                            <p><strong>Gender:</strong> {{ pet.gender }}</p>
+                            <p><strong>Status:</strong> {{ pet.status }}</p>
+                            <a href="{% url 'users:pet_detail' pet.id %}" class="btn btn-small">View Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% else %}
+        <p class="no-pets-message">No pets are currently available for adoption. Check back soon!</p>
+    {% endif %}
+
+    {# User's Reports (Optional: for dashboard) #}
+    {% if reports %}
+        <div class="user-reports-box">
+            <h3>Your Pet Reports</h3>
+            <ul>
+            {% for report in reports %}
+                <li>
+                    <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
+                    - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
 
 </section>
 {% endblock %}

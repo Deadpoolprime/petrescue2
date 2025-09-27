@@ -1,0 +1,40 @@
+{# users/templates/users/pet_report_detail.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Report Detail{% endblock %}
+
+{% block content %}
+<section class="report-detail-section">
+    <div class="report-detail-container">
+        <h2 class="section-title">{{ report.get_report_type_display }} Report</h2>
+
+        <div class="report-header">
+            <p><strong>Reported by:</strong> {{ report.reporter.get_full_name|default:report.reporter.username }}</p>
+            <p><strong>Reported on:</strong> {{ report.date_reported|date:"F d, Y H:i" }}</p>
+            <p><strong>Status:</strong> {{ report.get_status_display }}</p>
+        </div>
+
+        {% if report.pet_image %}
+            <div class="report-image-large">
+                <img src="{{ report.pet_image.url }}" alt="Pet Image">
+            </div>
+        {% endif %}
+
+        <div class="report-details">
+            <p><strong>Pet Type:</strong> {{ report.pet_type }}</p>
+            <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+            <p><strong>Color:</strong> {{ report.color }}</p>
+            <p><strong>Location:</strong> {{ report.location }}</p>
+            <p><strong>Contact Info:</strong> {{ report.contact_info }}</p>
+        </div>
+
+        {# Add a button for expressing interest or matching later #}
+        {# <a href="#" class="btn btn-primary">Express Interest</a> #}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{# Add any pet detail specific JS here #}
+{% endblock %}

@@ -1,193 +1,625 @@
-/* Basic Reset */
+/* static/css/style.css */
+
+/* --- Basic Reset --- */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+/* --- Variables (Design System) --- */
+:root {
+  --background: hsl(35, 20%, 98%);
+  --foreground: hsl(25, 15%, 15%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(25, 15%, 15%);
+  --popover: 0 0% 100%;
+  --popover-foreground: 25 15% 15%;
+  --primary: hsl(25, 85%, 55%); /* Orange-ish primary */
+  --primary-foreground: 0 0% 100%;
+  --secondary: hsl(120, 25%, 92%); /* Light green/teal secondary */
+  --secondary-foreground: 25 15% 15%;
+  --muted: 35 15% 95%;
+  --muted-foreground: 25 10% 50%;
+  --border: hsl(35, 20%, 90%);
+  --input: hsl(35, 20%, 96%);
+  --ring: 25 85% 55%;
+
+  /* PawFinder brand colors - using HSL values for flexibility */
+  --primary-warm: 25 85% 55%;     /* Warm orange for primary actions */
+  --primary-soft: 35 40% 88%;     /* Softer peach/orange for backgrounds */
+  --success-green: 120 45% 55%;   /* Nice green for success messages */
+  --earth-brown: 25 25% 35%;      /* Darker brown/earth tone */
+  --accent-purple: 255 40% 55%;   /* A nice purple for accents */
+  --accent-purple-soft: 255 40% 88%; /* Lighter purple */
+
+  /* Gradients */
+  --gradient-warm: linear-gradient(135deg, hsl(var(--primary-warm)), hsl(var(--primary-soft)));
+  --gradient-hero: linear-gradient(135deg, hsl(var(--primary-warm) / 0.1), hsl(var(--success-green) / 0.1));
+
+  /* Shadows */
+  --shadow-soft: 0 4px 20px hsl(var(--primary-warm) / 0.1);
+  --shadow-warm: 0 8px 30px hsl(var(--primary-warm) / 0.15);
+
+  --radius: 0.5rem; /* Default border radius */
+
+  /* Sidebar specific, if needed, otherwise can be removed or adapted */
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
+}
+
+/* Tailwind-like directives - If you are actually using Tailwind, this would be processed by its build tool.
+   For direct CSS, these are treated as comments or potentially unusual syntax.
+   Assuming these are descriptive comments or if they come from a pre-processor like PostCSS.
+*/
+/* @layer base { */
+/*  * { @apply border-border; } */
+/*  body { @apply bg-background text-foreground; } */
+/* } */
+
+/* --- General Body Styling --- */
 body {
-    font-family: 'Quicksand', sans-serif; /* Cute and readable font */
-    line-height: 1.6;
-    color: #333;
-    background-color: #f9f9f9;
+  font-family: 'Quicksand', sans-serif; /* Cute and readable font */
+  line-height: 1.6;
+  color: var(--foreground); /* Using variable for text color */
+  background-color: var(--background); /* Using variable */
+  min-height: 100vh; /* Ensure footer stays at bottom */
+  display: flex;
+  flex-direction: column; /* Structure for footer at bottom */
 }
 
-/* Typography */
+/* --- Typography --- */
 h1, h2, h3 {
-    font-family: 'Pacifico', cursive; /* Cute title font */
-    color: #e67e22; /* Warm orange */
+  font-family: 'Pacifico', cursive; /* Cute title font */
+  color: var(--primary-warm); /* Using brand warm color */
 }
 
 .site-title {
-    font-size: 2.5em;
-    margin-left: 10px;
+  font-size: 2.5em;
+  margin-left: 10px;
+  color: var(--primary-warm); /* Inherit or set specific color */
 }
 
 .section-title {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2em;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2em;
+  color: var(--primary-warm);
 }
 
-/* Layout & Containers */
+/* --- Layout & Containers --- */
 .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px 0;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
 }
 
-/* Header */
+/* --- Header --- */
 .site-header {
-    background-color: #ffffff;
-    padding: 10px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background-color: var(--card); /* White card background */
+  padding: 10px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .site-header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .logo-img {
-    height: 40px;
-    width: auto;
+  height: 40px;
+  width: auto;
 }
 
 .site-header nav ul {
-    list-style: none;
-    display: flex;
+  list-style: none;
+  display: flex;
 }
 
 .site-header nav li {
-    margin-left: 25px;
+  margin-left: 25px;
 }
 
 .site-header nav a {
-    text-decoration: none;
-    color: #555;
-    font-weight: bold;
-    font-size: 1.1em;
-    transition: color 0.3s ease;
+  text-decoration: none;
+  color: var(--muted-foreground); /* Muted color for links */
+  font-weight: bold;
+  font-size: 1.1em;
+  transition: color 0.3s ease;
 }
 
 .site-header nav a:hover {
-    color: #e67e22;
+  color: var(--primary-warm); /* Warm primary color on hover */
 }
 
-/* Main Content */
+/* --- Main Content Area --- */
 main {
-    padding-top: 30px;
-    min-height: 70vh; /* Ensure footer stays at bottom */
+  padding-top: 30px;
+  flex-grow: 1; /* Allows main to take available space, pushing footer down */
 }
 
-/* Hero Section */
+/* --- Hero Section (for HomePage, can be adapted) --- */
 .hero-section {
-    background-color: #ffddc1; /* Light peach */
-    padding: 60px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 15px;
-    margin-bottom: 40px;
-    overflow: hidden; /* For rounded corners of image */
+  background-color: var(--primary-soft); /* Soft primary color */
+  padding: 60px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 15px;
+  margin-bottom: 40px;
+  overflow: hidden;
 }
 
 .hero-content {
-    flex: 1;
-    padding-right: 30px;
+  flex: 1;
+  padding-right: 30px;
 }
 
 .hero-content h2 {
-    font-size: 3em;
-    margin-bottom: 20px;
-    color: #7d3cff; /* Purple */
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: var(--sidebar-primary); /* Using a darker accent for contrast */
 }
 
 .hero-content p {
-    font-size: 1.3em;
-    margin-bottom: 30px;
-    color: #555;
+  font-size: 1.3em;
+  margin-bottom: 30px;
+  color: var(--foreground);
 }
 
 .hero-image img {
-    max-width: 100%;
-    height: 350px; /* Fixed height for consistent look */
-    border-radius: 15px;
-    object-fit: cover; /* Ensure image covers the area nicely */
+  max-width: 100%;
+  height: 350px;
+  border-radius: 15px;
+  object-fit: cover;
 }
 
 .hero-actions {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
 
-/* Buttons */
+/* --- Buttons --- */
 .btn {
-    display: inline-block;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-size: 1.1em;
+  display: inline-block;
+  padding: 12px 25px;
+  border: none;
+  border-radius: var(--radius); /* Using variable for radius */
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease; /* Transition for hover and active effects */
+  font-size: 1.1em;
+  box-shadow: var(--shadow-soft); /* Using shadow variable */
 }
 
 .btn-primary {
-    background-color: #7d3cff; /* Purple */
-    color: white;
+  background: var(--gradient-warm); /* Using gradient variable */
+  color: var(--primary-foreground);
 }
 
 .btn-primary:hover {
-    background-color: #6c33cc;
-    transform: translateY(-2px);
+  background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%)); /* Darker gradient on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25); /* Stronger shadow on hover */
+}
+
+.btn-primary:active {
+    transform: translateY(0); /* Remove transform on click */
+    box-shadow: var(--shadow-soft); /* Restore shadow */
 }
 
 .btn-secondary {
-    background-color: #ffddc1; /* Light peach */
-    color: #e67e22; /* Warm orange */
-    border: 2px solid #e67e22;
+  background: var(--primary-soft); /* Soft primary background */
+  color: var(--primary-warm); /* Warm primary text */
+  border: 2px solid var(--primary-warm);
 }
 
 .btn-secondary:hover {
-    background-color: #ffe8d7;
-    border-color: #d6721f;
-    transform: translateY(-2px);
+  background: hsl(35, 40%, 80%); /* Lighter background on hover */
+  border-color: hsl(25, 85%, 50%); /* Darker border on hover */
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    background: hsl(35, 40%, 85%);
 }
 
 .btn-small {
-    padding: 8px 15px;
-    font-size: 0.9em;
+  padding: 8px 15px;
+  font-size: 0.9em;
 }
 
 .btn-full {
-    width: 100%;
+  width: 100%;
 }
 
-/* Featured Pets Section */
-.featured-pets-section {
+/* --- Pet Cards (for lists) --- */
+.featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
+  margin-bottom: 50px;
+  padding: 30px 0;
+}
+
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.pet-card {
+  background-color: var(--card); /* Using card color variable */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft); /* Using soft shadow variable */
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+}
+
+.pet-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.pet-card-info {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pet-card-info h3 {
+  font-family: 'Pacifico', cursive;
+  color: var(--foreground); /* Using general foreground color */
+  margin-bottom: 10px;
+  font-size: 1.6em;
+}
+
+.pet-card-info p {
+  margin-bottom: 8px;
+  color: var(--muted-foreground); /* Muted color for details */
+}
+
+.pet-card-info .btn-small {
+  margin-top: 15px;
+}
+
+/* --- About Section --- */
+.about-pawfinder-section {
+  background-color: var(--accent); /* Using accent for background */
+  padding: 50px 0;
+  text-align: center;
+  border-radius: var(--radius);
+  margin-bottom: 40px;
+}
+
+.about-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-icon {
+  height: 50px;
+  width: auto;
+  margin-bottom: 20px;
+  opacity: 0.7; /* Slightly faded icon */
+}
+
+.about-content p {
+  font-size: 1.1em;
+  color: var(--foreground);
+}
+
+/* --- Authentication Forms (Login & Register) --- */
+.auth-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 0;
+}
+
+.auth-box {
+  background: var(--card); /* Using card background variable */
+  backdrop-filter: blur(8px); /* Frosted glass effect */
+  border: 1px solid var(--border); /* Using border variable */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-warm); /* Using shadow variable */
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: var(--foreground);
+}
+
+.auth-subtitle {
+  font-size: 1.1em;
+  color: var(--muted-foreground);
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500; /* Slightly less bold than headings */
+  color: var(--foreground);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group input[type="tel"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border); /* Using border variable */
+  border-radius: var(--radius);
+  background: var(--input); /* Using input background variable */
+  color: var(--foreground);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--primary); /* Primary color on focus */
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2); /* Ring effect on focus */
+}
+
+.password-rules {
+  display: block;
+  font-size: 0.8em;
+  color: var(--muted-foreground);
+  margin-top: 5px;
+}
+
+.auth-switch {
+  margin-top: 25px;
+  font-size: 0.95em;
+}
+
+.auth-switch a {
+  margin-left: 5px;
+  color: var(--primary); /* Primary color for links */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+  color: hsl(25, 85%, 50%); /* Darker primary on hover */
+}
+
+/* Alerts */
+.messages { /* Changed from '.alert' to '.messages' for consistency with Django messages */
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.messages li {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: var(--radius);
+    font-size: 0.9em;
+    text-align: center;
+    border: 1px solid transparent; /* Base border */
+}
+
+/* Specific message type styling (matches Django's default tags) */
+.messages li.success {
+    background-color: hsl(120, 45%, 90%); /* Soft success green */
+    color: hsl(120, 45%, 35%); /* Darker success green text */
+    border-color: hsl(120, 45%, 70%);
+}
+
+.messages li.error {
+    background-color: hsl(0, 62%, 90%); /* Soft error red */
+    color: hsl(0, 62%, 30%); /* Darker error red text */
+    border-color: hsl(0, 62%, 70%);
+}
+
+.messages li.info {
+    background-color: hsl(210, 45%, 90%); /* Soft info blue */
+    color: hsl(210, 45%, 35%);
+    border-color: hsl(210, 45%, 70%);
+}
+
+.messages li.warning {
+    background-color: hsl(40, 85%, 90%); /* Soft warning yellow */
+    color: hsl(40, 85%, 30%);
+    border-color: hsl(40, 85%, 70%);
+}
+
+
+/* --- Dashboard Section --- */
+.dashboard-section {
+    padding: 40px 0;
+    background-color: var(--background); /* Light background */
+}
+
+.dashboard-section .section-title {
+    color: var(--primary-warm); /* Orange title */
+    margin-bottom: 40px;
+}
+
+.user-info-box {
+    background-color: var(--card);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.user-info-box h3 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: var(--foreground);
+}
+
+.user-info-box p {
+    margin-bottom: 10px;
+    color: var(--muted-foreground);
+    font-size: 1.1em;
+}
+
+.user-info-box .profile-pic-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 20px;
+    border: 3px solid var(--primary-warm); /* Warm primary border */
+}
+
+.dashboard-actions {
+    background-color: var(--accent); /* Soft accent color for actions */
+    padding: 30px;
+    border-radius: var(--radius);
+    margin-bottom: 40px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+}
+
+.dashboard-actions h2 {
+    font-size: 2.2em;
+    margin-bottom: 25px;
+    color: var(--sidebar-primary); /* Dark accent for heading */
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    min-width: 200px;
+    background: var(--gradient-warm); /* Use gradient for primary action buttons */
+    color: var(--primary-foreground);
+    border: none; /* Ensure no extra border */
+}
+
+.action-buttons .btn:hover {
+    background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%));
+    transform: translateY(-2px);
+}
+
+.action-buttons .btn-secondary {
+    background: var(--primary-soft);
+    color: var(--primary-warm);
+    border: 2px solid var(--primary-warm);
+}
+
+.action-buttons .btn-secondary:hover {
+    background: hsl(35, 40%, 80%);
+    border-color: hsl(25, 85%, 50%);
+}
+
+.user-reports-box {
+    background-color: var(--input); /* Using input background for a lighter box */
+    padding: 25px;
+    border-radius: var(--radius);
+    margin-top: 30px;
+}
+
+.user-reports-box h3 {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    color: var(--foreground);
+}
+
+.user-reports-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.user-reports-box li {
+    background-color: var(--card); /* Card background for list items */
+    padding: 15px;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.user-reports-box li strong {
+    color: var(--primary-warm); /* Orange for emphasis */
+}
+
+.user-reports-box li a {
+    color: var(--primary); /* Primary color for links */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.user-reports-box li a:hover {
+    text-decoration: underline;
+    color: hsl(25, 85%, 50%); /* Darker primary on hover */
+}
+
+/* --- Pets List Section --- */
+.featured-pets-section, .dashboard-pets-section {
     margin-bottom: 50px;
+    padding: 30px 0;
+}
+
+.pets-adoption-section .section-title,
+.featured-pets-section .section-title,
+.dashboard-pets-section .section-title { /* Applied to multiple sections */
+    color: var(--accent-purple); /* Purple for pet section titles */
 }
 
 .pet-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
+    gap: 40px; /* Increased gap */
 }
 
 .pet-card {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background-color: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
     overflow: hidden;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -197,194 +629,221 @@ main {
 
 .pet-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
 }
 
 .pet-card-img {
     width: 100%;
-    height: 200px; /* Fixed height for images */
-    object-fit: cover; /* Cover the area without distortion */
+    height: 200px;
+    object-fit: cover;
 }
 
 .pet-card-info {
     padding: 15px;
-    flex-grow: 1; /* Allows this div to take up available space */
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pushes button to bottom */
+    justify-content: space-between;
 }
 
 .pet-card-info h3 {
     font-family: 'Pacifico', cursive;
-    color: #333;
+    color: var(--foreground);
     margin-bottom: 10px;
     font-size: 1.6em;
 }
 
 .pet-card-info p {
     margin-bottom: 8px;
-    color: #555;
+    color: var(--muted-foreground);
 }
 
 .pet-card-info .btn-small {
-    margin-top: 15px; /* Space above button */
+    margin-top: 15px;
 }
 
-/* About Section */
-.about-pawfinder-section {
-    background-color: #e0f7fa; /* Light blue */
-    padding: 50px 0;
-    text-align: center;
-    border-radius: 15px;
-    margin-bottom: 40px;
-}
-
-.about-content {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.about-icon {
-    height: 50px;
-    width: auto;
-    margin-bottom: 20px;
-}
-
-.about-content p {
-    font-size: 1.1em;
-    color: #444;
-}
-
-/* Authentication Forms */
-.auth-section {
+/* --- Report Pet Form Section --- */
+.report-section {
+    padding: 40px 0; /* Increased padding */
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 50px 0;
 }
 
-.auth-box {
-    background-color: white;
+.report-box {
+    background: var(--card); /* Using card background */
+    backdrop-filter: blur(8px); /* Frosted glass effect */
+    border: 1px solid var(--border); /* Using border variable */
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm); /* Using shadow variable */
     padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     width: 100%;
-    max-width: 450px;
+    max-width: 550px;
     text-align: center;
 }
 
-.auth-title {
+.report-box .auth-title {
     font-size: 2em;
     margin-bottom: 10px;
-    color: #333;
+    color: var(--foreground);
 }
 
-.auth-subtitle {
+.report-box .auth-subtitle {
     font-size: 1.1em;
-    color: #666;
+    color: var(--muted-foreground);
     margin-bottom: 30px;
 }
 
-.form-group {
+/* Re-use form-group and input styling from auth-box */
+.report-box .form-group {
     margin-bottom: 20px;
     text-align: left;
 }
 
-.form-group label {
+.report-box label {
     display: block;
     margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
+    font-weight: 500;
+    color: var(--foreground);
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"],
-.form-group input[type="number"],
-.form-group input[type="tel"] {
+.report-box input[type="text"],
+.report-box input[type="email"],
+.report-box input[type="password"],
+.report-box input[type="number"],
+.report-box input[type="tel"],
+.report-box input[type="file"] {
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1em;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--input);
+    color: var(--foreground);
+    font-size: 0.875rem;
     outline: none;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group input:focus {
-    border-color: #7d3cff;
+.report-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }
 
-.password-rules {
+.report-box input[type="file"] {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.report-box small {
     display: block;
     font-size: 0.8em;
-    color: #888;
+    color: var(--muted-foreground);
     margin-top: 5px;
 }
 
-.auth-switch {
-    margin-top: 25px;
-    font-size: 0.95em;
+
+/* --- Pet Report Detail Section --- */
+.report-detail-section {
+    padding: 40px 0;
 }
 
-.auth-switch a {
-    margin-left: 5px;
-    color: #7d3cff;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.auth-switch a:hover {
-    text-decoration: underline;
-}
-
-/* Alerts */
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    font-size: 0.9em;
-}
-
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-/* Footer */
-.site-footer {
-    background-color: #333;
-    color: white;
-    padding: 30px 0;
-    text-align: center;
-    margin-top: 40px; /* Space above footer */
-}
-
-.site-footer .container {
+.report-detail-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    flex-wrap: wrap;
+    gap: 40px;
+    background-color: var(--card);
+    padding: 40px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
 }
 
-.site-footer p {
-    margin-bottom: 10px; /* Space for wrapped items */
+.report-header {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 30px;
 }
 
-.social-links img {
-    height: 24px;
-    width: auto;
-    margin-left: 15px;
-    opacity: 0.7;
+.report-header p {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    color: var(--muted-foreground);
+}
+
+.report-header p strong {
+    color: var(--primary-warm); /* Orange for emphasis */
+}
+
+.report-image-large {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 30px auto;
+    text-align: center; /* Center the image */
+}
+
+.report-image-large img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+.report-details {
+    width: 100%;
+    text-align: left;
+}
+
+.report-details p {
+    margin-bottom: 12px;
+    font-size: 1.15em;
+    color: var(--muted-foreground);
+}
+
+.report-details p strong {
+    color: var(--accent-purple); /* Purple for detail labels */
+}
+
+/* --- Messages Styling --- */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.messages li {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: var(--radius);
+    font-size: 0.9em;
+    text-align: center;
+    border: 1px solid transparent;
     transition: opacity 0.3s ease;
 }
 
-.social-links img:hover {
-    opacity: 1;
+.messages li.success {
+    background-color: hsl(120, 45%, 90%);
+    color: hsl(120, 45%, 35%);
+    border-color: hsl(120, 45%, 70%);
 }
 
-/* Responsive Adjustments */
+.messages li.error {
+    background-color: hsl(0, 62%, 90%);
+    color: hsl(0, 62%, 30%);
+    border-color: hsl(0, 62%, 70%);
+}
+
+.messages li.info {
+    background-color: hsl(210, 45%, 90%);
+    color: hsl(210, 45%, 35%);
+    border-color: hsl(210, 45%, 70%);
+}
+
+.messages li.warning {
+    background-color: hsl(40, 85%, 90%);
+    color: hsl(40, 85%, 30%);
+    border-color: hsl(40, 85%, 70%);
+}
+
+/* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
     .site-header .container, .site-footer .container {
         flex-direction: column;
@@ -400,49 +859,71 @@ main {
     .logo {
         margin-bottom: 15px;
     }
+    /* Hero section adjustments */
     .hero-section {
         flex-direction: column;
         text-align: center;
+        padding: 40px 0;
     }
     .hero-content {
         padding-right: 0;
         margin-bottom: 30px;
     }
-    .hero-image img {
-        max-width: 80%;
-        height: 250px;
+    .hero-content h2 {
+        font-size: 2.5em; /* Smaller heading on mobile */
     }
+    .hero-content p {
+        font-size: 1.1em;
+    }
+    .hero-image img {
+        height: 250px; /* Smaller image on mobile */
+    }
+    .hero-actions {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 15px;
+        align-items: center;
+    }
+    .btn {
+        width: 80%; /* Make buttons wider */
+    }
+
+    /* Pet Cards */
     .pet-grid {
         grid-template-columns: 1fr; /* Stack cards on smaller screens */
     }
-    .auth-box {
+
+    /* Auth and Report Boxes */
+    .auth-box, .report-box {
         max-width: 90%;
         padding: 30px;
     }
+
+    /* Social Links */
     .social-links {
         margin-top: 15px;
     }
-        .flash-messages {
-  margin-bottom: 20px;
-}
 
-.alert {
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  text-align: center;
-}
+    /* Dashboard Actions */
+    .dashboard-actions h2 {
+        font-size: 1.8em;
+    }
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    .action-buttons .btn {
+        width: 80%;
+    }
 
-.alert.success {
-  background-color: #d4edda; /* light green */
-  color: #155724; /* dark green text */
-  border: 1px solid #c3e6cb;
-}
-
-.alert.error {
-  background-color: #f8d7da; /* light red */
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
+    /* Report Detail Page */
+    .report-detail-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .report-image-large {
+        max-width: 80%;
+    }
+    .report-details {
+        text-align: center;
+    }
 }
