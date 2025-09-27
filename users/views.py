@@ -181,21 +181,33 @@ def create_pet_report_view(request, report_type):
     if request.method == 'POST':
         form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
         if form.is_valid():
-            # Save the PetReport to the database
+
+            # Get cleaned data, handling potential None for optional fields
+            pet_name = form.cleaned_data.get('name')
+            pet_age = form.cleaned_data.get('age')
+            pet_gender = form.cleaned_data.get('gender') # This might be '' if not selected
+
+
+            if not pet_gender: 
+                pass # Let the model's default handle it if blank is submitted
+
             pet_report = PetReport.objects.create(
-                report_type=report_type, # 'Lost' or 'Found' from the URL
-                reporter=request.user,   # The currently logged-in user
+                report_type=report_type,
+                reporter=request.user,
+                name=pet_name, # This will be None if left blank, which is correct for optional
+                age=pet_age,   # This will be None if left blank, which is correct for optional
+                gender=pet_gender, # This is the key field to watch
                 pet_type=form.cleaned_data['pet_type'],
-                breed=form.cleaned_data.get('breed'), # Use .get for optional fields
+                breed=form.cleaned_data.get('breed'),
                 color=form.cleaned_data['color'],
-                pet_image=form.cleaned_data['pet_image'], # Image is saved to MEDIA_ROOT
+                pet_image=form.cleaned_data['pet_image'],
                 location=form.cleaned_data['location'],
                 contact_info=form.cleaned_data['contact_info'],
-                # status defaults to 'Open' as defined in the model
+                # status defaults to 'Open'
             )
             messages.success(request, f"Your '{report_type}' pet report has been submitted successfully!")
-            return redirect('users:dashboard') # Redirect to dashboard after successful submission
-        # If form is not valid, 'form' will hold the errors for rendering.
+            return redirect('users:dashboard')
+        # If form is not valid, 'form' still holds the invalid data and errors.
     else:
         # GET request: Initialize an empty form
         form = PetReportForm()
@@ -234,7 +246,6 @@ class PetReportForm(forms.Form):
     contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
     name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
     age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
-    gender = forms.ChoiceField(choices=Profile.ROLE_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"})) # Reusing ROLE_CHOICES is an error, should be GENDER_CHOICES
     gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
 
 # --- Placeholder views for About, Contact, etc. ---

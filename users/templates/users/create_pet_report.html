@@ -37,15 +37,21 @@
                 <label for="id_age">Age (Optional):</label>
                 <input type="number" id="id_age" name="age" min="0" value="{{ form.age.value|default:'' }}">
             </div>
-            <div class="form-group">
+           <div class="form-group">
                 <label for="id_gender">Gender:</label>
-                {# Using select for dropdown based on choices #}
                 <select id="id_gender" name="gender">
+                    {# --- MODIFIED GENDER SELECT LOGIC --- #}
+                    {# Add a default option that represents 'empty' or 'unknown' #}
+                    {# If the field has no value OR the value is empty string, select this option #}
+                    <option value="" {% if not form.gender.value %}selected{% endif %}>Select Gender</option>
                     {% for value, display in form.gender.field.choices %}
-                        <option value="{{ value }}" {% if form.gender.value == value %}selected{% endif %}>{{ display }}</option>
+                        {# If the form value matches the option value, mark it as selected #}
+                        {# Ensure we compare against the actual value Django provides #}
+                        <option value="{{ value }}" {% if form.gender.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ display }}</option>
                     {% endfor %}
                 </select>
             </div>
+
 
             {# Existing Fields #}
             <div class="form-group">
