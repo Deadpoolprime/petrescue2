@@ -121,12 +121,6 @@ h1, h2, h3 {
   color: var(--primary-warm); /* Using brand warm color */
 }
 
-.site-title {
-  font-size: 2.5em;
-  margin-left: 10px;
-  color: var(--primary-warm); /* Inherit or set specific color */
-}
-
 .section-title {
   text-align: center;
   margin-bottom: 30px;
@@ -155,16 +149,18 @@ h1, h2, h3 {
   align-items: center;
 }
 
+.logo-full-img {
+  height: 85px; /* You can adjust this height to fit your logo's design */
+  width: auto;  /* This keeps the aspect ratio correct */
+  display: block;
+  margin-left: -120px;   /* Ensures it behaves as a block element within the link */
+}
 .logo {
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-.logo-img {
-  height: 40px;
-  width: auto;
-}
 
 .site-header nav ul {
   list-style: none;

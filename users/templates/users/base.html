@@ -13,10 +13,9 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <div class="logo">
-                <img src="{% static 'images/paw-logo.png' %}" alt="PawFinder Logo" class="logo-img">
-                <h1 class="site-title">PawFinder</h1>
-            </div>
+            <a href="{% url 'users:login' %}" class="logo">
+            <img src="{% static 'images/fulllogo.png' %}" alt="PawFinder Logo" class="logo-full-img">
+            </a>
             <nav>
                 <ul>
                     {# --- Conditional Navigation Links --- #}
