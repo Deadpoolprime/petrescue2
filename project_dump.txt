@@ -1,4 +1,54 @@
 
+================================================================================
+File: .\dump_project.py
+================================================================================
+
+import os
+
+# Set your project root (current folder)
+project_root = "."
+
+# Output file
+output_file = "project_dump.txt"
+
+# File extensions to include when dumping all files
+include_exts = [".py", ".html", ".css", ".js", ".json", ".txt", ".md"]
+
+# 🔧 If you want only specific files, list them here by name
+# Example: only_files = ["views.py", "urls.py", "login.html"]
+only_files = []   # put filenames here
+
+with open(output_file, "w", encoding="utf-8") as outfile:
+    for root, dirs, files in os.walk(project_root):
+        if "venv" in dirs:
+            dirs.remove("venv")
+        if "__pycache__" in dirs:
+            dirs.remove("__pycache__")
+
+        for file in files:
+            # ✅ If only_files is set, include only those filenames
+            if only_files and file not in only_files:
+                continue
+
+            # Otherwise filter by extension
+            if not only_files and not any(file.endswith(ext) for ext in include_exts):
+                continue
+
+            filepath = os.path.join(root, file)
+            try:
+                with open(filepath, "r", encoding="utf-8") as infile:
+                    outfile.write(f"\n{'='*80}\n")
+                    outfile.write(f"File: {filepath}\n")
+                    outfile.write(f"{'='*80}\n\n")
+                    outfile.write(infile.read())
+                    outfile.write("\n\n")
+            except Exception as e:
+                outfile.write(f"\n[Could not read {filepath}: {e}]\n")
+
+print(f"✅ File contents saved to {output_file}")
+print("ℹ️  Cleared only_files list after writing.")
+
+
 
 ================================================================================
 File: .\manage.py
@@ -287,98 +337,98 @@ File: .\static\css\style.css
 
 /* --- Basic Reset --- */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
 }
 
 /* --- Variables (Design System) --- */
 :root {
-  --background: hsl(35, 20%, 98%);
-  --foreground: hsl(25, 15%, 15%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(25, 15%, 15%);
-  --popover: 0 0% 100%;
-  --popover-foreground: 25 15% 15%;
-  --primary: hsl(25, 85%, 55%); /* Orange-ish primary */
-  --primary-foreground: 0 0% 100%;
-  --secondary: hsl(120, 25%, 92%); /* Light green/teal secondary */
-  --secondary-foreground: 25 15% 15%;
-  --muted: 35 15% 95%;
-  --muted-foreground: 25 10% 50%;
-  --border: hsl(35, 20%, 90%);
-  --input: hsl(35, 20%, 96%);
-  --ring: 25 85% 55%;
+ --background: hsl(35, 20%, 98%);
+ --foreground: hsl(25, 15%, 15%);
+ --card: hsl(0, 0%, 100%);
+ --card-foreground: hsl(25, 15%, 15%);
+ --popover: 0 0% 100%;
+ --popover-foreground: 25 15% 15%;
+ --primary: hsl(25, 85%, 55%); /* Orange-ish primary */
+ --primary-foreground: 0 0% 100%;
+ --secondary: hsl(120, 25%, 92%); /* Light green/teal secondary */
+ --secondary-foreground: 25 15% 15%;
+ --muted: 35 15% 95%;
+ --muted-foreground: 25 10% 50%;
+ --border: hsl(35, 20%, 90%);
+ --input: hsl(35, 20%, 96%);
+ --ring: 25 85% 55%;
 
-  /* PurPaws brand colors - using HSL values for flexibility */
-  --primary-warm: 25 85% 55%;     /* Warm orange for primary actions */
-  --primary-soft: 35 40% 88%;     /* Softer peach/orange for backgrounds */
-  --success-green: 120 45% 55%;   /* Nice green for success messages */
-  --earth-brown: 25 25% 35%;      /* Darker brown/earth tone */
-  --accent-purple: 255 40% 55%;   /* A nice purple for accents */
-  --accent-purple-soft: 255 40% 88%; /* Lighter purple */
+ /* PurPaws brand colors - using HSL values for flexibility */
+ --primary-warm: 25 85% 55%;   /* Warm orange for primary actions */
+ --primary-soft: 35 40% 88%;   /* Softer peach/orange for backgrounds */
+ --success-green: 120 45% 55%;  /* Nice green for success messages */
+ --earth-brown: 25 25% 35%;   /* Darker brown/earth tone */
+ --accent-purple: 255 40% 55%;  /* A nice purple for accents */
+ --accent-purple-soft: 255 40% 88%; /* Lighter purple */
 
-  /* Gradients */
-  --gradient-warm: linear-gradient(135deg, hsl(var(--primary-warm)), hsl(var(--primary-soft)));
-  --gradient-hero: linear-gradient(135deg, hsl(var(--primary-warm) / 0.1), hsl(var(--success-green) / 0.1));
+ /* Gradients */
+ --gradient-warm: linear-gradient(135deg, hsl(var(--primary-warm)), hsl(var(--primary-soft)));
+ --gradient-hero: linear-gradient(135deg, hsl(var(--primary-warm) / 0.1), hsl(var(--success-green) / 0.1));
 
-  /* Shadows */
-  --shadow-soft: 0 4px 20px hsl(var(--primary-warm) / 0.1);
-  --shadow-warm: 0 8px 30px hsl(var(--primary-warm) / 0.15);
+ /* Shadows */
+ --shadow-soft: 0 4px 20px hsl(var(--primary-warm) / 0.1);
+ --shadow-warm: 0 8px 30px hsl(var(--primary-warm) / 0.15);
 
-  --radius: 0.5rem; /* Default border radius */
+ --radius: 0.5rem; /* Default border radius */
 
-  /* Sidebar specific, if needed, otherwise can be removed or adapted */
-  --sidebar-background: 0 0% 98%;
-  --sidebar-foreground: 240 5.3% 26.1%;
-  --sidebar-primary: 240 5.9% 10%;
-  --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 240 4.8% 95.9%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+ /* Sidebar specific, if needed, otherwise can be removed or adapted */
+ --sidebar-background: 0 0% 98%;
+ --sidebar-foreground: 240 5.3% 26.1%;
+ --sidebar-primary: 240 5.9% 10%;
+ --sidebar-primary-foreground: 0 0% 98%;
+ --sidebar-accent: 240 4.8% 95.9%;
+ --sidebar-accent-foreground: 240 5.9% 10%;
+ --sidebar-border: 220 13% 91%;
+ --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
 /* Tailwind-like directives - If you are actually using Tailwind, this would be processed by its build tool.
-   For direct CSS, these are treated as comments or potentially unusual syntax.
-   Assuming these are descriptive comments or if they come from a pre-processor like PostCSS.
+  For direct CSS, these are treated as comments or potentially unusual syntax.
+  Assuming these are descriptive comments or if they come from a pre-processor like PostCSS.
 */
 /* @layer base { */
-/*  * { @apply border-border; } */
-/*  body { @apply bg-background text-foreground; } */
+/* * { @apply border-border; } */
+/* body { @apply bg-background text-foreground; } */
 /* } */
 
 /* --- General Body Styling --- */
 body {
-  font-family: 'Quicksand', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f9f9f9; /* Default background for ALL pages */
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  /* REMOVE position: relative; from the general body */
+ font-family: 'Quicksand', sans-serif;
+ line-height: 1.6;
+ color: #333;
+ background-color: #f9f9f9; /* Default background for ALL pages */
+ min-height: 100vh;
+ display: flex;
+ flex-direction: column;
+ /* REMOVE position: relative; from the general body */
 }
 
 /* --- LOGIN PAGE SPECIFIC BACKGROUND --- */
 body.login-page-background {
-  background-image: url('../images/loginpet.png');
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
-  position: relative; /* Add position: relative; ONLY here */
+ background-image: url('../images/loginpet.png');
+ background-size: cover;
+ background-position: center center;
+ background-attachment: fixed;
+ position: relative; /* Add position: relative; ONLY here */
 }
 
 /* Overlay for the login page background */
 body.login-page-background::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0);
-  z-index: 0;
+ content: '';
+ position: absolute;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ background-color: rgba(0, 0, 0, 0);
+ z-index: 0;
 }
 
 
@@ -387,208 +437,592 @@ body.login-page-background::before {
 body.login-page-background header,
 body.login-page-background main,
 body.login-page-background footer {
-    position: relative;
-    z-index: 1;
-    /* Optional: Make header/footer transparent on login page */
-    /* background-color: transparent; */
+  position: relative;
+  z-index: 1;
+  /* Optional: Make header/footer transparent on login page */
+  /* background-color: transparent; */
 }
 
 
 /* --- You may need to add back a background for headers/footers on OTHER pages --- */
 /* If your header and footer look transparent on other pages now, add this: */
 header, footer {
-    background-color: #ffffff; /* Or var(--card) if you prefer */
+  background-color: #ffffff; /* Or var(--card) if you prefer */
 }
 
 /* --- Typography --- */
-h1, h2, h3 {
-  font-family: 'Pacifico', cursive; /* Cute title font */
-  color: var(--primary-warm); /* Using brand warm color */
+/* Apply cursive font only to h1 tags by default, and to any element with the .cursive-title class */
+h1, .cursive-title {
+ font-family: 'Pacifico', cursive; /* Cute title font */
+ color: var(--primary-warm);
 }
 
 .section-title {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 2em;
-  color: var(--primary-warm);
+ text-align: center;
+ margin-bottom: 30px;
+ font-size: 2em;
+ color: var(--primary-warm);
 }
 
 /* --- Layout & Containers --- */
 .container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px 0;
+ width: 90%;
+ max-width: 1200px;
+ margin: 0 auto;
+ padding: 20px 0;
 }
 
 /* --- Header --- */
 .site-header {
-  background-color: var(--card); /* White card background */
-  padding: 10px 0;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+ background-color: var(--card); /* White card background */
+ padding: 10px 0;
+ box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .site-header .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
 }
 
 .logo-full-img {
-  height: 85px; /* You can adjust this height to fit your logo's design */
-  width: auto;  /* This keeps the aspect ratio correct */
-  display: block;
-  margin-left: -120px;   /* Ensures it behaves as a block element within the link */
+ height: 85px; /* You can adjust this height to fit your logo's design */
+ width: auto; /* This keeps the aspect ratio correct */
+ display: block;
+ margin-left: -120px;  /* Ensures it behaves as a block element within the link */
 }
 .logo {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+ display: flex;
+ align-items: center;
+ cursor: pointer;
 }
 
 
 .site-header nav ul {
-  list-style: none;
-  display: flex;
+ list-style: none;
+ display: flex;
 }
 
 .site-header nav a:hover {
-  color: rgb(236, 109, 19); /* Change link color on hover */
+ color: rgb(236, 109, 19); /* Change link color on hover */
 }
 
 .site-header nav li {
-  margin-left: 25px;
+ margin-left: 25px;
 }
 
 .site-header nav a {
-  text-decoration: none;
-  color: var(--muted-foreground); /* Muted color for links */
-  font-weight: bold;
-  font-size: 1.1em;
-  transition: color 0.3s ease;
+ text-decoration: none;
+ color: var(--muted-foreground); /* Muted color for links */
+ font-weight: bold;
+ font-size: 1.1em;
+ transition: color 0.3s ease;
 }
 
 
 
 /* --- Main Content Area --- */
 main {
-  padding-top: 30px;
-  flex-grow: 1; /* Allows main to take available space, pushing footer down */
+ padding-top: 30px;
+ flex-grow: 1; /* Allows main to take available space, pushing footer down */
 }
 
 /* --- Hero Section (for HomePage, can be adapted) --- */
 .hero-section {
-  background-color: var(--primary-soft); /* Soft primary color */
-  padding: 60px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 15px;
-  margin-bottom: 40px;
-  overflow: hidden;
+ background-color: var(--primary-soft); /* Soft primary color */
+ padding: 60px 0;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ border-radius: 15px;
+ margin-bottom: 40px;
+ overflow: hidden;
 }
 
 .hero-content {
-  flex: 1;
-  padding-right: 30px;
+ flex: 1;
+ padding-right: 30px;
 }
 
 .hero-content h2 {
-  font-size: 3em;
-  margin-bottom: 20px;
-  color: var(--sidebar-primary); /* Using a darker accent for contrast */
+ font-size: 3em;
+ margin-bottom: 20px;
+ color: var(--sidebar-primary); /* Using a darker accent for contrast */
 }
 
 .hero-content p {
-  font-size: 1.3em;
-  margin-bottom: 30px;
-  color: var(--foreground);
+ font-size: 1.3em;
+ margin-bottom: 30px;
+ color: var(--foreground);
 }
 
 .hero-image img {
-  max-width: 100%;
-  height: 350px;
-  border-radius: 15px;
-  object-fit: cover;
+ max-width: 100%;
+ height: 350px;
+ border-radius: 15px;
+ object-fit: cover;
 }
 
 .hero-actions {
-  display: flex;
-  gap: 20px;
+ display: flex;
+ gap: 20px;
 }
 
 /* --- Buttons --- */
 .btn {
-  display: inline-block;
-  padding: 12px 25px;
-  border: none;
-  border-radius: var(--radius); /* Using variable for radius */
-  text-decoration: none;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease; /* Transition for hover and active effects */
-  font-size: 1.1em;
-  box-shadow: var(--shadow-soft); /* Using shadow variable */
+ display: inline-block;
+ padding: 12px 25px;
+ border: none;
+ border-radius: var(--radius); /* Using variable for radius */
+ text-decoration: none;
+ font-weight: bold;
+ cursor: pointer;
+ transition: all 0.2s ease; /* Transition for hover and active effects */
+ font-size: 1.1em;
+ box-shadow: var(--shadow-soft); /* Using shadow variable */
 }
 
 .btn-primary {
-  background: var(--gradient-warm); /* Using gradient variable */
-  color: var(--primary-foreground);
+ background: var(--gradient-warm); /* Using gradient variable */
+ color: var(--primary-foreground);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%)); /* Darker gradient on hover */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25); /* Stronger shadow on hover */
+ background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%)); /* Darker gradient on hover */
+ transform: translateY(-2px);
+ box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25); /* Stronger shadow on hover */
 }
 
 .btn-primary:active {
-    transform: translateY(0); /* Remove transform on click */
-    box-shadow: var(--shadow-soft); /* Restore shadow */
+  transform: translateY(0); /* Remove transform on click */
+  box-shadow: var(--shadow-soft); /* Restore shadow */
 }
 
 .btn-secondary {
-  background: var(--primary-soft); /* Soft primary background */
-  color: var(--primary-warm); /* Warm primary text */
-  border: 2px solid var(--primary-warm);
+ background: var(--primary-soft); /* Soft primary background */
+ color: var(--primary-warm); /* Warm primary text */
+ border: 2px solid var(--primary-warm);
 }
 
 .btn-secondary:hover {
-  background: hsl(35, 40%, 80%); /* Lighter background on hover */
-  border-color: hsl(25, 85%, 50%); /* Darker border on hover */
-  transform: translateY(-2px);
+ background: hsl(35, 40%, 80%); /* Lighter background on hover */
+ border-color: hsl(25, 85%, 50%); /* Darker border on hover */
+ transform: translateY(-2px);
 }
 
 .btn-secondary:active {
-    transform: translateY(0);
-    background: hsl(35, 40%, 85%);
+  transform: translateY(0);
+  background: hsl(35, 40%, 85%);
 }
 
 .btn-small {
-  padding: 8px 15px;
-  font-size: 0.9em;
+ padding: 8px 15px;
+ font-size: 0.9em;
 }
 
 .btn-full {
-  width: 100%;
+ width: 100%;
 }
 
 /* --- Pet Cards (for lists) --- */
 .featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
+ margin-bottom: 50px;
+ padding: 30px 0;
+}
+
+.pet-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+ gap: 30px;
+}
+
+.pet-card {
+ position: relative; /* Make it a positioning context for the badge */
+ background-color: var(--card); /* Using card color variable */
+ border-radius: var(--radius);
+ box-shadow: var(--shadow-soft); /* Using soft shadow variable */
+ overflow: hidden;
+ text-align: center;
+ transition: transform 0.3s ease, box-shadow 0.3s ease;
+ display: flex;
+ flex-direction: column;
+}
+
+.pet-card:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+}
+
+.report-type-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+  z-index: 1; /* Make sure it's above the image */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.report-type-badge.lost {
+  background-color: white; /* Change background to white */
+  color: var(--foreground);   /* Change text color to dark (black-ish) */
+  border: 1px solid var(--border); /* Add a light border to help it stand out */
+}
+
+.report-type-badge.found {
+  background-color: white; 
+  color: var(--foreground);   /* Change text color to dark (black-ish) */
+  border: 1px solid var(--border);/* A nice green for 'Found' */
+}
+
+.pet-card-img {
+ width: 100%;
+ height: 200px;
+ object-fit: cover;
+}
+
+.pet-card-info {
+ padding: 15px;
+ flex-grow: 1;
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+}
+
+.pet-card-info h3 {
+ font-family: 'Pacifico', cursive;
+ color: var(--foreground); /* Using general foreground color */
+ margin-bottom: 10px;
+ font-size: 1.6em;
+}
+
+.pet-card-info p {
+ margin-bottom: 8px;
+ color: var(--muted-foreground); /* Muted color for details */
+}
+
+.pet-card-info .btn-small {
+ margin-top: 15px;
+}
+
+/* --- About Section --- */
+.about-purpaws-section {
+ background-color: var(--accent); /* Using accent for background */
+ padding: 50px 0;
+ text-align: center;
+ border-radius: var(--radius);
+ margin-bottom: 40px;
+}
+
+.about-content {
+ max-width: 800px;
+ margin: 0 auto;
+}
+
+.about-icon {
+ height: 50px;
+ width: auto;
+ margin-bottom: 20px;
+ opacity: 0.7; /* Slightly faded icon */
+}
+
+.about-content p {
+ font-size: 1.1em;
+ color: var(--foreground);
+}
+
+/* --- Authentication Forms (Login & Register) --- */
+.auth-section {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ padding: 50px 0;
+}
+
+.auth-box {
+ background: var(--card); /* Using card background variable */
+ backdrop-filter: blur(8px); /* Frosted glass effect */
+ border: 1px solid var(--border); /* Using border variable */
+ border-radius: var(--radius);
+ box-shadow: var(--shadow-warm); /* Using shadow variable */
+ padding: 40px;
+ width: 100%;
+ max-width: 450px;
+ text-align: center;
+}
+
+.auth-title {
+ font-size: 2em;
+ margin-bottom: 10px;
+ color: var(--foreground);
+}
+
+.auth-subtitle {
+ font-size: 1.1em;
+ color: var(--muted-foreground);
+ margin-bottom: 30px;
+}
+
+.form-group {
+ margin-bottom: 20px;
+ text-align: left;
+}
+
+.form-group label {
+ display: block;
+ margin-bottom: 8px;
+ font-weight: 500; /* Slightly less bold than headings */
+ color: var(--foreground);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group input[type="tel"] {
+ width: 100%;
+ padding: 12px 15px;
+ border: 1px solid var(--border); /* Using border variable */
+ border-radius: var(--radius);
+ background: var(--input); /* Using input background variable */
+ color: var(--foreground);
+ font-size: 0.875rem;
+ outline: none;
+ transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+ border-color: var(--primary); /* Primary color on focus */
+ box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2); /* Ring effect on focus */
+}
+
+.password-rules {
+ display: block;
+ font-size: 0.8em;
+ color: var(--muted-foreground);
+ margin-top: 5px;
+}
+
+.auth-switch {
+ margin-top: 25px;
+ font-size: 0.95em;
+}
+
+.auth-switch a {
+ margin-left: 5px;
+ color: var(--primary); /* Primary color for links */
+ text-decoration: none;
+ font-weight: 500;
+}
+
+.auth-switch a:hover {
+ text-decoration: underline;
+ color: hsl(25, 85%, 50%); /* Darker primary on hover */
+}
+
+/* Alerts */
+.messages { /* Changed from '.alert' to '.messages' for consistency with Django messages */
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.messages li {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: var(--radius);
+  font-size: 0.9em;
+  text-align: center;
+  border: 1px solid transparent; /* Base border */
+}
+
+/* Specific message type styling (matches Django's default tags) */
+.messages li.success {
+  background-color: hsl(120, 45%, 90%); /* Soft success green */
+  color: hsl(120, 45%, 35%); /* Darker success green text */
+  border-color: hsl(120, 45%, 70%);
+}
+
+.messages li.error {
+  background-color: hsl(0, 62%, 90%); /* Soft error red */
+  color: hsl(0, 62%, 30%); /* Darker error red text */
+  border-color: hsl(0, 62%, 70%);
+}
+
+.messages li.info {
+  background-color: hsl(210, 45%, 90%); /* Soft info blue */
+  color: hsl(210, 45%, 35%);
+  border-color: hsl(210, 45%, 70%);
+}
+
+.messages li.warning {
+  background-color: hsl(40, 85%, 90%); /* Soft warning yellow */
+  color: hsl(40, 85%, 30%);
+  border-color: hsl(40, 85%, 70%);
+}
+
+
+/* --- Dashboard Section --- */
+.dashboard-section {
+  padding: 40px 0;
+  background-color: var(--background); /* Light background */
+}
+
+.dashboard-section .section-title {
+  color: var(--primary-warm); /* Orange title */
+  margin-bottom: 40px;
+}
+
+.user-info-box {
+  background-color: var(--card);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-warm);
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.user-info-box h3 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: var(--foreground);
+}
+
+.user-info-box p {
+  margin-bottom: 10px;
+  color: var(--muted-foreground);
+  font-size: 1.1em;
+}
+
+.user-info-box .profile-pic-large {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 20px;
+  border: 3px solid var(--primary-warm); /* Warm primary border */
+}
+
+.dashboard-actions {
+  background-color: var(--accent); /* Soft accent color for actions */
+  padding: 30px;
+  border-radius: var(--radius);
+  margin-bottom: 40px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.dashboard-actions h2 {
+  font-size: 2.2em;
+  margin-bottom: 25px;
+  color: var(--sidebar-primary); /* Dark accent for heading */
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+  min-width: 200px;
+  background: var(--gradient-warm); /* Use gradient for primary action buttons */
+  color: var(--primary-foreground);
+  border: none; /* Ensure no extra border */
+}
+
+.action-buttons .btn:hover {
+  background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%));
+  transform: translateY(-2px);
+}
+
+.action-buttons .btn-secondary {
+  background: var(--primary-soft);
+  color: var(--primary-warm);
+  border: 2px solid var(--primary-warm);
+}
+
+.action-buttons .btn-secondary:hover {
+  background: hsl(35, 40%, 80%);
+  border-color: hsl(25, 85%, 50%);
+}
+
+.user-reports-box {
+  background-color: var(--input); /* Using input background for a lighter box */
+  padding: 25px;
+  border-radius: var(--radius);
+  margin-top: 30px;
+}
+
+.user-reports-box h3 {
+  font-size: 1.6em;
+  margin-bottom: 20px;
+  color: var(--foreground);
+}
+
+.user-reports-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.user-reports-box li {
+  background-color: var(--card); /* Card background for list items */
+  padding: 15px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.user-reports-box li strong {
+  color: var(--primary-warm); /* Orange for emphasis */
+}
+
+.user-reports-box li a {
+  color: var(--primary); /* Primary color for links */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.user-reports-box li a:hover {
+  text-decoration: underline;
+  color: hsl(25, 85%, 50%); /* Darker primary on hover */
+}
+
+/* --- Pets List Section --- */
+.featured-pets-section, .dashboard-pets-section {
   margin-bottom: 50px;
   padding: 30px 0;
+}
+
+.pets-adoption-section .section-title,
+.featured-pets-section .section-title,
+.dashboard-pets-section .section-title { /* Applied to multiple sections */
+  color: var(--accent-purple); /* Purple for pet section titles */
 }
 
 .pet-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
+  gap: 40px; /* Increased gap */
 }
 
 .pet-card {
-  background-color: var(--card); /* Using card color variable */
+  background-color: var(--card);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-soft); /* Using soft shadow variable */
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -598,7 +1032,7 @@ main {
 
 .pet-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
 }
 
 .pet-card-img {
@@ -617,418 +1051,63 @@ main {
 
 .pet-card-info h3 {
   font-family: 'Pacifico', cursive;
-  color: var(--foreground); /* Using general foreground color */
+  color: var(--foreground);
   margin-bottom: 10px;
   font-size: 1.6em;
 }
 
 .pet-card-info p {
   margin-bottom: 8px;
-  color: var(--muted-foreground); /* Muted color for details */
+  color: var(--muted-foreground);
 }
 
 .pet-card-info .btn-small {
   margin-top: 15px;
 }
 
-/* --- About Section --- */
-.about-purpaws-section {
-  background-color: var(--accent); /* Using accent for background */
-  padding: 50px 0;
-  text-align: center;
-  border-radius: var(--radius);
-  margin-bottom: 40px;
-}
-
-.about-content {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.about-icon {
-  height: 50px;
-  width: auto;
-  margin-bottom: 20px;
-  opacity: 0.7; /* Slightly faded icon */
-}
-
-.about-content p {
-  font-size: 1.1em;
-  color: var(--foreground);
-}
-
-/* --- Authentication Forms (Login & Register) --- */
-.auth-section {
+/* --- Report Pet Form Section --- */
+.report-section {
+  padding: 40px 0; /* Increased padding */
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 50px 0;
 }
 
-.auth-box {
-  background: var(--card); /* Using card background variable */
+.report-box {
+  background: var(--card); /* Using card background */
   backdrop-filter: blur(8px); /* Frosted glass effect */
   border: 1px solid var(--border); /* Using border variable */
   border-radius: var(--radius);
   box-shadow: var(--shadow-warm); /* Using shadow variable */
   padding: 40px;
   width: 100%;
-  max-width: 450px;
+  max-width: 550px;
   text-align: center;
 }
 
-.auth-title {
+.report-box .auth-title {
   font-size: 2em;
   margin-bottom: 10px;
   color: var(--foreground);
 }
 
-.auth-subtitle {
+.report-box .auth-subtitle {
   font-size: 1.1em;
   color: var(--muted-foreground);
   margin-bottom: 30px;
 }
 
-.form-group {
+/* Re-use form-group and input styling from auth-box */
+.report-box .form-group {
   margin-bottom: 20px;
   text-align: left;
 }
 
-.form-group label {
+.report-box label {
   display: block;
   margin-bottom: 8px;
-  font-weight: 500; /* Slightly less bold than headings */
-  color: var(--foreground);
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"],
-.form-group input[type="number"],
-.form-group input[type="tel"] {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid var(--border); /* Using border variable */
-  border-radius: var(--radius);
-  background: var(--input); /* Using input background variable */
-  color: var(--foreground);
-  font-size: 0.875rem;
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.form-group input:focus {
-  border-color: var(--primary); /* Primary color on focus */
-  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2); /* Ring effect on focus */
-}
-
-.password-rules {
-  display: block;
-  font-size: 0.8em;
-  color: var(--muted-foreground);
-  margin-top: 5px;
-}
-
-.auth-switch {
-  margin-top: 25px;
-  font-size: 0.95em;
-}
-
-.auth-switch a {
-  margin-left: 5px;
-  color: var(--primary); /* Primary color for links */
-  text-decoration: none;
   font-weight: 500;
-}
-
-.auth-switch a:hover {
-  text-decoration: underline;
-  color: hsl(25, 85%, 50%); /* Darker primary on hover */
-}
-
-/* Alerts */
-.messages { /* Changed from '.alert' to '.messages' for consistency with Django messages */
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-}
-
-.messages li {
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: var(--radius);
-    font-size: 0.9em;
-    text-align: center;
-    border: 1px solid transparent; /* Base border */
-}
-
-/* Specific message type styling (matches Django's default tags) */
-.messages li.success {
-    background-color: hsl(120, 45%, 90%); /* Soft success green */
-    color: hsl(120, 45%, 35%); /* Darker success green text */
-    border-color: hsl(120, 45%, 70%);
-}
-
-.messages li.error {
-    background-color: hsl(0, 62%, 90%); /* Soft error red */
-    color: hsl(0, 62%, 30%); /* Darker error red text */
-    border-color: hsl(0, 62%, 70%);
-}
-
-.messages li.info {
-    background-color: hsl(210, 45%, 90%); /* Soft info blue */
-    color: hsl(210, 45%, 35%);
-    border-color: hsl(210, 45%, 70%);
-}
-
-.messages li.warning {
-    background-color: hsl(40, 85%, 90%); /* Soft warning yellow */
-    color: hsl(40, 85%, 30%);
-    border-color: hsl(40, 85%, 70%);
-}
-
-
-/* --- Dashboard Section --- */
-.dashboard-section {
-    padding: 40px 0;
-    background-color: var(--background); /* Light background */
-}
-
-.dashboard-section .section-title {
-    color: var(--primary-warm); /* Orange title */
-    margin-bottom: 40px;
-}
-
-.user-info-box {
-    background-color: var(--card);
-    padding: 30px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-warm);
-    margin-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.user-info-box h3 {
-    font-size: 1.8em;
-    margin-bottom: 20px;
-    color: var(--foreground);
-}
-
-.user-info-box p {
-    margin-bottom: 10px;
-    color: var(--muted-foreground);
-    font-size: 1.1em;
-}
-
-.user-info-box .profile-pic-large {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-top: 20px;
-    border: 3px solid var(--primary-warm); /* Warm primary border */
-}
-
-.dashboard-actions {
-    background-color: var(--accent); /* Soft accent color for actions */
-    padding: 30px;
-    border-radius: var(--radius);
-    margin-bottom: 40px;
-    text-align: center;
-    box-shadow: var(--shadow-soft);
-}
-
-.dashboard-actions h2 {
-    font-size: 2.2em;
-    margin-bottom: 25px;
-    color: var(--sidebar-primary); /* Dark accent for heading */
-}
-
-.action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-}
-
-.action-buttons .btn {
-    min-width: 200px;
-    background: var(--gradient-warm); /* Use gradient for primary action buttons */
-    color: var(--primary-foreground);
-    border: none; /* Ensure no extra border */
-}
-
-.action-buttons .btn:hover {
-    background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%));
-    transform: translateY(-2px);
-}
-
-.action-buttons .btn-secondary {
-    background: var(--primary-soft);
-    color: var(--primary-warm);
-    border: 2px solid var(--primary-warm);
-}
-
-.action-buttons .btn-secondary:hover {
-    background: hsl(35, 40%, 80%);
-    border-color: hsl(25, 85%, 50%);
-}
-
-.user-reports-box {
-    background-color: var(--input); /* Using input background for a lighter box */
-    padding: 25px;
-    border-radius: var(--radius);
-    margin-top: 30px;
-}
-
-.user-reports-box h3 {
-    font-size: 1.6em;
-    margin-bottom: 20px;
-    color: var(--foreground);
-}
-
-.user-reports-box ul {
-    list-style: none;
-    padding: 0;
-}
-
-.user-reports-box li {
-    background-color: var(--card); /* Card background for list items */
-    padding: 15px;
-    border-radius: var(--radius);
-    margin-bottom: 12px;
-    box-shadow: var(--shadow-soft);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.user-reports-box li strong {
-    color: var(--primary-warm); /* Orange for emphasis */
-}
-
-.user-reports-box li a {
-    color: var(--primary); /* Primary color for links */
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.user-reports-box li a:hover {
-    text-decoration: underline;
-    color: hsl(25, 85%, 50%); /* Darker primary on hover */
-}
-
-/* --- Pets List Section --- */
-.featured-pets-section, .dashboard-pets-section {
-    margin-bottom: 50px;
-    padding: 30px 0;
-}
-
-.pets-adoption-section .section-title,
-.featured-pets-section .section-title,
-.dashboard-pets-section .section-title { /* Applied to multiple sections */
-    color: var(--accent-purple); /* Purple for pet section titles */
-}
-
-.pet-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 40px; /* Increased gap */
-}
-
-.pet-card {
-    background-color: var(--card);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-soft);
-    overflow: hidden;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.pet-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
-}
-
-.pet-card-img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.pet-card-info {
-    padding: 15px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.pet-card-info h3 {
-    font-family: 'Pacifico', cursive;
-    color: var(--foreground);
-    margin-bottom: 10px;
-    font-size: 1.6em;
-}
-
-.pet-card-info p {
-    margin-bottom: 8px;
-    color: var(--muted-foreground);
-}
-
-.pet-card-info .btn-small {
-    margin-top: 15px;
-}
-
-/* --- Report Pet Form Section --- */
-.report-section {
-    padding: 40px 0; /* Increased padding */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.report-box {
-    background: var(--card); /* Using card background */
-    backdrop-filter: blur(8px); /* Frosted glass effect */
-    border: 1px solid var(--border); /* Using border variable */
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-warm); /* Using shadow variable */
-    padding: 40px;
-    width: 100%;
-    max-width: 550px;
-    text-align: center;
-}
-
-.report-box .auth-title {
-    font-size: 2em;
-    margin-bottom: 10px;
-    color: var(--foreground);
-}
-
-.report-box .auth-subtitle {
-    font-size: 1.1em;
-    color: var(--muted-foreground);
-    margin-bottom: 30px;
-}
-
-/* Re-use form-group and input styling from auth-box */
-.report-box .form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.report-box label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: var(--foreground);
+  color: var(--foreground);
 }
 
 .report-box input[type="text"],
@@ -1037,134 +1116,134 @@ main {
 .report-box input[type="number"],
 .report-box input[type="tel"],
 .report-box input[type="file"] {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--input);
-    color: var(--foreground);
-    font-size: 0.875rem;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--input);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .report-box input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }
 
 .report-box input[type="file"] {
-    padding-top: 8px;
-    padding-bottom: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .report-box small {
-    display: block;
-    font-size: 0.8em;
-    color: var(--muted-foreground);
-    margin-top: 5px;
+  display: block;
+  font-size: 0.8em;
+  color: var(--muted-foreground);
+  margin-top: 5px;
 }
 
 
 /* --- Pet Report Detail Section --- */
 .report-detail-section {
-    padding: 40px 0;
+  padding: 40px 0;
 }
 
 .report-detail-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-    background-color: var(--card);
-    padding: 40px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-warm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  background-color: var(--card);
+  padding: 40px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-warm);
 }
 
 .report-header {
-    text-align: center;
-    width: 100%;
-    margin-bottom: 30px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 30px;
 }
 
 .report-header p {
-    margin-bottom: 8px;
-    font-size: 1.1em;
-    color: var(--muted-foreground);
+  margin-bottom: 8px;
+  font-size: 1.1em;
+  color: var(--muted-foreground);
 }
 
 .report-header p strong {
-    color: var(--primary-warm); /* Orange for emphasis */
+  color: var(--primary-warm); /* Orange for emphasis */
 }
 
 .report-image-large {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto 30px auto;
-    text-align: center; /* Center the image */
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 30px auto;
+  text-align: center; /* Center the image */
 }
 
 .report-image-large img {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    border-radius: var(--radius);
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: var(--radius);
 }
 
 .report-details {
-    width: 100%;
-    text-align: left;
+  width: 100%;
+  text-align: left;
 }
 
 .report-details p {
-    margin-bottom: 12px;
-    font-size: 1.15em;
-    color: var(--muted-foreground);
+  margin-bottom: 12px;
+  font-size: 1.15em;
+  color: var(--muted-foreground);
 }
 
 .report-details p strong {
-    color: var(--accent-purple); /* Purple for detail labels */
+  color: var(--accent-purple); /* Purple for detail labels */
 }
 
 /* --- Messages Styling --- */
 .messages {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
 }
 
 .messages li {
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: var(--radius);
-    font-size: 0.9em;
-    text-align: center;
-    border: 1px solid transparent;
-    transition: opacity 0.3s ease;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: var(--radius);
+  font-size: 0.9em;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: opacity 0.3s ease;
 }
 
 .messages li.success {
-    background-color: hsl(120, 45%, 90%);
-    color: hsl(120, 45%, 35%);
-    border-color: hsl(120, 45%, 70%);
+  background-color: hsl(120, 45%, 90%);
+  color: hsl(120, 45%, 35%);
+  border-color: hsl(120, 45%, 70%);
 }
 
 .messages li.error {
-    background-color: hsl(0, 62%, 90%);
-    color: hsl(0, 62%, 30%);
-    border-color: hsl(0, 62%, 70%);
+  background-color: hsl(0, 62%, 90%);
+  color: hsl(0, 62%, 30%);
+  border-color: hsl(0, 62%, 70%);
 }
 
 .messages li.info {
-    background-color: hsl(210, 45%, 90%);
-    color: hsl(210, 45%, 35%);
-    border-color: hsl(210, 45%, 70%);
+  background-color: hsl(210, 45%, 90%);
+  color: hsl(210, 45%, 35%);
+  border-color: hsl(210, 45%, 70%);
 }
 
 .messages li.warning {
-    background-color: hsl(40, 85%, 90%);
-    color: hsl(40, 85%, 30%);
-    border-color: hsl(40, 85%, 70%);
+  background-color: hsl(40, 85%, 90%);
+  color: hsl(40, 85%, 30%);
+  border-color: hsl(40, 85%, 70%);
 }
 
 
@@ -1173,399 +1252,401 @@ main {
 .admin-dashboard-section h3,
 .manage-users-section h2,
 .manage-users-section h3 {
-    font-family: 'Quicksand', sans-serif; /* Use the regular body font */
-    font-weight: 700; /* Make it bold to stand out */
+  font-family: 'Quicksand', sans-serif; /* Use the regular body font */
+  font-weight: 700; /* Make it bold to stand out */
 }
 
 /* --- Admin Dashboard --- */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
 }
 .stat-card {
-    background-color: var(--card);
-    padding: 25px;
-    border-radius: var(--radius);
-    text-align: center;
-    box-shadow: var(--shadow-soft);
-    border: 1px solid var(--border);
+  background-color: var(--card);
+  padding: 25px;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 .stat-card h3 {
-    font-size: 0.9em; /* Make the card title a bit smaller */
-    color: var(--muted-foreground);
-    text-transform: uppercase; /* A common style for stat cards */
-    letter-spacing: 1px;
+  font-size: 0.9em; /* Make the card title a bit smaller */
+  color: var(--muted-foreground);
+  text-transform: uppercase; /* A common style for stat cards */
+  letter-spacing: 1px;
 }
 .stat-card p {
-    font-family: 'Quicksand', sans-serif; /* Also apply to the number itself */
-    font-size: 2.8em;
-    font-weight: 700;
-    color: var(--primary-warm);
-    margin-top: 10px;
+  font-family: 'Quicksand', sans-serif; /* Also apply to the number itself */
+  font-size: 2.8em;
+  font-weight: 700;
+  color: var(--primary-warm);
+  margin-top: 10px;
 }
 .admin-actions {
-    margin-top: 40px;
-    padding: 30px;
-    background-color: #fdfdfd;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    text-align: center;
+  margin-top: 40px;
+  padding: 30px;
+  background-color: #fdfdfd;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
 }
 .admin-actions h3 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 /* --- Manage Users Page --- */
 .admin-nav {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 .admin-nav a {
-    text-decoration: none;
-    color: var(--primary);
-    font-weight: bold;
+  text-decoration: none;
+  color: var(--primary);
+  font-weight: bold;
 }
 .admin-nav a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .user-table-container {
-    overflow-x: auto; /* Allows horizontal scrolling on small screens */
-    background-color: var(--card);
-    padding: 20px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-soft);
+  overflow-x: auto; /* Allows horizontal scrolling on small screens */
+  background-color: var(--card);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
 }
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 th, td {
-    padding: 12px 15px;
-    border-bottom: 1px solid var(--border); /* Use bottom borders for a cleaner look */
-    text-align: left;
-    vertical-align: middle;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border); /* Use bottom borders for a cleaner look */
+  text-align: left;
+  vertical-align: middle;
 }
 thead th {
-    background-color: var(--muted);
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.85em;
-    letter-spacing: 0.5px;
+  background-color: var(--muted);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  letter-spacing: 0.5px;
 }
 tbody tr:hover {
-    background-color: hsl(var(--primary-warm) / 0.05); /* Subtle hover effect */
+  background-color: hsl(var(--primary-warm) / 0.05); /* Subtle hover effect */
 }
 
 /* Styling for the action buttons in the table */
 .action-cell {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .action-form {
-    margin: 0;
+  margin: 0;
 }
 
 /* Remove Button */
 .btn-danger {
-    background-color: rgb(231, 76, 60); /* A strong red */
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    font-size: 0.85em;
-    font-weight: bold;
-    transition: background-color 0.2s ease; /* Add transition */
+  background-color: rgb(231, 76, 60); /* A strong red */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: bold;
+  transition: background-color 0.2s ease; /* Add transition */
 }
 .btn-danger:hover {
-    background-color: rgb(192, 57, 43); /* Darker red on hover */
+  background-color: rgb(192, 57, 43); /* Darker red on hover */
 }
 
 /* Promote Button */
 .btn-promote {
-    background-color: rgb(231, 76, 60); /* A strong, clear green */
-    color: white; /* Explicitly set text color to white */
-    border: none;
-    padding: 6px 12px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    font-size: 0.85em;
-    font-weight: bold;
-    transition: background-color 0.2s ease; /* Add transition */
+  background-color: rgb(231, 76, 60); /* A strong, clear green */
+  color: white; /* Explicitly set text color to white */
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: bold;
+  transition: background-color 0.2s ease; /* Add transition */
 }
 .btn-promote:hover {
-    background-color: rgb(192, 57,43); /* Darker green on hover */
+  background-color: rgb(192, 57,43); /* Darker green on hover */
 }
 /* Role badges in the user table */
 .role-admin {
-    background-color: var(--primary-warm);
-    color: rgb(0, 0, 0);
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    font-weight: bold;
+  background-color: var(--primary-warm);
+  color: rgb(0, 0, 0);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
 }
 .role-user {
-    background-color: var(--muted);
-    color: var(--muted-foreground);
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    font-weight: bold;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
 }
 
 /* --- Style for the Admin link in main navigation --- */
 .admin-link {
-    color: #c0392b !important; /* A distinct red color */
-    font-weight: bold;
-    position: relative;
+  color: #c0392b !important; /* A distinct red color */
+  font-weight: bold;
+  position: relative;
 }
 
 /* Optional: add a small dot to the admin link */
 .admin-link::after {
-    content: '';
-    position: absolute;
-    top: 5px;
-    right: -10px;
-    width: 6px;
-    height: 6px;
-    background-color: #c0392b;
-    border-radius: 50%;
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: -10px;
+  width: 6px;
+  height: 6px;
+  background-color: #c0392b;
+  border-radius: 50%;
 }
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
-    .site-header .container, .site-footer .container {
-        flex-direction: column;
-        text-align: center;
-    }
-    .site-header nav ul {
-        flex-direction: column;
-        margin-top: 15px;
-    }
-    .site-header nav li {
-        margin: 5px 0;
-    }
-    .logo {
-        margin-bottom: 15px;
-    }
-    /* Hero section adjustments */
-    .hero-section {
-        flex-direction: column;
-        text-align: center;
-        padding: 40px 0;
-    }
-    .hero-content {
-        padding-right: 0;
-        margin-bottom: 30px;
-    }
-    .hero-content h2 {
-        font-size: 2.5em; /* Smaller heading on mobile */
-    }
-    .hero-content p {
-        font-size: 1.1em;
-    }
-    .hero-image img {
-        height: 250px; /* Smaller image on mobile */
-    }
-    .hero-actions {
-        flex-direction: column; /* Stack buttons vertically */
-        gap: 15px;
-        align-items: center;
-    }
-    .btn {
-        width: 80%; /* Make buttons wider */
-    }
+  .site-header .container, .site-footer .container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .site-header nav ul {
+    flex-direction: column;
+    margin-top: 15px;
+  }
+  .site-header nav li {
+    margin: 5px 0;
+  }
+  .logo {
+    margin-bottom: 15px;
+  }
+  /* Hero section adjustments */
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 0;
+  }
+  .hero-content {
+    padding-right: 0;
+    margin-bottom: 30px;
+  }
+  .hero-content h2 {
+    font-size: 2.5em; /* Smaller heading on mobile */
+  }
+  .hero-content p {
+    font-size: 1.1em;
+  }
+  .hero-image img {
+    height: 250px; /* Smaller image on mobile */
+  }
+  .hero-actions {
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 15px;
+    align-items: center;
+  }
+  .btn {
+    width: 80%; /* Make buttons wider */
+  }
 
-    /* Pet Cards */
-    .pet-grid {
-        grid-template-columns: 1fr; /* Stack cards on smaller screens */
-    }
+  /* Pet Cards */
+  .pet-grid {
+    grid-template-columns: 1fr; /* Stack cards on smaller screens */
+  }
 
-    /* Auth and Report Boxes */
-    .auth-box, .report-box {
-        max-width: 90%;
-        padding: 30px;
-    }
+  /* Auth and Report Boxes */
+  .auth-box, .report-box {
+    max-width: 90%;
+    padding: 30px;
+  }
 
-    /* Social Links */
-    .social-links {
-        margin-top: 15px;
-    }
+  /* Social Links */
+  .social-links {
+    margin-top: 15px;
+  }
 
-    /* Dashboard Actions */
-    .dashboard-actions h2 {
-        font-size: 1.8em;
-    }
-    .action-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    .action-buttons .btn {
-        width: 80%;
-    }
+  /* Dashboard Actions */
+  .dashboard-actions h2 {
+    font-size: 1.8em;
+  }
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  .action-buttons .btn {
+    width: 80%;
+  }
 
-    /* Report Detail Page */
-    .report-detail-container {
-        flex-direction: column;
-        align-items: center;
-    }
-    .report-image-large {
-        max-width: 80%;
-    }
-    .report-details {
-        text-align: center;
-    }
+  /* Report Detail Page */
+  .report-detail-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .report-image-large {
+    max-width: 80%;
+  }
+  .report-details {
+    text-align: center;
+  }
 }
 
 .about-hero-section h1,
 .about-content-section h2 {
-    font-family: 'Quicksand', sans-serif; /* Use the regular body font */
-    font-weight: 700; /* Make it bold */
+  font-family: 'Quicksand', sans-serif; /* Use the regular body font */
+  font-weight: 700; /* Make it bold */
 }
 
 
 .about-hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.618), rgba(0, 0, 0, 0.771)), url('../images/about-hero.jpg');
-    background-size: cover;
-    background-position: center 30%;
-    color: white;
-    text-align: center;
-    padding: 80px 20px;
-    margin-bottom: 50px;
-    border-radius: 20px;   /* round edges */
-    overflow: hidden;
+  background: linear-gradient(rgba(0, 0, 0, 0.618), rgba(0, 0, 0, 0.771)), url('../images/about-hero.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+  margin-bottom: 50px;
+  border-radius: 20px;  /* round edges */
+  overflow: hidden;
 }
 
 .about-hero-section h1 {
-    font-size: 3.5em;
-    color: white;
-    margin-bottom: 10px;
+  font-size: 3.5em;
+  color: white;
+  margin-bottom: 10px;
 }
 
 .about-hero-section p {
-    font-size: 1.7em;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 500;
+  font-size: 1.7em;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
 }
 
 .about-content-section {
-    max-width: 1000px;
+  max-width: 1000px;
 }
 
 .about-mission {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-    margin-bottom: 80px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 80px;
 }
 
 .about-mission .about-text {
-    flex: 1;
+  flex: 1;
 }
 
 .about-mission .about-text h2 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    color: var(--primary-warm);
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: var(--primary-warm);
 }
 
 .about-mission .about-text p {
-    font-size: 1.1em;
-    line-height: 1.7;
-    color: var(--muted-foreground);
+  font-size: 1.1em;
+  line-height: 1.7;
+  color: var(--muted-foreground);
 }
 
 .about-mission .about-image {
-    flex: 1;
-    max-width: 450px;
+  flex: 1;
+  max-width: 450px;
 }
 
 .about-mission .about-image img {
-    width: 100%;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-warm);
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-warm);
 }
 
 .how-it-works {
-    text-align: center;
-    margin-bottom: 80px;
+  text-align: center;
+  margin-bottom: 80px;
 }
 
 .steps-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
 }
 
 .step-card {
-    background: var(--card);
-    padding: 30px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-soft);
-    border-top: 4px solid var(--primary-warm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--card);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  border-top: 4px solid var(--primary-warm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .step-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-warm);
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-warm);
 }
 
 .step-card .step-icon {
-    font-size: 3em;
-    margin-bottom: 15px;
+  font-size: 3em;
+  margin-bottom: 15px;
 }
 
 .step-card h3 {
-    /* The global h3 rule still applies, so we override it here */
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
-    font-size: 1.5em;
-    margin-bottom: 15px;
-    color: var(--foreground);
+  /* The global h3 rule still applies, so we override it here */
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  color: var(--foreground);
 }
 
 .step-card p {
-    color: var(--muted-foreground);
+  color: var(--muted-foreground);
 }
 
 .call-to-action {
-    background-color: var(--accent-purple-soft);
-    text-align: center;
-    padding: 50px 30px;
-    border-radius: var(--radius);
+  background-color: var(--accent-purple-soft);
+  text-align: center;
+  padding: 50px 30px;
+  border-radius: var(--radius);
 }
 
 .call-to-action h2 {
-    color: var(--accent-purple);
-    font-size: 2.5em;
-    margin-bottom: 15px;
+  color: var(--accent-purple);
+  font-size: 2.5em;
+  margin-bottom: 15px;
 }
 
 .call-to-action p {
-    margin-bottom: 30px;
-    font-size: 1.1em;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+  margin-bottom: 30px;
+  font-size: 1.1em;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* --- Responsive adjustments for About Page --- */
 @media (max-width: 768px) {
-    .about-hero-section h1 {
-        font-size: 2.5em;
-    }
-    .about-mission {
-        flex-direction: column;
-    }
+  .about-hero-section h1 {
+    font-size: 2.5em;
+  }
+  .about-mission {
+    flex-direction: column;
+  }
 }
+
+
 
 
 ================================================================================
@@ -1579,10 +1660,48 @@ File: .\static\js\script.js
 File: .\users\admin.py
 ================================================================================
 
+# users/admin.py
+
 from django.contrib import admin
+from .models import Profile, PetReport, PetForAdoption, Notification
 
-# Register your models here.
+# These classes customize how the models are displayed in the admin interface.
 
+class PetReportAdmin(admin.ModelAdmin):
+    """Customizes the display for PetReport in the admin."""
+    list_display = ('id', 'report_type', 'pet_type', 'status', 'reporter', 'date_reported', 'location')
+    list_filter = ('status', 'report_type', 'pet_type')
+    search_fields = ('location', 'breed', 'reporter__username')
+    readonly_fields = ('date_reported',)
+    list_per_page = 25
+
+class PetForAdoptionAdmin(admin.ModelAdmin):
+    """Customizes the display for PetForAdoption in the admin."""
+    list_display = ('name', 'pet_type', 'status', 'lister', 'date_listed')
+    list_filter = ('status', 'pet_type', 'gender')
+    search_fields = ('name', 'breed', 'lister__username')
+    readonly_fields = ('date_listed',)
+
+class ProfileAdmin(admin.ModelAdmin):
+    """Customizes the display for user Profiles."""
+    list_display = ('user', 'role', 'city', 'phone_number')
+    search_fields = ('user__username', 'city')
+
+class NotificationAdmin(admin.ModelAdmin):
+    """Customizes the display for Notifications."""
+    list_display = ('recipient', 'message_summary', 'is_read', 'created_at')
+    list_filter = ('is_read',)
+    search_fields = ('recipient__username', 'message')
+
+    def message_summary(self, obj):
+        return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
+    message_summary.short_description = 'Message'
+
+# Register your models with the admin site
+admin.site.register(PetReport, PetReportAdmin)
+admin.site.register(PetForAdoption, PetForAdoptionAdmin)
+admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Notification, NotificationAdmin)
 
 
 ================================================================================
@@ -1648,7 +1767,7 @@ class Profile(models.Model):
 
 # This table handles both LOST and FOUND pet "incidents".
 class PetReport(models.Model):
-    REPORT_TYPE_CHOICES = (('Lost', 'I lost my pet'), ('Found', 'I found a pet'))
+    REPORT_TYPE_CHOICES = (('Lost', 'Lost pet'), ('Found', 'Found pet'))
     STATUS_CHOICES = (('Open', 'Open'),('Pending Adoption', 'Pending Adoption'), ('Closed', 'Closed'))
     GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown')) # Add gender choices here
 
@@ -1741,10 +1860,328 @@ class NotificationSerializer(serializers.ModelSerializer):
 File: .\users\tests.py
 ================================================================================
 
-from django.test import TestCase
+# users/tests.py
 
-# Create your tests here.
+from django.test import TestCase, Client
+from django.urls import reverse
+from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
+from .models import Profile, PetReport
+from django.conf import settings
 
+# =============================================================================
+#  Introduction to Django Tests
+#
+#  This file contains automated tests for the 'users' app. Tests are crucial
+#  for ensuring that your application works correctly now and in the future.
+#
+#  - TestCase: A class that groups related tests. A separate, temporary
+#    database is created for each TestCase.
+#
+#  - setUp(): A method that runs BEFORE every single test function in the class.
+#    It's used to set up common objects, like users or a test client.
+#
+#  - test_*(): Any method starting with 'test_' is an automated test that will
+#    be run by the test runner.
+#
+#  - self.client: A "dummy" web browser that can make requests (GET, POST) to
+#    your application's URLs without needing to run a live server.
+#
+#  - self.assertEqual(a, b): Asserts that a is equal to b.
+#  - self.assertTrue(x): Asserts that x is True.
+#  - self.assertRedirects(response, url): Asserts that the response is a
+#    redirect to the specified URL.
+# =============================================================================
+
+
+class StaticPagesTests(TestCase):
+    """
+    Tests for simple, static pages that don't require user authentication.
+    """
+    def setUp(self):
+        self.client = Client()
+
+    def test_about_page_loads_correctly(self):
+        """
+        Tests if the 'About' page is accessible and uses the correct template.
+        """
+        url = reverse('users:about')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200) # 200 OK
+        self.assertTemplateUsed(response, 'users/about.html')
+        self.assertContains(response, "Our Mission") # Check for some content
+
+
+class UserModelAndProfileTests(TestCase):
+    """
+    Tests for the User model and its related Profile.
+    """
+    def test_profile_is_created_during_registration_view(self):
+        """
+        Tests the application's registration view logic to ensure a Profile is created.
+        This is a more accurate test than checking the model directly.
+        """
+        # ## FIX ##: The original test was flawed. This now tests the actual registration form.
+        url = reverse('users:register')
+        self.client.post(url, {
+            'username': 'newuser',
+            'email': 'new@user.com',
+            'password': 'Password123!',
+            'password2': 'Password123!',
+        })
+        user = User.objects.get(username='newuser')
+        self.assertTrue(hasattr(user, 'profile'))
+        self.assertEqual(user.profile.role, 'user')
+
+
+class AuthenticationTests(TestCase):
+    """
+    Tests for user registration, login, and logout functionality.
+    """
+    def setUp(self):
+        self.client = Client()
+        # Create a user to test login and other authenticated actions
+        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='strongpassword!1')
+        # ## FIX ##: Create the associated profile for the test user.
+        Profile.objects.create(user=self.user)
+
+    def test_registration_page_loads_correctly(self):
+        """Tests if the registration page is accessible."""
+        url = reverse('users:register')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/register.html')
+
+    def test_user_can_register_successfully(self):
+        """Tests the full registration process for a new user."""
+        url = reverse('users:register')
+        form_data = {
+            'username': 'new_register_user',
+            'email': 'new_register@example.com',
+            'password': 'V3ryStrongPassword!',
+            'password2': 'V3ryStrongPassword!',
+            'first_name': 'Test',
+            'city': 'Testville'
+        }
+        response = self.client.post(url, form_data)
+        
+        # Check that the user was created
+        self.assertTrue(User.objects.filter(username='new_register_user').exists())
+        # Check that the user is logged in and redirected to the dashboard
+        self.assertRedirects(response, reverse('users:dashboard'))
+
+    def test_login_page_loads_correctly(self):
+        """Tests if the login page is accessible."""
+        url = reverse('users:login')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/login.html')
+
+    def test_successful_login(self):
+        """Tests that a user with correct credentials can log in and is redirected."""
+        url = reverse('users:login')
+        response = self.client.post(url, {'username': 'testuser', 'password': 'strongpassword!1'})
+        
+        self.assertRedirects(response, reverse('users:dashboard'))
+        # Check if the user ID is stored in the session, confirming login
+        self.assertIn('_auth_user_id', self.client.session)
+        self.assertEqual(int(self.client.session['_auth_user_id']), self.user.id)
+
+    def test_failed_login(self):
+        """Tests that a user with incorrect credentials cannot log in."""
+        url = reverse('users:login')
+        response = self.client.post(url, {'username': 'testuser', 'password': 'wrongpassword'})
+        
+        self.assertEqual(response.status_code, 200) # Stays on the same page
+        self.assertTemplateUsed(response, 'users/login.html')
+        self.assertNotIn('_auth_user_id', self.client.session) # Not logged in
+
+    def test_user_can_logout(self):
+        """Tests the logout process."""
+        # First, log the user in
+        self.client.login(username='testuser', password='strongpassword!1')
+        self.assertIn('_auth_user_id', self.client.session)
+
+        # Then, access the logout URL
+        url = reverse('users:logout')
+        response = self.client.get(url)
+
+        # Check that it redirects to the login page
+        self.assertRedirects(response, reverse('users:login'))
+        # Check that the user is no longer in the session
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+
+class PetReportTests(TestCase):
+    """
+    Tests for creating and viewing Lost/Found pet reports.
+    Requires a logged-in user.
+    """
+    def setUp(self):
+        self.user = User.objects.create_user(username='reporter', password='password123')
+        # ## FIX ##: Create the associated profile for the reporter user.
+        Profile.objects.create(user=self.user)
+        self.client = Client()
+        self.client.login(username='reporter', password='password123')
+
+    def test_create_report_page_loads(self):
+        """Tests if the form page for creating a report is accessible."""
+        url = reverse('users:create_pet_report', kwargs={'report_type': 'Lost'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/create_pet_report.html')
+
+    def test_create_found_pet_report(self):
+        """Tests the full process of submitting a 'Found' pet report."""
+        url = reverse('users:create_pet_report', kwargs={'report_type': 'Found'})
+        # Create a dummy image file in memory for the upload
+        dummy_image = SimpleUploadedFile("pet.jpg", b"file_content", content_type="image/jpeg")
+        
+        form_data = {
+            'pet_type': 'Dog',
+            # ## FIX ##: Add all required fields from the form to make it valid.
+            'color': 'Golden',
+            'location': 'City Park',
+            'contact_info': '555-1234',
+            'pet_image': dummy_image,
+        }
+        
+        response = self.client.post(url, form_data)
+
+        # ## FIX ##: Check for redirect first, as it indicates success before checking the count.
+        self.assertRedirects(response, reverse('users:dashboard'))
+        
+        # Check that the report was created in the database
+        self.assertEqual(PetReport.objects.count(), 1)
+        report = PetReport.objects.first()
+        self.assertEqual(report.report_type, 'Found')
+        self.assertEqual(report.reporter, self.user)
+        self.assertEqual(report.pet_type, 'Dog')
+
+
+    def test_view_pet_report_detail(self):
+        """Tests if a user can view the details of a specific report."""
+        # ## FIX ##: ImageField is required, so we need to provide a dummy one.
+        dummy_image = SimpleUploadedFile("cat.jpg", b"file_content", content_type="image/jpeg")
+        report = PetReport.objects.create(
+            reporter=self.user,
+            report_type='Lost',
+            pet_type='Cat',
+            color='Black',
+            location='Downtown',
+            contact_info='test@example.com',
+            pet_image=dummy_image, # ## FIX ##: Add the required image field
+        )
+        url = reverse('users:pet_report_detail', kwargs={'report_id': report.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/pet_report_detail.html')
+        self.assertContains(response, 'Pet Type:</span> Cat') # ## FIX ##: Check for more specific HTML
+        self.assertContains(response, 'Location:</span> Downtown')
+
+
+class AdminFunctionalityTests(TestCase):
+    """
+    Tests for custom admin panel functionality like promoting and removing users.
+    This requires multiple user types (regular, staff, superuser).
+    """
+    def setUp(self):
+        self.client = Client()
+        self.regular_user = User.objects.create_user(username='regular', password='password123')
+        self.staff_user = User.objects.create_user(username='staff', password='password123', is_staff=True)
+        self.superuser = User.objects.create_user(username='super', password='password123', is_staff=True, is_superuser=True)
+        # ## FIX ##: Create profiles for all users to prevent crashes.
+        Profile.objects.create(user=self.regular_user)
+        Profile.objects.create(user=self.staff_user)
+        Profile.objects.create(user=self.superuser)
+
+    def test_manage_users_page_access(self):
+        """Tests that only staff and superusers can access the manage users page."""
+        url = reverse('users:admin_manage_users')
+
+        # Regular user should be redirected
+        self.client.login(username='regular', password='password123')
+        response = self.client.get(url)
+        # ## FIX ##: When a decorator blocks access, it redirects. The status code is 302, not 200.
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(reverse('users:login')))
+
+        # Staff user should have access
+        self.client.login(username='staff', password='password123')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Superuser should have access
+        self.client.login(username='super', password='password123')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_superuser_can_promote_user_to_admin(self):
+        """Tests if a superuser can successfully promote a regular user."""
+        self.client.login(username='super', password='password123')
+        url = reverse('users:admin_promote_user', kwargs={'user_id': self.regular_user.id})
+        
+        self.assertFalse(self.regular_user.is_staff)
+        
+        response = self.client.post(url)
+        
+        self.assertRedirects(response, reverse('users:admin_manage_users'))
+        self.regular_user.refresh_from_db()
+        self.assertTrue(self.regular_user.is_staff)
+
+    def test_staff_user_cannot_promote_user(self):
+        """Tests that a non-superuser staff member cannot promote users."""
+        self.client.login(username='staff', password='password123')
+        url = reverse('users:admin_promote_user', kwargs={'user_id': self.regular_user.id})
+
+        response = self.client.post(url)
+        
+        # ## FIX ##: The decorator will cause a redirect to the login page.
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(reverse('users:login')))
+        
+        self.regular_user.refresh_from_db()
+        self.assertFalse(self.regular_user.is_staff)
+
+    def test_superuser_can_remove_user(self):
+        """Tests if a superuser can remove another user."""
+        self.client.login(username='super', password='password123')
+        url = reverse('users:admin_remove_user', kwargs={'user_id': self.regular_user.id})
+        
+        self.assertTrue(User.objects.filter(id=self.regular_user.id).exists())
+        
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse('users:admin_manage_users'))
+        
+        self.assertFalse(User.objects.filter(id=self.regular_user.id).exists())
+
+    def test_staff_user_cannot_remove_other_staff(self):
+        """
+        Tests that a staff user is blocked from removing another staff user,
+        as per the logic in the view.
+        """
+        self.client.login(username='staff', password='password123')
+        # A staff user trying to remove a superuser (who is also staff)
+        url = reverse('users:admin_remove_user', kwargs={'user_id': self.superuser.id})
+        
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse('users:admin_manage_users'))
+        
+        self.assertTrue(User.objects.filter(id=self.superuser.id).exists())
+
+    def test_staff_user_can_remove_regular_user(self):
+        """Tests that a staff user CAN remove a non-staff, regular user."""
+        self.client.login(username='staff', password='password123')
+        url = reverse('users:admin_remove_user', kwargs={'user_id': self.regular_user.id})
+        
+        self.assertTrue(User.objects.filter(id=self.regular_user.id).exists())
+        
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse('users:admin_manage_users'))
+        
+        self.assertFalse(User.objects.filter(id=self.regular_user.id).exists())
 
 
 ================================================================================
@@ -1811,202 +2248,207 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 # --- API ViewSets ---
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    # permission_classes = [IsAuthenticated] # Uncomment if API access should be restricted
+  queryset = Profile.objects.all()
+  serializer_class = ProfileSerializer
+  # permission_classes = [IsAuthenticated] # Uncomment if API access should be restricted
 
 class PetReportViewSet(viewsets.ModelViewSet):
-    queryset = PetReport.objects.all()
-    serializer_class = PetReportSerializer
-    # permission_classes = [IsAuthenticated]
+  queryset = PetReport.objects.all()
+  serializer_class = PetReportSerializer
+  # permission_classes = [IsAuthenticated]
 
 class PetForAdoptionViewSet(viewsets.ModelViewSet):
-    queryset = PetForAdoption.objects.all()
-    serializer_class = PetForAdoptionSerializer
-    # permission_classes = [IsAuthenticated]
+  queryset = PetForAdoption.objects.all()
+  serializer_class = PetForAdoptionSerializer
+  # permission_classes = [IsAuthenticated]
 
 class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
-    # permission_classes = [IsAuthenticated]
+  queryset = Notification.objects.all()
+  serializer_class = NotificationSerializer
+  # permission_classes = [IsAuthenticated]
 
 # --- API View for Registration ---
 class RegisterView(APIView):
-    permission_classes = [AllowAny]
-    def post(self, request):
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
+  permission_classes = [AllowAny]
+  def post(self, request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
 
-        if not username or not password or not email:
-            return Response({'error': 'Username, email, and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(username=username).exists():
-            return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(email=email).exists():
-            return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not username or not password or not email:
+      return Response({'error': 'Username, email, and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(username=username).exists():
+      return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(email=email).exists():
+      return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=username, email=email, password=password)
-        Profile.objects.create(user=user) # Creates profile with default values
-        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+    user = User.objects.create_user(username=username, email=email, password=password)
+    Profile.objects.create(user=user) # Creates profile with default values
+    return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
 # --- HTML Rendering Views ---
 
 # Login View
 def login_view(request):
-    if request.method == 'POST':
-        form_username = request.POST.get('username')
-        form_password = request.POST.get('password')
+  if request.method == 'POST':
+    form_username = request.POST.get('username')
+    form_password = request.POST.get('password')
 
-        user = authenticate(request, username=form_username, password=form_password)
+    user = authenticate(request, username=form_username, password=form_password)
 
-        if user is not None:
-            auth_login(request, user)
-            messages.success(request, "Welcome back! You are logged in.")
-            # Redirect to the dashboard after successful login
-            return redirect('users:dashboard')
-        else:
-            # Authentication failed
-            messages.error(request, "Invalid username or password. Please try again.")
-            return render(request, 'users/login.html') # Re-render login page with error message
+    if user is not None:
+      auth_login(request, user)
+      messages.success(request, "Welcome back! You are logged in.")
+      # Redirect to the dashboard after successful login
+      return redirect('users:dashboard')
     else:
-        # GET request: show the login form
-        # If user is already authenticated, redirect them away from the login page.
-        if request.user.is_authenticated:
-            return redirect('users:dashboard') # Redirect logged-in users to dashboard
-        return render(request, 'users/login.html')
+      # Authentication failed
+      messages.error(request, "Invalid username or password. Please try again.")
+      return render(request, 'users/login.html') # Re-render login page with error message
+  else:
+    # GET request: show the login form
+    # If user is already authenticated, redirect them away from the login page.
+    if request.user.is_authenticated:
+      return redirect('users:dashboard') # Redirect logged-in users to dashboard
+    return render(request, 'users/login.html')
 
 # Logout View
 def logout_view(request):
-    auth_logout(request)
-    messages.info(request, "You have been logged out.")
-    return redirect('users:login') # Redirect to login after logout
+  auth_logout(request)
+  messages.info(request, "You have been logged out.")
+  return redirect('users:login') # Redirect to login after logout
 
 # Registration Form
 class RegistrationForm(forms.Form):
-    username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
-    first_name = forms.CharField(label="Full Name",max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_first_name', 'class': 'form-input'}))
-    age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'id': 'id_age', 'class': 'form-input'}))
-    city = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_city', 'class': 'form-input'}))
-    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'id': 'id_phone_number', 'class': 'form-input'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password1', 'class': 'form-input'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password2', 'class': 'form-input'}), label="Confirm Password")
-    is_admin_registration = forms.BooleanField(required=False, label="Register as Admin")
-    admin_passcode = forms.CharField(
-        widget=forms.PasswordInput,
-        required=False,
-        label="Admin Passcode"
-    )
+  username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
+  email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
+  first_name = forms.CharField(label="Full Name",max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_first_name', 'class': 'form-input'}))
+  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'id': 'id_age', 'class': 'form-input'}))
+  city = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_city', 'class': 'form-input'}))
+  phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'id': 'id_phone_number', 'class': 'form-input'}))
+  password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password1', 'class': 'form-input'}))
+  password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password2', 'class': 'form-input'}), label="Confirm Password")
+  is_admin_registration = forms.BooleanField(required=False, label="Register as Admin")
+  admin_passcode = forms.CharField(
+    widget=forms.PasswordInput,
+    required=False,
+    label="Admin Passcode"
+  )
 
-    # We need a custom validation method to check the passcode
-    def clean(self):
-        cleaned_data = super().clean()
-        is_admin = cleaned_data.get('is_admin_registration')
-        passcode = cleaned_data.get('admin_passcode')
+  # We need a custom validation method to check the passcode
+  def clean(self):
+    cleaned_data = super().clean()
+    is_admin = cleaned_data.get('is_admin_registration')
+    passcode = cleaned_data.get('admin_passcode')
 
-        if is_admin:
-            # If the admin box is checked, the passcode is required
-            if not passcode:
-                raise forms.ValidationError(
-                    "Admin passcode is required when registering as an admin."
-                )
+    if is_admin:
+      # If the admin box is checked, the passcode is required
+      if not passcode:
+        raise forms.ValidationError(
+          "Admin passcode is required when registering as an admin."
+        )
 
-            # Check if the passcode is correct
-            from django.conf import settings
-            if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
-                raise forms.ValidationError("Invalid admin passcode.")
+      # Check if the passcode is correct
+      from django.conf import settings
+      if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
+        raise forms.ValidationError("Invalid admin passcode.")
 
-            # --- NEW LOGIC: CHECK ADMIN LIMIT ---
-            # An "Admin" is a staff member who is NOT a superuser.
-            current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
-            
-            # We allow a maximum of 3 admins.
-            if current_admin_count >= 3:
-                raise forms.ValidationError(
-                    "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
-                )
-            # ------------------------------------
+      # --- NEW LOGIC: CHECK ADMIN LIMIT ---
+      # An "Admin" is a staff member who is NOT a superuser.
+      current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-        return cleaned_data
+      # We allow a maximum of 3 admins.
+      if current_admin_count >= 3:
+        raise forms.ValidationError(
+          "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
+        )
+      # ------------------------------------
 
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if password:
-            if len(password) < 8: raise forms.ValidationError("Password must contain at least 8 characters.")
-            if not any(c.islower() for c in password): raise forms.ValidationError("Password must contain at least one lowercase letter.")
-            if not any(c.isupper() for c in password): raise forms.ValidationError("Password must contain at least one uppercase letter.")
-            if not any(c.isdigit() for c in password): raise forms.ValidationError("Password must contain at least one number.")
-            if not any(not c.isalnum() for c in password): raise forms.ValidationError("Password must contain at least one special character.")
-        return password
+    return cleaned_data
 
-    def clean_password2(self):
-        password = self.cleaned_data.get("password")
-        password2 = self.cleaned_data.get("password2")
-        if password and password2 and password != password2:
-            raise forms.ValidationError("Passwords do not match.")
-        return password
+  def clean_password(self):
+    password = self.cleaned_data.get("password")
+    if password:
+      if len(password) < 8: raise forms.ValidationError("Password must contain at least 8 characters.")
+      if not any(c.islower() for c in password): raise forms.ValidationError("Password must contain at least one lowercase letter.")
+      if not any(c.isupper() for c in password): raise forms.ValidationError("Password must contain at least one uppercase letter.")
+      if not any(c.isdigit() for c in password): raise forms.ValidationError("Password must contain at least one number.")
+      if not any(not c.isalnum() for c in password): raise forms.ValidationError("Password must contain at least one special character.")
+    return password
 
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username already exists.")
-        return username
+  def clean_password2(self):
+    password = self.cleaned_data.get("password")
+    password2 = self.cleaned_data.get("password2")
+    if password and password2 and password != password2:
+      raise forms.ValidationError("Passwords do not match.")
+    return password
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already exists.")
-        return email
+  def clean_username(self):
+    username = self.cleaned_data.get('username')
+    if User.objects.filter(username=username).exists():
+      raise forms.ValidationError("Username already exists.")
+    return username
+
+  def clean_email(self):
+    email = self.cleaned_data.get('email')
+    if User.objects.filter(email=email).exists():
+      raise forms.ValidationError("Email already exists.")
+    return email
 
 # Registration View (Modified for correct form handling and redirection)
 def register_view(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            cleaned_data = form.cleaned_data
-            is_admin = cleaned_data.get('is_admin_registration')
+  if request.method == 'POST':
+    form = RegistrationForm(request.POST)
+    if form.is_valid():
+      cleaned_data = form.cleaned_data
+      is_admin = cleaned_data.get('is_admin_registration')
 
-            # Step 1: Create the User
-            user = User.objects.create_user(
-                username=cleaned_data['username'],
-                email=cleaned_data['email'],
-                password=cleaned_data['password'],
-                first_name=cleaned_data.get('first_name', '')
-            )
+      # Step 1: Create the User
+      user = User.objects.create_user(
+        username=cleaned_data['username'],
+        email=cleaned_data['email'],
+        password=cleaned_data['password'],
+        first_name=cleaned_data.get('first_name', '')
+      )
 
-            if is_admin:
-                user.is_staff = True
-                user.save()
+      if is_admin:
+        user.is_staff = True
+        user.save()
 
-            # Step 2: Explicitly create the Profile with all the form data
-            # This is the crucial part that creates the row in the `users_profile` table.
-            Profile.objects.create(
-                user=user,
-                role='admin' if is_admin else 'user',
-                age=cleaned_data.get('age'),
-                city=cleaned_data.get('city'),
-                phone_number=cleaned_data.get('phone_number')
-            )
+      # Step 2: Explicitly create the Profile with all the form data
+      # This is the crucial part that creates the row in the `users_profile` table.
+      Profile.objects.create(
+        user=user,
+        role='admin' if is_admin else 'user',
+        age=cleaned_data.get('age'),
+        city=cleaned_data.get('city'),
+        phone_number=cleaned_data.get('phone_number')
+      )
 
-            # Step 3: Log in and redirect
-            auth_login(request, user)
-            messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
-            return redirect('users:dashboard')
-    else:
-        form = RegistrationForm()
+      # Step 3: Log in and redirect
+      auth_login(request, user)
+      messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
+      return redirect('users:dashboard')
+  else:
+    form = RegistrationForm()
 
-    return render(request, 'users/register.html', {'form': form})
+  return render(request, 'users/register.html', {'form': form})
 
-# Dashboard View (Modified to show available pets and action buttons)
+# Dashboard View
 @login_required
 def dashboard_view(request):
-    # Fetch available pets for adoption
-    available_pets = PetForAdoption.objects.filter(status='Available')
+    # Fetch user's profile to display their info at the top.
+    profile = None
+    if hasattr(request.user, 'profile'):
+        profile = request.user.profile
+
+    # Fetch all open pet reports (both Lost and Found)
+    open_reports = PetReport.objects.filter(status='Open').order_by('-date_reported')
 
     context = {
-        'available_pets': available_pets
-        # We can also fetch user profile and reports here if needed for dashboard
+        'profile': profile,
+        'open_reports': open_reports,
     }
     return render(request, 'users/dashboard.html', context)
 
@@ -2014,343 +2456,331 @@ def dashboard_view(request):
 # New View for Reporting Lost/Found Pet
 # This view will handle both 'Lost' and 'Found' report types.
 def create_pet_report_view(request, report_type):
-    # Ensure user is logged in
-    if not request.user.is_authenticated:
-        messages.error(request, "You need to be logged in to report a pet.")
-        return redirect('users:login')
+  # Ensure user is logged in
+  if not request.user.is_authenticated:
+    messages.error(request, "You need to be logged in to report a pet.")
+    return redirect('users:login')
 
-    if request.method == 'POST':
-        form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
-        if form.is_valid():
+  if request.method == 'POST':
+    form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
+    if form.is_valid():
 
-            # Get cleaned data, handling potential None for optional fields
-            pet_name = form.cleaned_data.get('name')
-            pet_age = form.cleaned_data.get('age')
-            pet_gender = form.cleaned_data.get('gender') # This might be '' if not selected
+      # Get cleaned data, handling potential None for optional fields
+      pet_name = form.cleaned_data.get('name')
+      pet_age = form.cleaned_data.get('age')
+      pet_gender = form.cleaned_data.get('gender') # This might be '' if not selected
 
 
-            if not pet_gender: 
-                pass # Let the model's default handle it if blank is submitted
+      if not pet_gender: 
+        pass # Let the model's default handle it if blank is submitted
 
-            pet_report = PetReport.objects.create(
-                report_type=report_type,
-                reporter=request.user,
-                name=pet_name, # This will be None if left blank, which is correct for optional
-                age=pet_age,   # This will be None if left blank, which is correct for optional
-                gender=pet_gender, # This is the key field to watch
-                pet_type=form.cleaned_data['pet_type'],
-                breed=form.cleaned_data.get('breed'),
-                color=form.cleaned_data['color'],
-                pet_image=form.cleaned_data['pet_image'],
-                location=form.cleaned_data['location'],
-                contact_info=form.cleaned_data['contact_info'],
-                # status defaults to 'Open'
-            )
-            messages.success(request, f"Your '{report_type}' pet report has been submitted successfully!")
-            return redirect('users:dashboard')
-        # If form is not valid, 'form' still holds the invalid data and errors.
-    else:
-        # GET request: Initialize an empty form
-        form = PetReportForm()
+      pet_report = PetReport.objects.create(
+        report_type=report_type,
+        reporter=request.user,
+        name=pet_name, # This will be None if left blank, which is correct for optional
+        age=pet_age,  # This will be None if left blank, which is correct for optional
+        gender=pet_gender, # This is the key field to watch
+        pet_type=form.cleaned_data['pet_type'],
+        breed=form.cleaned_data.get('breed'),
+        color=form.cleaned_data['color'],
+        pet_image=form.cleaned_data['pet_image'],
+        location=form.cleaned_data['location'],
+        contact_info=form.cleaned_data['contact_info'],
+        # status defaults to 'Open'
+      )
+      messages.success(request, f"Your '' pet report has been submitted successfully!")
+      return redirect('users:dashboard')
+    # If form is not valid, 'form' still holds the invalid data and errors.
+  else:
+    # GET request: Initialize an empty form
+    form = PetReportForm()
 
-    context = {
-        'form': form,
-        'report_type': report_type, # Pass to template for dynamic title/heading
-    }
-    return render(request, 'users/create_pet_report.html', context) # New template
+  context = {
+    'form': form,
+    'report_type': report_type, # Pass to template for dynamic title/heading
+  }
+  return render(request, 'users/create_pet_report.html', context) # New template
 
 # View to show a single pet report's details
 @login_required # Protect this view
 def pet_report_detail_view(request, report_id):
-    try:
-        report = PetReport.objects.get(pk=report_id)
-        # Optional: Check if the logged-in user is the reporter of this report
-        # if report.reporter != request.user:
-        #     messages.error(request, "You do not have permission to view this report.")
-        #     return redirect('users:dashboard')
-    except PetReport.DoesNotExist:
-        messages.error(request, "Report not found.")
-        return redirect('users:dashboard')
+  try:
+    report = PetReport.objects.get(pk=report_id)
+    # Optional: Check if the logged-in user is the reporter of this report
+    # if report.reporter != request.user:
+    #   messages.error(request, "You do not have permission to view this report.")
+    #   return redirect('users:dashboard')
+  except PetReport.DoesNotExist:
+    messages.error(request, "Report not found.")
+    return redirect('users:dashboard')
 
-    context = {
-        'report': report
-    }
-    return render(request, 'users/pet_report_detail.html', context)
+  context = {
+    'report': report
+  }
+  return render(request, 'users/pet_report_detail.html', context)
 
 # --- Form for Reporting Lost/Found Pet ---
 class PetReportForm(forms.Form):
-    pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
-    breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
-    color = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Brown, Black and White'}))
-    pet_image = forms.ImageField(required=True)
-    location = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Area where the pet was lost or found'}))
-    contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
-    name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
-    age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
-    gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
+  pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
+  breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
+  color = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Brown, Black and White'}))
+  pet_image = forms.ImageField(required=True)
+  location = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Area where the pet was lost or found'}))
+  contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
+  name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
+  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
+  gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
 
 # --- Placeholder views for About, Contact, etc. ---
 def about_view(request):
-    return render(request, 'users/about.html')
+  return render(request, 'users/about.html')
 
 def contact_view(request):
-    return render(request, 'users/contact.html')
-
-# Dashboard View (already modified to fetch available pets)
-@login_required
-def dashboard_view(request):
-    # Fetch available pets for adoption
-    available_pets = PetForAdoption.objects.filter(status='Available')
-
-    context = {
-        'available_pets': available_pets
-        # We can also fetch user profile and reports here if needed for dashboard
-    }
-    return render(request, 'users/dashboard.html', context)
+  return render(request, 'users/contact.html')
 
 def pets_list_view(request):
-    all_pets = PetForAdoption.objects.filter(status='Available')
-    context = {
-        'pets': all_pets
-    }
-    return render(request, 'users/pets_list.html', context)
+  all_pets = PetForAdoption.objects.filter(status='Available')
+  context = {
+    'pets': all_pets
+  }
+  return render(request, 'users/pets_list.html', context)
 
 @login_required # Protect this view
 def pet_detail_view(request, report_id):
-    # ... (implementation for pet_report_detail_view) ...
-    pass # Placeholder for now
+  # ... (implementation for pet_report_detail_view) ...
+  pass # Placeholder for now
 
 @staff_required
 def admin_adoption_processing_view(request):
-    """
-    Lists pets that are pending adoption and need admin action.
-    """
-    # Find all PetReports marked as 'Pending Adoption'
-    pets_to_process = PetReport.objects.filter(status='Pending Adoption')
+  """
+  Lists pets that are pending adoption and need admin action.
+  """
+  # Find all PetReports marked as 'Pending Adoption'
+  pets_to_process = PetReport.objects.filter(status='Pending Adoption')
 
-    context = {
-        'pets_to_process': pets_to_process,
-    }
-    return render(request, 'admin/process_adoption.html', context)
+  context = {
+    'pets_to_process': pets_to_process,
+  }
+  return render(request, 'admin/process_adoption.html', context)
 
 # Form for putting a pet up for adoption
 class PutForAdoptionForm(forms.ModelForm):
-    # We can inherit from PetForAdoption and add fields
-    class Meta:
-        model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description'] # Fields the admin will fill in
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-        }
+  # We can inherit from PetForAdoption and add fields
+  class Meta:
+    model = PetForAdoption
+    fields = ['name', 'age', 'gender', 'description'] # Fields the admin will fill in
+    widgets = {
+      'description': forms.Textarea(attrs={'rows': 4}),
+    }
 
 @staff_required
 def admin_put_for_adoption_view(request, report_id):
-    """
-    Handles the form for an admin to name a pet and put it up for adoption.
-    """
-    try:
-        report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
-    except PetReport.DoesNotExist:
-        messages.error(request, "This pet report was not found or is not pending adoption.")
-        return redirect('users:admin_adoption_processing')
+  """
+  Handles the form for an admin to name a pet and put it up for adoption.
+  """
+  try:
+    report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
+  except PetReport.DoesNotExist:
+    messages.error(request, "This pet report was not found or is not pending adoption.")
+    return redirect('users:admin_adoption_processing')
 
-    if request.method == 'POST':
-        form = PutForAdoptionForm(request.POST)
-        if form.is_valid():
-            # Create the new PetForAdoption record
-            new_adoption_pet = form.save(commit=False) # Don't save to DB yet
-            new_adoption_pet.pet_type = report.pet_type
-            new_adoption_pet.breed = report.breed
-            new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image # Directly assign the image file
-            new_adoption_pet.lister = request.user # The admin is the lister
-            new_adoption_pet.status = 'Available'
-            new_adoption_pet.save()
+  if request.method == 'POST':
+    form = PutForAdoptionForm(request.POST)
+    if form.is_valid():
+      # Create the new PetForAdoption record
+      new_adoption_pet = form.save(commit=False) # Don't save to DB yet
+      new_adoption_pet.pet_type = report.pet_type
+      new_adoption_pet.breed = report.breed
+      new_adoption_pet.color = report.color
+      new_adoption_pet.image = report.pet_image # Directly assign the image file
+      new_adoption_pet.lister = request.user # The admin is the lister
+      new_adoption_pet.status = 'Available'
+      new_adoption_pet.save()
 
-            # Close the original report
-            report.status = 'Closed'
-            report.save()
+      # Close the original report
+      report.status = 'Closed'
+      report.save()
 
-            messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
-            return redirect('users:admin_adoption_processing')
-    else:
-        # Pre-populate the form with data from the report
-        initial_data = {
-            'name': report.name or '',
-            'age': report.age or '',
-            'gender': report.gender
-        }
-        form = PutForAdoptionForm(initial=initial_data)
-
-    context = {
-        'form': form,
-        'report': report,
+      messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
+      return redirect('users:admin_adoption_processing')
+  else:
+    # Pre-populate the form with data from the report
+    initial_data = {
+      'name': report.name or '',
+      'age': report.age or '',
+      'gender': report.gender
     }
-    return render(request, 'admin/put_for_adoption_form.html', context)
+    form = PutForAdoptionForm(initial=initial_data)
+
+  context = {
+    'form': form,
+    'report': report,
+  }
+  return render(request, 'admin/put_for_adoption_form.html', context)
 
 @staff_required # Only staff (Admins and Superusers) can access this
 def admin_dashboard_view(request):
-    """
-    Displays statistics for the admin dashboard.
-    """
-    user_count = User.objects.count()
-    pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
-    lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
-    found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
+  """
+  Displays statistics for the admin dashboard.
+  """
+  user_count = User.objects.count()
+  pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
+  lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
+  found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
 
-    context = {
-        'user_count': user_count,
-        'pets_for_adoption_count': pets_for_adoption_count,
-        'lost_reports_count': lost_reports_count,
-        'found_reports_count': found_reports_count,
-    }
-    return render(request, 'admin/dashboard.html', context)
+  context = {
+    'user_count': user_count,
+    'pets_for_adoption_count': pets_for_adoption_count,
+    'lost_reports_count': lost_reports_count,
+    'found_reports_count': found_reports_count,
+  }
+  return render(request, 'admin/dashboard.html', context)
 
 
 @staff_required # Only staff can manage users
 def admin_manage_users_view(request):
-    """
-    Lists all non-superuser users for management.
-    """
-    # Exclude superusers so they cannot be managed from this interface
-    users_to_manage = User.objects.filter(is_superuser=False).select_related('profile')
+  """
+  Lists all non-superuser users for management.
+  """
+  # Exclude superusers so they cannot be managed from this interface
+  users_to_manage = User.objects.filter(is_superuser=False).select_related('profile')
 
-    context = {
-        'users': users_to_manage,
-    }
-    return render(request, 'admin/manage_users.html', context)
+  context = {
+    'users': users_to_manage,
+  }
+  return render(request, 'admin/manage_users.html', context)
 
 
 @superuser_required # ONLY a superuser can promote another user to admin
 def admin_promote_user_view(request, user_id):
-    if request.method == 'POST':
-        # --- NEW LOGIC: Check the current number of admins ---
-        # An "Admin" is a staff member who is NOT a superuser.
-        current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
-        
-        # We allow a maximum of 2 admins.
-        if current_admin_count >= 3:
-            messages.error(request, "Cannot promote user. The maximum number of 3 admins has been reached.")
-            return redirect('users:admin_manage_users')
-        # ---------------------------------------------------
+  if request.method == 'POST':
+    # --- NEW LOGIC: Check the current number of admins ---
+    # An "Admin" is a staff member who is NOT a superuser.
+    current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-        try:
-            user_to_promote = User.objects.get(pk=user_id)
+    # We allow a maximum of 2 admins.
+    if current_admin_count >= 3:
+      messages.error(request, "Cannot promote user. The maximum number of 3 admins has been reached.")
+      return redirect('users:admin_manage_users')
+    # ---------------------------------------------------
 
-            if user_to_promote.is_superuser or user_to_promote.is_staff:
-                messages.warning(request, "This user is already a superuser or admin.")
-            else:
-                # Promote the user
-                user_to_promote.is_staff = True
-                user_to_promote.save()
+    try:
+      user_to_promote = User.objects.get(pk=user_id)
 
-                user_to_promote.profile.role = 'admin'
-                user_to_promote.profile.save()
+      if user_to_promote.is_superuser or user_to_promote.is_staff:
+        messages.warning(request, "This user is already a superuser or admin.")
+      else:
+        # Promote the user
+        user_to_promote.is_staff = True
+        user_to_promote.save()
 
-                messages.success(request, f"User '{user_to_promote.username}' has been promoted to Admin.")
+        user_to_promote.profile.role = 'admin'
+        user_to_promote.profile.save()
 
-        except User.DoesNotExist:
-            messages.error(request, "User not found.")
+        messages.success(request, f"User '{user_to_promote.username}' has been promoted to Admin.")
 
-    return redirect('users:admin_manage_users')
+    except User.DoesNotExist:
+      messages.error(request, "User not found.")
+
+  return redirect('users:admin_manage_users')
 
 
 @staff_required # Any staff member can attempt to remove a user
 def admin_remove_user_view(request, user_id):
-    if request.method == 'POST':
-        try:
-            user_to_remove = User.objects.get(pk=user_id)
+  if request.method == 'POST':
+    try:
+      user_to_remove = User.objects.get(pk=user_id)
 
-            # Security check: Prevent non-superusers from removing admins.
-            if user_to_remove.is_staff and not request.user.is_superuser:
-                messages.error(request, "You do not have permission to remove an admin user.")
-                return redirect('users:admin_manage_users')
+      # Security check: Prevent non-superusers from removing admins.
+      if user_to_remove.is_staff and not request.user.is_superuser:
+        messages.error(request, "You do not have permission to remove an admin user.")
+        return redirect('users:admin_manage_users')
 
-            # Prevent anyone from removing a superuser via this view
-            if user_to_remove.is_superuser:
-                messages.error(request, "Superusers cannot be removed from this interface.")
-                return redirect('users:admin_manage_users')
-            
-            username = user_to_remove.username
-            user_to_remove.delete()
-            messages.success(request, f"User '{username}' has been removed successfully.")
+      # Prevent anyone from removing a superuser via this view
+      if user_to_remove.is_superuser:
+        messages.error(request, "Superusers cannot be removed from this interface.")
+        return redirect('users:admin_manage_users')
 
-        except User.DoesNotExist:
-            messages.error(request, "User not found.")
+      username = user_to_remove.username
+      user_to_remove.delete()
+      messages.success(request, f"User '' has been removed successfully.")
 
-    return redirect('users:admin_manage_users')
+    except User.DoesNotExist:
+      messages.error(request, "User not found.")
+
+  return redirect('users:admin_manage_users')
 
 
 @staff_required
 def admin_adoption_processing_view(request):
-    """
-    Lists pets that are pending adoption and need admin action.
-    """
-    pets_to_process = PetReport.objects.filter(status='Pending Adoption')
-    context = {'pets_to_process': pets_to_process}
-    return render(request, 'admin/process_adoption.html', context)
+  """
+  Lists pets that are pending adoption and need admin action.
+  """
+  pets_to_process = PetReport.objects.filter(status='Pending Adoption')
+  context = {'pets_to_process': pets_to_process}
+  return render(request, 'admin/process_adoption.html', context)
 
 
 # Form for putting a pet up for adoption (can be defined here or with other forms)
 class PutForAdoptionForm(forms.ModelForm):
-    class Meta:
-        model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-        }
-        labels = {
-            'name': "Pet's New Name (for adoption listing)",
-            'age': "Estimated Age",
-            'description': "Adoption Profile Description",
-        }
+  class Meta:
+    model = PetForAdoption
+    fields = ['name', 'age', 'gender', 'description']
+    widgets = {
+      'description': forms.Textarea(attrs={'rows': 4}),
+    }
+    labels = {
+      'name': "Pet's New Name (for adoption listing)",
+      'age': "Estimated Age",
+      'description': "Adoption Profile Description",
+    }
 
 
 @staff_required
 def admin_put_for_adoption_view(request, report_id):
-    """
-    Handles the form for an admin to name a pet and put it up for adoption.
-    """
-    try:
-        report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
-    except PetReport.DoesNotExist:
-        messages.error(request, "This pet report was not found or is not pending adoption.")
-        return redirect('users:admin_adoption_processing')
+  """
+  Handles the form for an admin to name a pet and put it up for adoption.
+  """
+  try:
+    report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
+  except PetReport.DoesNotExist:
+    messages.error(request, "This pet report was not found or is not pending adoption.")
+    return redirect('users:admin_adoption_processing')
 
-    if request.method == 'POST':
-        form = PutForAdoptionForm(request.POST)
-        if form.is_valid():
-            # Create the new PetForAdoption record
-            new_adoption_pet = form.save(commit=False)
-            new_adoption_pet.pet_type = report.pet_type
-            new_adoption_pet.breed = report.breed
-            new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image # Directly assign the image file
-            new_adoption_pet.lister = request.user # The admin is the lister
-            new_adoption_pet.status = 'Available'
-            new_adoption_pet.save()
+  if request.method == 'POST':
+    form = PutForAdoptionForm(request.POST)
+    if form.is_valid():
+      # Create the new PetForAdoption record
+      new_adoption_pet = form.save(commit=False)
+      new_adoption_pet.pet_type = report.pet_type
+      new_adoption_pet.breed = report.breed
+      new_adoption_pet.color = report.color
+      new_adoption_pet.image = report.pet_image # Directly assign the image file
+      new_adoption_pet.lister = request.user # The admin is the lister
+      new_adoption_pet.status = 'Available'
+      new_adoption_pet.save()
 
-            # Close the original report
-            report.status = 'Closed'
-            report.save()
+      # Close the original report
+      report.status = 'Closed'
+      report.save()
 
-            messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
-            return redirect('users:admin_adoption_processing')
-    else:
-        # Pre-populate the form with data from the report for GET request
-        initial_data = {
-            'name': report.name if report.name else f"Friendly {report.pet_type}",
-            'age': report.age or None,
-            'gender': report.gender,
-            'description': f"This lovely {report.pet_type} was found near {report.location}. We are looking for a forever home for them!"
-        }
-        form = PutForAdoptionForm(initial=initial_data)
-
-    context = {
-        'form': form,
-        'report': report,
+      messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
+      return redirect('users:admin_adoption_processing')
+  else:
+    # Pre-populate the form with data from the report for GET request
+    initial_data = {
+      'name': report.name if report.name else f"Friendly {report.pet_type}",
+      'age': report.age or None,
+      'gender': report.gender,
+      'description': f"This lovely {report.pet_type} was found near {report.location}. We are looking for a forever home for them!"
     }
-    return render(request, 'admin/put_for_adoption_form.html', context)
+    form = PutForAdoptionForm(initial=initial_data)
+
+  context = {
+    'form': form,
+    'report': report,
+  }
+  return render(request, 'admin/put_for_adoption_form.html', context)
 
 
 ================================================================================
@@ -2458,7 +2888,7 @@ class Migration(migrations.Migration):
             name='PetReport',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('report_type', models.CharField(choices=[('Lost', 'I lost my pet'), ('Found', 'I found a pet')], max_length=10)),
+                ('report_type', models.CharField(choices=[('Lost', 'Lost pet'), ('Found', 'Found pet')], max_length=10)),
                 ('pet_type', models.CharField(help_text='e.g., Dog, Cat, Bird', max_length=50)),
                 ('breed', models.CharField(blank=True, max_length=100, null=True)),
                 ('color', models.CharField(max_length=50)),
@@ -2639,7 +3069,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='petreport',
             name='report_type',
-            field=models.CharField(choices=[('Lost', 'I lost my pet'), ('Found', 'I found a pet')], max_length=20),
+            field=models.CharField(choices=[('Lost', 'Lost pet'), ('Found', 'Found pet')], max_length=20),
         ),
         migrations.AlterField(
             model_name='petreport',
@@ -3008,11 +3438,6 @@ File: .\users\templates\users\base.html
     <footer class="site-footer">
         <div class="container">
             <p>&copy; {% now "Y" %} PurPaws. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#"><img src="{% static 'images/facebook-icon.png' %}" alt="Facebook"></a>
-                <a href="#"><img src="{% static 'images/twitter-icon.png' %}" alt="Twitter"></a>
-                <a href="#"><img src="{% static 'images/instagram-icon.png' %}" alt="Instagram"></a>
-            </div>
         </div>
     </footer>
 
@@ -3131,6 +3556,7 @@ File: .\users\templates\users\dashboard.html
 <section class="dashboard-section">
     <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
 
+  {% comment %}
     {# Display User Information - Keep this for context #}
     {% if profile %}
         <div class="user-info-box">
@@ -3151,6 +3577,7 @@ File: .\users\templates\users\dashboard.html
     {% else %}
         <p></p>
     {% endif %}
+{% endcomment %}
 
     {# Action Buttons - Links updated #}
     <div class="dashboard-actions">
@@ -3165,29 +3592,33 @@ File: .\users\templates\users\dashboard.html
 
     {# Display Found Pets Available for Adoption --- This is the new part #}
     {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
-    {% if available_pets %}
-        <section class="dashboard-pets-section">
-            <h3 class="section-title">Pets Available for Adoption</h3> {# Updated heading #}
-            <div class="pet-grid">
-                {% for pet in available_pets %}
-                    <div class="pet-card">
-                        <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="pet-card-img">
-                        <div class="pet-card-info">
-                            <h3>{{ pet.name }}</h3>
-                            <p><strong>Type:</strong> {{ pet.pet_type }}</p>
-                            <p><strong>Breed:</strong> {{ pet.breed|default:"N/A" }}</p>
-                            <p><strong>Age:</strong> {{ pet.age }} years</p>
-                            <p><strong>Gender:</strong> {{ pet.gender }}</p>
-                            <p><strong>Status:</strong> {{ pet.status }}</p>
-                            <a href="{% url 'users:pet_detail' pet.id %}" class="btn btn-small">View Details</a>
-                        </div>
-                    </div>
-                {% endfor %}
+    {# Display Open Lost and Found Reports #}
+  {% if open_reports %}
+    <section class="dashboard-pets-section">
+      <h3 class="section-title">Open Lost & Found Reports</h3>
+      <div class="pet-grid">
+        {% for report in open_reports %}
+          <div class="pet-card">
+            {# Add a visual indicator for Lost vs. Found #}
+            <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
+            
+            <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
+            <div class="pet-card-info">
+              {# Use pet's name if available, otherwise the pet type #}
+              <h3>{{ report.name|default:report.pet_type }}</h3>
+              <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+              <p><strong>Location:</strong> {{ report.location }}</p>
+              <p><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
+              {# The link should go to the report detail page #}
+              <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-secondary">View Report</a>
             </div>
-        </section>
-    {% else %}
-        <p class="no-pets-message">No pets are currently available for adoption. Check back soon!</p>
-    {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">There are no open lost or found reports at this time.</p>
+  {% endif %}
 
     {# User's Reports (Optional: for dashboard) #}
     {% if reports %}
@@ -3278,45 +3709,46 @@ File: .\users\templates\users\login.html
 {% block body_class %}login-page-background{% endblock %}
 {% block content %}
 <section class="auth-section">
-    <div class="auth-box">
-        <h2 class="auth-title">Hello!</h2>
-        {% if messages %}
-  <div class="flash-messages">
-    {% for message in messages %}
-      <div class="alert {{ message.tags }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  </div>
+  <div class="auth-box">
+    {# Add the .cursive-title class to make this specific h2 tag use the Pacifico font #}
+    <h2 class="auth-title cursive-title">Hello!</h2>
+    {% if messages %}
+ <div class="flash-messages">
+  {% for message in messages %}
+   <div class="alert {{ message.tags }}">
+    {{ message }}
+   </div>
+  {% endfor %}
+ </div>
 {% endif %}
-        <p class="auth-subtitle">Login to your PurPaws account.</p>
+    <p class="auth-subtitle">Login to your PurPaws account.</p>
 
-        {# Action correctly points to the login URL #}
-        <form method="post" action="{% url 'users:login' %}"> {# Corrected namespace #}
-            {% csrf_token %}
+    {# Action correctly points to the login URL #}
+    <form method="post" action="{% url 'users:login' %}"> {# Corrected namespace #}
+      {% csrf_token %}
 
-            {% if error_message %}
-                <div class="alert alert-danger">
-                    <p>{{ error_message }}</p>
-                </div>
-            {% endif %}
-
-            <div class="form-group">
-                <label for="username">Username or Email:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Login</button>
-        </form>
-
-        <div class="auth-switch">
-            <p>New user? <a href="{% url 'users:register' %}">Register Here</a></p> {# Corrected namespace #}
+      {% if error_message %}
+        <div class="alert alert-danger">
+          <p>{{ error_message }}</p>
         </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="username">Username or Email:</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Login</button>
+    </form>
+
+    <div class="auth-switch">
+      <p>New user? <a href="{% url 'users:register' %}">Register Here</a></p> {# Corrected namespace #}
     </div>
+  </div>
 </section>
 {% endblock %}
 
