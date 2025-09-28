@@ -8,6 +8,7 @@
 <section class="dashboard-section">
     <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
 
+  {% comment %}
     {# Display User Information - Keep this for context #}
     {% if profile %}
         <div class="user-info-box">
@@ -28,6 +29,7 @@
     {% else %}
         <p></p>
     {% endif %}
+{% endcomment %}
 
     {# Action Buttons - Links updated #}
     <div class="dashboard-actions">
