@@ -167,6 +167,10 @@ h1, h2, h3 {
   display: flex;
 }
 
+.site-header nav a:hover {
+  color: rgb(236, 109, 19); /* Change link color on hover */
+}
+
 .site-header nav li {
   margin-left: 25px;
 }
@@ -179,9 +183,7 @@ h1, h2, h3 {
   transition: color 0.3s ease;
 }
 
-.site-header nav a:hover {
-  color: var(--primary-warm); /* Warm primary color on hover */
-}
+
 
 /* --- Main Content Area --- */
 main {
