@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='petreport',
             name='report_type',
-            field=models.CharField(choices=[('Lost', 'I lost my pet'), ('Found', 'I found a pet')], max_length=20),
+            field=models.CharField(choices=[('Lost', 'Lost pet'), ('Found', 'Found pet')], max_length=20),
         ),
         migrations.AlterField(
             model_name='petreport',

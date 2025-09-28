@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             name='PetReport',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('report_type', models.CharField(choices=[('Lost', 'I lost my pet'), ('Found', 'I found a pet')], max_length=10)),
+                ('report_type', models.CharField(choices=[('Lost', 'Lost pet'), ('Found', 'Found pet')], max_length=10)),
                 ('pet_type', models.CharField(help_text='e.g., Dog, Cat, Bird', max_length=50)),
                 ('breed', models.CharField(blank=True, max_length=100, null=True)),
                 ('color', models.CharField(max_length=50)),

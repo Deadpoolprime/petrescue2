@@ -14,7 +14,7 @@ class Profile(models.Model):
 
 # This table handles both LOST and FOUND pet "incidents".
 class PetReport(models.Model):
-    REPORT_TYPE_CHOICES = (('Lost', 'I lost my pet'), ('Found', 'I found a pet'))
+    REPORT_TYPE_CHOICES = (('Lost', 'Lost pet'), ('Found', 'Found pet'))
     STATUS_CHOICES = (('Open', 'Open'),('Pending Adoption', 'Pending Adoption'), ('Closed', 'Closed'))
     GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown')) # Add gender choices here
 
