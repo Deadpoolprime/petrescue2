@@ -1139,3 +1139,145 @@ tbody tr:hover {
         text-align: center;
     }
 }
+
+.about-hero-section h1,
+.about-content-section h2 {
+    font-family: 'Quicksand', sans-serif; /* Use the regular body font */
+    font-weight: 700; /* Make it bold */
+}
+
+
+.about-hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../images/about-hero.jpg');
+    background-size: cover;
+    background-position: center 30%;
+    color: white;
+    text-align: center;
+    padding: 80px 20px;
+    margin-bottom: 50px;
+}
+
+.about-hero-section h1 {
+    font-size: 3.5em;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.about-hero-section p {
+    font-size: 1.3em;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+}
+
+.about-content-section {
+    max-width: 1000px;
+}
+
+.about-mission {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 80px;
+}
+
+.about-mission .about-text {
+    flex: 1;
+}
+
+.about-mission .about-text h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: var(--primary-warm);
+}
+
+.about-mission .about-text p {
+    font-size: 1.1em;
+    line-height: 1.7;
+    color: var(--muted-foreground);
+}
+
+.about-mission .about-image {
+    flex: 1;
+    max-width: 450px;
+}
+
+.about-mission .about-image img {
+    width: 70%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
+}
+
+.how-it-works {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.step-card {
+    background: var(--card);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    border-top: 4px solid var(--primary-warm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-warm);
+}
+
+.step-card .step-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.step-card h3 {
+    /* The global h3 rule still applies, so we override it here */
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: var(--foreground);
+}
+
+.step-card p {
+    color: var(--muted-foreground);
+}
+
+.call-to-action {
+    background-color: var(--accent-purple-soft);
+    text-align: center;
+    padding: 50px 30px;
+    border-radius: var(--radius);
+}
+
+.call-to-action h2 {
+    color: var(--accent-purple);
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.call-to-action p {
+    margin-bottom: 30px;
+    font-size: 1.1em;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Responsive adjustments for About Page --- */
+@media (max-width: 768px) {
+    .about-hero-section h1 {
+        font-size: 2.5em;
+    }
+    .about-mission {
+        flex-direction: column;
+    }
+}

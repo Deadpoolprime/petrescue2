@@ -25,8 +25,7 @@ urlpatterns = [
     path('dashboard/', dashboard_view, name='dashboard'),
     path('report/pet/<str:report_type>/', create_pet_report_view, name='create_pet_report'),
     path('report/<int:report_id>/', pet_report_detail_view, name='pet_report_detail'), 
-     path('admin_dashboard/', admin_dashboard_view, name='admin_dashboard'),
-    
+    path('admin_dashboard/', admin_dashboard_view, name='admin_dashboard'),
     path('admin_dashboard/users/', admin_manage_users_view, name='admin_manage_users'),
     path('admin_dashboard/users/promote/<int:user_id>/', admin_promote_user_view, name='admin_promote_user'),
     path('admin_dashboard/users/remove/<int:user_id>/', admin_remove_user_view, name='admin_remove_user'),

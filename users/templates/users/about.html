@@ -1,0 +1,55 @@
+{# users/templates/users/about.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}About PawFinder{% endblock %}
+
+{% block content %}
+<section class="about-hero-section">
+    <div class="container">
+        <h1>Our Story</h1>
+        <p>Connecting Paws with Hearts, One Home at a Time</p>
+    </div>
+</section>
+
+<section class="about-content-section container">
+    
+    <div class="about-mission">
+        <div class="about-text">
+            <h2>Our Mission</h2>
+            <p>At PawFinder, our mission is simple: to create a world where every pet has a safe, loving, and permanent home. We believe that the bond between a pet and a person is a special one, and we are dedicated to facilitating that connection. We built this platform to bridge the gap between lost pets and their worried owners, and to give unclaimed animals a second chance at a happy life through adoption.</p>
+        </div>
+        <div class="about-image">
+            <img src="{% static 'images/about-mission.jpg' %}" alt="A happy dog being petted by its owner">
+        </div>
+    </div>
+
+    <div class="how-it-works">
+        <h2 class="section-title">How PawFinder Works</h2>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-icon">🐾</div>
+                <h3>1. Report a Pet</h3>
+                <p>If you've lost a beloved pet or found a stray, you can create a report in seconds. Provide details and photos to help increase the chances of a happy reunion.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">❤️</div>
+                <h3>2. Community Network</h3>
+                <p>Our platform acts as a digital neighborhood watch, connecting people in the same area. Users can view lost and found reports to help identify and locate pets.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">🏠</div>
+                <h3>3. A Second Chance</h3>
+                <p>Found pets that remain unclaimed after a certain period are given a new opportunity. Our dedicated admins review their cases and list them for adoption, ensuring they can find a new forever home.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="call-to-action">
+        <h2>Join Our Community Today</h2>
+        <p>Whether you're looking to adopt, have lost a pet, or just want to help, your participation makes a difference.</p>
+        <a href="{% url 'users:register' %}" class="btn btn-primary">Get Started</a>
+    </div>
+
+</section>
+{% endblock %}
