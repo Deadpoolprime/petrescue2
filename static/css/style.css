@@ -1148,13 +1148,15 @@ tbody tr:hover {
 
 
 .about-hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../images/about-hero.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.618), rgba(0, 0, 0, 0.771)), url('../images/about-hero.jpg');
     background-size: cover;
     background-position: center 30%;
     color: white;
     text-align: center;
     padding: 80px 20px;
     margin-bottom: 50px;
+    border-radius: 20px;   /* round edges */
+    overflow: hidden;
 }
 
 .about-hero-section h1 {
@@ -1164,7 +1166,7 @@ tbody tr:hover {
 }
 
 .about-hero-section p {
-    font-size: 1.3em;
+    font-size: 1.7em;
     font-family: 'Quicksand', sans-serif;
     font-weight: 500;
 }
@@ -1202,7 +1204,7 @@ tbody tr:hover {
 }
 
 .about-mission .about-image img {
-    width: 70%;
+    width: 100%;
     border-radius: var(--radius);
     box-shadow: var(--shadow-warm);
 }
