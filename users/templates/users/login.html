@@ -5,44 +5,45 @@
 {% block body_class %}login-page-background{% endblock %}
 {% block content %}
 <section class="auth-section">
-    <div class="auth-box">
-        <h2 class="auth-title">Hello!</h2>
-        {% if messages %}
-  <div class="flash-messages">
-    {% for message in messages %}
-      <div class="alert {{ message.tags }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  </div>
+  <div class="auth-box">
+    {# Add the .cursive-title class to make this specific h2 tag use the Pacifico font #}
+    <h2 class="auth-title cursive-title">Hello!</h2>
+    {% if messages %}
+ <div class="flash-messages">
+  {% for message in messages %}
+   <div class="alert {{ message.tags }}">
+    {{ message }}
+   </div>
+  {% endfor %}
+ </div>
 {% endif %}
-        <p class="auth-subtitle">Login to your PurPaws account.</p>
+    <p class="auth-subtitle">Login to your PurPaws account.</p>
 
-        {# Action correctly points to the login URL #}
-        <form method="post" action="{% url 'users:login' %}"> {# Corrected namespace #}
-            {% csrf_token %}
+    {# Action correctly points to the login URL #}
+    <form method="post" action="{% url 'users:login' %}"> {# Corrected namespace #}
+      {% csrf_token %}
 
-            {% if error_message %}
-                <div class="alert alert-danger">
-                    <p>{{ error_message }}</p>
-                </div>
-            {% endif %}
-
-            <div class="form-group">
-                <label for="username">Username or Email:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Login</button>
-        </form>
-
-        <div class="auth-switch">
-            <p>New user? <a href="{% url 'users:register' %}">Register Here</a></p> {# Corrected namespace #}
+      {% if error_message %}
+        <div class="alert alert-danger">
+          <p>{{ error_message }}</p>
         </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="username">Username or Email:</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Login</button>
+    </form>
+
+    <div class="auth-switch">
+      <p>New user? <a href="{% url 'users:register' %}">Register Here</a></p> {# Corrected namespace #}
     </div>
+  </div>
 </section>
 {% endblock %}
