@@ -334,11 +334,15 @@ main {
 }
 
 .report-type-badge.lost {
-  background-color: var(--accent-purple); /* A nice purple for 'Lost' */
+  background-color: white; /* Change background to white */
+  color: var(--foreground);   /* Change text color to dark (black-ish) */
+  border: 1px solid var(--border); /* Add a light border to help it stand out */
 }
 
 .report-type-badge.found {
-  background-color: var(--success-green); /* A nice green for 'Found' */
+  background-color: white; 
+  color: var(--foreground);   /* Change text color to dark (black-ish) */
+  border: 1px solid var(--border);/* A nice green for 'Found' */
 }
 
 .pet-card-img {
