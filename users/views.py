@@ -122,7 +122,19 @@ class RegistrationForm(forms.Form):
             if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
                 raise forms.ValidationError("Invalid admin passcode.")
 
+            # --- NEW LOGIC: CHECK ADMIN LIMIT ---
+            # An "Admin" is a staff member who is NOT a superuser.
+            current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
+            
+            # We allow a maximum of 3 admins.
+            if current_admin_count >= 3:
+                raise forms.ValidationError(
+                    "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
+                )
+            # ------------------------------------
+
         return cleaned_data
+
     def clean_password(self):
         password = self.cleaned_data.get("password")
         if password:
