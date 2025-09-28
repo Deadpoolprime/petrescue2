@@ -301,6 +301,7 @@ main {
 }
 
 .pet-card {
+  position: relative; /* Make it a positioning context for the badge */
   background-color: var(--card); /* Using card color variable */
   border-radius: var(--radius);
   box-shadow: var(--shadow-soft); /* Using soft shadow variable */
@@ -314,6 +315,29 @@ main {
 .pet-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+}
+
+.report-type-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+  z-index: 1; /* Make sure it's above the image */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.report-type-badge.lost {
+  background-color: var(--accent-purple); /* A nice purple for 'Lost' */
+}
+
+.report-type-badge.found {
+  background-color: var(--success-green); /* A nice green for 'Found' */
 }
 
 .pet-card-img {

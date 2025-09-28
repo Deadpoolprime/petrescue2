@@ -42,29 +42,33 @@
 
     {# Display Found Pets Available for Adoption --- This is the new part #}
     {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
-    {% if available_pets %}
-        <section class="dashboard-pets-section">
-            <h3 class="section-title">Pets Available for Adoption</h3> {# Updated heading #}
-            <div class="pet-grid">
-                {% for pet in available_pets %}
-                    <div class="pet-card">
-                        <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="pet-card-img">
-                        <div class="pet-card-info">
-                            <h3>{{ pet.name }}</h3>
-                            <p><strong>Type:</strong> {{ pet.pet_type }}</p>
-                            <p><strong>Breed:</strong> {{ pet.breed|default:"N/A" }}</p>
-                            <p><strong>Age:</strong> {{ pet.age }} years</p>
-                            <p><strong>Gender:</strong> {{ pet.gender }}</p>
-                            <p><strong>Status:</strong> {{ pet.status }}</p>
-                            <a href="{% url 'users:pet_detail' pet.id %}" class="btn btn-small">View Details</a>
-                        </div>
-                    </div>
-                {% endfor %}
+    {# Display Open Lost and Found Reports #}
+  {% if open_reports %}
+    <section class="dashboard-pets-section">
+      <h3 class="section-title">Open Lost & Found Reports</h3>
+      <div class="pet-grid">
+        {% for report in open_reports %}
+          <div class="pet-card">
+            {# Add a visual indicator for Lost vs. Found #}
+            <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
+            
+            <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
+            <div class="pet-card-info">
+              {# Use pet's name if available, otherwise the pet type #}
+              <h3>{{ report.name|default:report.pet_type }}</h3>
+              <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+              <p><strong>Location:</strong> {{ report.location }}</p>
+              <p><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
+              {# The link should go to the report detail page #}
+              <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-secondary">View Report</a>
             </div>
-        </section>
-    {% else %}
-        <p class="no-pets-message">No pets are currently available for adoption. Check back soon!</p>
-    {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">There are no open lost or found reports at this time.</p>
+  {% endif %}
 
     {# User's Reports (Optional: for dashboard) #}
     {% if reports %}

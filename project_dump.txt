@@ -1,54 +1,4 @@
 
-================================================================================
-File: .\dump_project.py
-================================================================================
-
-import os
-
-# Set your project root (current folder)
-project_root = "."
-
-# Output file
-output_file = "project_dump.txt"
-
-# File extensions to include when dumping all files
-include_exts = [".py", ".html", ".css", ".js", ".json", ".txt", ".md"]
-
-# 🔧 If you want only specific files, list them here by name
-# Example: only_files = ["views.py", "urls.py", "login.html"]
-only_files = []   # put filenames here
-
-with open(output_file, "w", encoding="utf-8") as outfile:
-    for root, dirs, files in os.walk(project_root):
-        if "venv" in dirs:
-            dirs.remove("venv")
-        if "__pycache__" in dirs:
-            dirs.remove("__pycache__")
-
-        for file in files:
-            # ✅ If only_files is set, include only those filenames
-            if only_files and file not in only_files:
-                continue
-
-            # Otherwise filter by extension
-            if not only_files and not any(file.endswith(ext) for ext in include_exts):
-                continue
-
-            filepath = os.path.join(root, file)
-            try:
-                with open(filepath, "r", encoding="utf-8") as infile:
-                    outfile.write(f"\n{'='*80}\n")
-                    outfile.write(f"File: {filepath}\n")
-                    outfile.write(f"{'='*80}\n\n")
-                    outfile.write(infile.read())
-                    outfile.write("\n\n")
-            except Exception as e:
-                outfile.write(f"\n[Could not read {filepath}: {e}]\n")
-
-print(f"✅ File contents saved to {output_file}")
-print("ℹ️  Cleared only_files list after writing.")
-
-
 
 ================================================================================
 File: .\manage.py
@@ -456,12 +406,6 @@ h1, h2, h3 {
   color: var(--primary-warm); /* Using brand warm color */
 }
 
-.site-title {
-  font-size: 2.5em;
-  margin-left: 10px;
-  color: var(--primary-warm); /* Inherit or set specific color */
-}
-
 .section-title {
   text-align: center;
   margin-bottom: 30px;
@@ -490,20 +434,26 @@ h1, h2, h3 {
   align-items: center;
 }
 
+.logo-full-img {
+  height: 85px; /* You can adjust this height to fit your logo's design */
+  width: auto;  /* This keeps the aspect ratio correct */
+  display: block;
+  margin-left: -120px;   /* Ensures it behaves as a block element within the link */
+}
 .logo {
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-.logo-img {
-  height: 40px;
-  width: auto;
-}
 
 .site-header nav ul {
   list-style: none;
   display: flex;
+}
+
+.site-header nav a:hover {
+  color: rgb(236, 109, 19); /* Change link color on hover */
 }
 
 .site-header nav li {
@@ -518,9 +468,7 @@ h1, h2, h3 {
   transition: color 0.3s ease;
 }
 
-.site-header nav a:hover {
-  color: var(--primary-warm); /* Warm primary color on hover */
-}
+
 
 /* --- Main Content Area --- */
 main {
@@ -1969,7 +1917,19 @@ class RegistrationForm(forms.Form):
             if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
                 raise forms.ValidationError("Invalid admin passcode.")
 
+            # --- NEW LOGIC: CHECK ADMIN LIMIT ---
+            # An "Admin" is a staff member who is NOT a superuser.
+            current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
+            
+            # We allow a maximum of 3 admins.
+            if current_admin_count >= 3:
+                raise forms.ValidationError(
+                    "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
+                )
+            # ------------------------------------
+
         return cleaned_data
+
     def clean_password(self):
         password = self.cleaned_data.get("password")
         if password:
@@ -2936,6 +2896,7 @@ File: .\users\templates\users\about.html
     <div class="container">
         <h1>Our Story</h1>
         <p>Connecting Paws with Hearts, One Home at a Time</p>
+        <p>It’s your purpaws to give every paw a chance at love.</p>
     </div>
 </section>
 
@@ -3001,10 +2962,9 @@ File: .\users\templates\users\base.html
 <body>
     <header class="site-header">
         <div class="container">
-            <div class="logo">
-                <img src="{% static 'images/paw-logo.png' %}" alt="PurPaws Logo" class="logo-img">
-                <h1 class="site-title">PurPaws</h1>
-            </div>
+            <a href="{% url 'users:login' %}" class="logo">
+            <img src="{% static 'images/fulllogo.png' %}" alt="PurPaws Logo" class="logo-full-img">
+            </a>
             <nav>
                 <ul>
                     {# --- Conditional Navigation Links --- #}
