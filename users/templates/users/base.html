@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}PawFinder - Find Your Furry Friend!{% endblock %}</title>
+    <title>{% block title %}PurPaws - Find Your Furry Friend!{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -14,7 +14,7 @@
     <header class="site-header">
         <div class="container">
             <a href="{% url 'users:login' %}" class="logo">
-            <img src="{% static 'images/fulllogo.png' %}" alt="PawFinder Logo" class="logo-full-img">
+            <img src="{% static 'images/fulllogo.png' %}" alt="PurPaws Logo" class="logo-full-img">
             </a>
             <nav>
                 <ul>
@@ -58,7 +58,7 @@
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; {% now "Y" %} PawFinder. All rights reserved.</p>
+            <p>&copy; {% now "Y" %} PurPaws. All rights reserved.</p>
             <div class="social-links">
                 <a href="#"><img src="{% static 'images/facebook-icon.png' %}" alt="Facebook"></a>
                 <a href="#"><img src="{% static 'images/twitter-icon.png' %}" alt="Twitter"></a>

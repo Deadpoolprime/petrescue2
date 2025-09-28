@@ -184,7 +184,7 @@ def register_view(request):
 
             # Step 3: Log in and redirect
             auth_login(request, user)
-            messages.success(request, "🎉 Registration successful! Welcome to PawFinder.")
+            messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
             return redirect('users:dashboard')
     else:
         form = RegistrationForm()

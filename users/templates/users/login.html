@@ -1,7 +1,7 @@
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}Login to PawFinder{% endblock %}
+{% block title %}Login to PurPaws{% endblock %}
 {% block body_class %}login-page-background{% endblock %}
 {% block content %}
 <section class="auth-section">
@@ -16,7 +16,7 @@
     {% endfor %}
   </div>
 {% endif %}
-        <p class="auth-subtitle">Login to your PawFinder account.</p>
+        <p class="auth-subtitle">Login to your PurPaws account.</p>
 
         {# Action correctly points to the login URL #}
         <form method="post" action="{% url 'users:login' %}"> {# Corrected namespace #}

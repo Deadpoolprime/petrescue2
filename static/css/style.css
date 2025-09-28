@@ -25,7 +25,7 @@
   --input: hsl(35, 20%, 96%);
   --ring: 25 85% 55%;
 
-  /* PawFinder brand colors - using HSL values for flexibility */
+  /* PurPaws brand colors - using HSL values for flexibility */
   --primary-warm: 25 85% 55%;     /* Warm orange for primary actions */
   --primary-soft: 35 40% 88%;     /* Softer peach/orange for backgrounds */
   --success-green: 120 45% 55%;   /* Nice green for success messages */
@@ -345,7 +345,7 @@ main {
 }
 
 /* --- About Section --- */
-.about-pawfinder-section {
+.about-purpaws-section {
   background-color: var(--accent); /* Using accent for background */
   padding: 50px 0;
   text-align: center;

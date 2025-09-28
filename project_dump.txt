@@ -360,7 +360,7 @@ File: .\static\css\style.css
   --input: hsl(35, 20%, 96%);
   --ring: 25 85% 55%;
 
-  /* PawFinder brand colors - using HSL values for flexibility */
+  /* PurPaws brand colors - using HSL values for flexibility */
   --primary-warm: 25 85% 55%;     /* Warm orange for primary actions */
   --primary-soft: 35 40% 88%;     /* Softer peach/orange for backgrounds */
   --success-green: 120 45% 55%;   /* Nice green for success messages */
@@ -684,7 +684,7 @@ main {
 }
 
 /* --- About Section --- */
-.about-pawfinder-section {
+.about-purpaws-section {
   background-color: var(--accent); /* Using accent for background */
   padding: 50px 0;
   text-align: center;
@@ -2031,7 +2031,7 @@ def register_view(request):
 
             # Step 3: Log in and redirect
             auth_login(request, user)
-            messages.success(request, "🎉 Registration successful! Welcome to PawFinder.")
+            messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
             return redirect('users:dashboard')
     else:
         form = RegistrationForm()
@@ -2929,7 +2929,7 @@ File: .\users\templates\users\about.html
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}About PawFinder{% endblock %}
+{% block title %}About PurPaws{% endblock %}
 
 {% block content %}
 <section class="about-hero-section">
@@ -2944,7 +2944,7 @@ File: .\users\templates\users\about.html
     <div class="about-mission">
         <div class="about-text">
             <h2>Our Mission</h2>
-            <p>At PawFinder, our mission is simple: to create a world where every pet has a safe, loving, and permanent home. We believe that the bond between a pet and a person is a special one, and we are dedicated to facilitating that connection. We built this platform to bridge the gap between lost pets and their worried owners, and to give unclaimed animals a second chance at a happy life through adoption.</p>
+            <p>At PurPaws, our mission is simple: to create a world where every pet has a safe, loving, and permanent home. We believe that the bond between a pet and a person is a special one, and we are dedicated to facilitating that connection. We built this platform to bridge the gap between lost pets and their worried owners, and to give unclaimed animals a second chance at a happy life through adoption.</p>
         </div>
         <div class="about-image">
             <img src="{% static 'images/about-mission.jpg' %}" alt="A happy dog being petted by its owner">
@@ -2952,7 +2952,7 @@ File: .\users\templates\users\about.html
     </div>
 
     <div class="how-it-works">
-        <h2 class="section-title">How PawFinder Works</h2>
+        <h2 class="section-title">How PurPaws Works</h2>
         <div class="steps-container">
             <div class="step-card">
                 <div class="step-icon">🐾</div>
@@ -2993,7 +2993,7 @@ File: .\users\templates\users\base.html
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}PawFinder - Find Your Furry Friend!{% endblock %}</title>
+    <title>{% block title %}PurPaws - Find Your Furry Friend!{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -3002,8 +3002,8 @@ File: .\users\templates\users\base.html
     <header class="site-header">
         <div class="container">
             <div class="logo">
-                <img src="{% static 'images/paw-logo.png' %}" alt="PawFinder Logo" class="logo-img">
-                <h1 class="site-title">PawFinder</h1>
+                <img src="{% static 'images/paw-logo.png' %}" alt="PurPaws Logo" class="logo-img">
+                <h1 class="site-title">PurPaws</h1>
             </div>
             <nav>
                 <ul>
@@ -3047,7 +3047,7 @@ File: .\users\templates\users\base.html
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; {% now "Y" %} PawFinder. All rights reserved.</p>
+            <p>&copy; {% now "Y" %} PurPaws. All rights reserved.</p>
             <div class="social-links">
                 <a href="#"><img src="{% static 'images/facebook-icon.png' %}" alt="Facebook"></a>
                 <a href="#"><img src="{% static 'images/twitter-icon.png' %}" alt="Twitter"></a>
@@ -3259,7 +3259,7 @@ File: .\users\templates\users\home.html
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}Welcome to PawFinder!{% endblock %}
+{% block title %}Welcome to PurPaws!{% endblock %}
 
 {% block content %}
 <section class="hero-section">
@@ -3297,11 +3297,11 @@ File: .\users\templates\users\home.html
     </div>
 </section>
 
-<section class="about-pawfinder-section">
-    <h2 class="section-title">About PawFinder</h2>
+<section class="about-purpaws-section">
+    <h2 class="section-title">About PurPaws</h2>
     <div class="about-content">
         <img src="{% static 'images/paw-print-icon.png' %}" alt="Paw Print Icon" class="about-icon">
-        <p>PawFinder is dedicated to making adoption easier and more accessible for everyone. We believe every pet deserves a loving home, and we're here to help you find your perfect match.</p>
+        <p>PurPaws is dedicated to making adoption easier and more accessible for everyone. We believe every pet deserves a loving home, and we're here to help you find your perfect match.</p>
     </div>
 </section>
 {% endblock %}
@@ -3314,7 +3314,7 @@ File: .\users\templates\users\login.html
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}Login to PawFinder{% endblock %}
+{% block title %}Login to PurPaws{% endblock %}
 {% block body_class %}login-page-background{% endblock %}
 {% block content %}
 <section class="auth-section">
@@ -3329,7 +3329,7 @@ File: .\users\templates\users\login.html
     {% endfor %}
   </div>
 {% endif %}
-        <p class="auth-subtitle">Login to your PawFinder account.</p>
+        <p class="auth-subtitle">Login to your PurPaws account.</p>
 
         {# Action correctly points to the login URL #}
         <form method="post" action="{% url 'users:login' %}"> {# Corrected namespace #}
@@ -3415,7 +3415,7 @@ File: .\users\templates\users\register.html
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}Register with PawFinder{% endblock %}
+{% block title %}Register with PurPaws{% endblock %}
 
 {% block content %}
 <section class="auth-section">
