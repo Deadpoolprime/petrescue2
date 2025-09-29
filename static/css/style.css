@@ -309,15 +309,14 @@ main {
 }
 
 .btn-secondary {
- background: var(--primary-soft); /* Soft primary background */
- color: var(--primary-warm); /* Warm primary text */
- border: 2px solid var(--primary-warm);
+ background: var(--gradient-warm); /* Using gradient variable */
+ color: var(--primary-foreground);
 }
 
 .btn-secondary:hover {
- background: hsl(35, 40%, 80%); /* Lighter background on hover */
- border-color: hsl(25, 85%, 50%); /* Darker border on hover */
+ background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%)); /* Darker gradient on hover */
  transform: translateY(-2px);
+ box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25);
 }
 
 .btn-secondary:active {
