@@ -579,7 +579,7 @@ main {
 /* --- Dashboard Section --- */
 .dashboard-section {
  padding: 40px 0;
- background-color: var(--background); /* Light background */
+ ; /* Light background */
 }
 
 .dashboard-section .section-title {
