@@ -118,6 +118,27 @@ body.register-page-background::before {
  z-index: 0;
 }
 
+body.home-page-background {
+    background-image: url('../images/home-hero-bg.jpg'); /* CHANGE THIS TO YOUR IMAGE NAME */
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+/* Overlay for the home page background - use a warm, low opacity overlay */
+body.home-page-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* This creates the "orangey" element you requested */
+    background-color: hsla(var(--primary-warm), 0.15); /* 15% opacity of our primary orange */
+    z-index: 0;
+}
+
 /* Ensure main content appears ABOVE the overlay for BOTH pages */
 body.login-page-background header,
 body.login-page-background main,
@@ -128,6 +149,7 @@ body.register-page-background footer {
  position: relative;
  z-index: 1;
 }
+
 
 
 /* --- You may need to add back a background for headers/footers on OTHER pages --- */
@@ -312,8 +334,8 @@ main {
 
 /* --- Pet Cards (for lists) --- */
 .featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
- margin-bottom: 50px;
- padding: 30px 0;
+  margin-bottom: 50px;
+  padding: 30px 0;
 }
 
 .pet-grid {
