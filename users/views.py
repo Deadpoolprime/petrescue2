@@ -99,7 +99,7 @@ def login_view(request):
 def logout_view(request):
     auth_logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect('users:login') # Redirect to login after logout
+    return redirect('users:home') # Redirect to login after logout
 
 # Registration Form
 class RegistrationForm(forms.Form):
