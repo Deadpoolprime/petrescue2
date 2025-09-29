@@ -1,0 +1,34 @@
+{# users/templates/users/pets_list.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Pets Available for Adoption{% endblock %}
+
+{% block content %}
+<section class="pets-adoption-section container">
+    <h2 class="section-title">Pets Ready for Adoption</h2>
+    <p class="auth-subtitle" style="text-align: center; margin-bottom: 30px;">These wonderful animals are looking for their forever homes. Click on a profile to learn more!</p>
+
+    {% if pets %}
+        <div class="pet-grid">
+            {% for pet in pets %}
+                <div class="pet-card">
+                    <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="pet-card-img">
+                    <div class="pet-card-info">
+                        <h3>{{ pet.name }}</h3>
+                        <p><strong>Type:</strong> {{ pet.pet_type }}</p>
+                        <p><strong>Age:</strong> {{ pet.age }} years</p>
+                        <p><strong>Gender:</strong> {{ pet.gender }}</p>
+                        <a href="{% url 'users:pet_detail' pet.id %}" class="btn btn-small btn-primary">View Profile</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 50px;">
+            <p>We currently do not have any pets available for adoption. Check back soon!</p>
+        </div>
+    {% endif %}
+
+</section>
+{% endblock %}

@@ -20,7 +20,7 @@
 
         <form method="post" action="">
             {% csrf_token %}
-            
+
             {# Rendering the form fields manually for better control #}
             <div class="form-group">
                 <label for="{{ form.name.id_for_label }}">Pet's New Name:</label>

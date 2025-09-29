@@ -1,0 +1,34 @@
+{# users/templates/users/pet_detail.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Adopt {{ pet.name }}{% endblock %}
+
+{% block content %}
+<section class="report-detail-section">
+    <div class="report-detail-container" style="max-width: 800px; margin: 0 auto;">
+        <h2 class="section-title">{{ pet.name }} - Ready for Adoption!</h2>
+
+        <div class="report-image-large">
+            <img src="{{ pet.image.url }}" alt="{{ pet.name }}" style="height: 400px; max-width: 100%;">
+        </div>
+
+        <div class="report-details" style="width: 100%;">
+            <p><strong>Status:</strong> <span class="role-admin">{{ pet.get_status_display }}</span></p>
+            <hr>
+            <p><strong>Type:</strong> {{ pet.pet_type }}</p>
+            <p><strong>Breed:</strong> {{ pet.breed|default:"Mixed/Unknown" }}</p>
+            <p><strong>Color:</strong> {{ pet.color }}</p>
+            <p><strong>Age:</strong> {{ pet.age }} years</p>
+            <p><strong>Gender:</strong> {{ pet.gender }}</p>
+            <hr>
+            <p><strong>About Me:</strong></p>
+            <p style="white-space: pre-wrap; font-style: italic; color: #333;">{{ pet.description }}</p>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <a href="{% url 'users:contact' %}" class="btn btn-primary">Start Adoption Application</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{# users/templates/users/contact.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<section class="report-section" style="padding-top: 20px;">
+    <div class="report-box" style="max-width: 600px;">
+        <h2 class="section-title">Get in Touch with PurPaws</h2>
+        <p class="auth-subtitle">We're here to help you reunite with a lost pet or find a new companion!</p>
+
+        <div style="text-align: left; line-height: 1.8;">
+            <h3>General Inquiries</h3>
+            <p>For questions about adoption, policies, or general feedback:</p>
+            <p><strong>Email:</strong> <a href="mailto:info@purpaws.org">info@purpaws.org</a></p>
+            
+            <h3 style="margin-top: 20px;">Lost & Found Support</h3>
+            <p>If you need immediate assistance regarding a lost or found report:</p>
+            <p><strong>Phone:</strong> (555) 555-PAWS</p>
+            
+            <h3 style="margin-top: 20px;">Mailing Address</h3>
+            <address>
+                PurPaws Foundation<br>
+                123 Adoption Way<br>
+                Animal City, PA 12345
+            </address>
+        </div>
+
+        <div style="margin-top: 30px;">
+             <a href="{% url 'users:pets_list' %}" class="btn btn-secondary">View Available Pets</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

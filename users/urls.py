@@ -1,21 +1,23 @@
 # users/urls.py
 from django.urls import path
 from .views import (
-   login_view, logout_view, register_view,
-    pets_list_view, pet_detail_view, about_view, contact_view, dashboard_view, create_pet_report_view, # Make sure this is imported
+    login_view, logout_view, register_view,
+    pets_list_view, pet_detail_view, about_view, contact_view, dashboard_view, create_pet_report_view,
     pet_report_detail_view, admin_dashboard_view,
     admin_manage_users_view,
     admin_promote_user_view,
     admin_remove_user_view,
     admin_adoption_processing_view,
-    admin_put_for_adoption_view
+    admin_put_for_adoption_view,
+    home_view # <-- ADDED
 )
 
 app_name = 'users' 
 
 urlpatterns = [
     # --- HTML Rendering URLs ---
-    path('', login_view, name='login'), 
+    path('', home_view, name='home'), # <-- NEW ROOT: Home Page
+    path('login/', login_view, name='login'), # <-- LOGIN is now explicit
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('pets/', pets_list_view, name='pets_list'),
@@ -32,4 +34,3 @@ urlpatterns = [
     path('admin_dashboard/process-adoption/', admin_adoption_processing_view, name='admin_adoption_processing'),
     path('admin_dashboard/process-adoption/<int:report_id>/', admin_put_for_adoption_view, name='admin_put_for_adoption'),
 ]
-
