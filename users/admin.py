@@ -1,17 +1,16 @@
-# users/admin.py
-
 from django.contrib import admin
 from .models import Profile, PetReport, PetForAdoption, Notification
 
 # These classes customize how the models are displayed in the admin interface.
 
 class PetReportAdmin(admin.ModelAdmin):
-    """Customizes the display for PetReport in the admin."""
-    list_display = ('id', 'report_type', 'pet_type', 'status', 'reporter', 'date_reported', 'location')
-    list_filter = ('status', 'report_type', 'pet_type')
-    search_fields = ('location', 'breed', 'reporter__username')
-    readonly_fields = ('date_reported',)
-    list_per_page = 25
+  """Customizes the display for PetReport in the admin."""
+  # UPDATED list_display
+  list_display = ('id', 'report_type', 'pet_type', 'status', 'reporter', 'date_reported', 'location', 'health_information', 'injury')
+  list_filter = ('status', 'report_type', 'pet_type')
+  search_fields = ('location', 'breed', 'reporter__username')
+  readonly_fields = ('date_reported',)
+  list_per_page = 25
 
 class PetForAdoptionAdmin(admin.ModelAdmin):
     """Customizes the display for PetForAdoption in the admin."""

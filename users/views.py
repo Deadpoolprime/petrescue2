@@ -238,54 +238,54 @@ def dashboard_view(request):
     return render(request, 'users/dashboard.html', context)
 
 
-# New View for Reporting Lost/Found Pet
-# This view will handle both 'Lost' and 'Found' report types.
 def create_pet_report_view(request, report_type):
-    # Ensure user is logged in
-    if not request.user.is_authenticated:
-        messages.error(request, "You need to be logged in to report a pet.")
-        return redirect('users:login')
+ # Ensure user is logged in
+ if not request.user.is_authenticated:
+  messages.error(request, "You need to be logged in to report a pet.")
+  return redirect('users:login')
 
-    if request.method == 'POST':
-        form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
-        if form.is_valid():
+ if report_type not in ['Lost', 'Found']:
+  messages.error(request, "Invalid report type.")
+  return redirect('users:dashboard')
 
-            # Get cleaned data, handling potential None for optional fields
-            pet_name = form.cleaned_data.get('name')
-            pet_age = form.cleaned_data.get('age')
-            pet_gender = form.cleaned_data.get('gender') # This might be '' if not selected
+ if request.method == 'POST':
+  form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
+  if form.is_valid():
+   
+   # Conditional saving for injury field (only relevant for Found reports)
+   injury_detail = form.cleaned_data.get('injury') if report_type == 'Found' else None
+   
+   pet_report = PetReport.objects.create(
+    report_type=report_type,
+    reporter=request.user,
+    name=form.cleaned_data.get('name'), # Use form.cleaned_data directly
+    age=form.cleaned_data.get('age'), 
+    gender=form.cleaned_data.get('gender'), 
+    pet_type=form.cleaned_data['pet_type'],
+    breed=form.cleaned_data.get('breed'),
+    color=form.cleaned_data['color'],
+    pet_image=form.cleaned_data['pet_image'],
+    location=form.cleaned_data['location'],
+    contact_info=form.cleaned_data['contact_info'],
+    # --- NEW FIELDS ---
+    health_information=form.cleaned_data.get('health_information'),
+    injury=injury_detail,
+    # ------------------
+    # status defaults to 'Open'
+   )
+   messages.success(request, f"Your {report_type} pet report has been submitted successfully!")
+   return redirect('users:dashboard')
+  # If form is not valid, 'form' still holds the invalid data and errors.
+ else:
+  # GET request: Initialize an empty form
+  form = PetReportForm()
 
-
-            if not pet_gender: 
-                pass # Let the model's default handle it if blank is submitted
-
-            pet_report = PetReport.objects.create(
-                report_type=report_type,
-                reporter=request.user,
-                name=pet_name, # This will be None if left blank, which is correct for optional
-                age=pet_age, # This will be None if left blank, which is correct for optional
-                gender=pet_gender, # This is the key field to watch
-                pet_type=form.cleaned_data['pet_type'],
-                breed=form.cleaned_data.get('breed'),
-                color=form.cleaned_data['color'],
-                pet_image=form.cleaned_data['pet_image'],
-                location=form.cleaned_data['location'],
-                contact_info=form.cleaned_data['contact_info'],
-                # status defaults to 'Open'
-            )
-            messages.success(request, f"Your {report_type} pet report has been submitted successfully!")
-            return redirect('users:dashboard')
-        # If form is not valid, 'form' still holds the invalid data and errors.
-    else:
-        # GET request: Initialize an empty form
-        form = PetReportForm()
-
-    context = {
-        'form': form,
-        'report_type': report_type, # Pass to template for dynamic title/heading
-    }
-    return render(request, 'users/create_pet_report.html', context) # New template
-
+ context = {
+  'form': form,
+  'report_type': report_type, # Pass to template for dynamic title/heading
+  'is_found_report': report_type == 'Found' # Pass flag for conditional display in template
+ }
+ return render(request, 'users/create_pet_report.html', context) # New template
 # View to show a single pet report's details
 @login_required # Protect this view
 def pet_report_detail_view(request, report_id):
@@ -302,15 +302,18 @@ def pet_report_detail_view(request, report_id):
 
 # --- Form for Reporting Lost/Found Pet ---
 class PetReportForm(forms.Form):
-    pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
-    breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
-    color = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Brown, Black and White'}))
-    pet_image = forms.ImageField(required=True)
-    location = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Area where the pet was lost or found'}))
-    contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
-    name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
-    age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
-    gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
+ pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
+ breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
+ color = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Brown, Black and White'}))
+ pet_image = forms.ImageField(required=True)
+ location = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Area where the pet was lost or found'}))
+ contact_info = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'placeholder': 'Your phone or email'}))
+ name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
+ age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
+ gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
+ # --- NEW FIELDS ADDED ---
+ health_information = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Known medical issues, required medications, temperament, etc."}), label="Health Information")
+ injury = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Visible injuries, limp, signs of distress (Found reports only)."}), label="Observed Injury")
 
 # --- Placeholder views for About, Contact, etc. ---
 def about_view(request):
@@ -412,21 +415,30 @@ def admin_put_for_adoption_view(request, report_id):
 
 @staff_required # Only staff (Admins and Superusers) can access this
 def admin_dashboard_view(request):
-    """
-    Displays statistics for the admin dashboard.
-    """
-    user_count = User.objects.count()
-    pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
-    lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
-    found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
+  """
+  Displays statistics for the admin dashboard.
+  (UPDATED to separate user counts)
+  """
+  # Calculate Admin count (is_staff=True AND is_superuser=False)
+  total_admins = User.objects.filter(is_staff=True, is_superuser=False).count()
+  
+  # Calculate Normal User count (is_staff=False)
+  # Superusers are excluded implicitly, but we must ensure we only count non-staff users
+  total_normal_users = User.objects.filter(is_staff=False).count()
+  
+  pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
+  lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
+  found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
 
-    context = {
-        'user_count': user_count,
-        'pets_for_adoption_count': pets_for_adoption_count,
-        'lost_reports_count': lost_reports_count,
-        'found_reports_count': found_reports_count,
-    }
-    return render(request, 'admin/dashboard.html', context)
+  context = {
+    'total_normal_users': total_normal_users,
+    'total_admins': total_admins,
+    'pets_for_adoption_count': pets_for_adoption_count,
+    'lost_reports_count': lost_reports_count,
+    'found_reports_count': found_reports_count,
+  }
+  return render(request, 'admin/dashboard.html', context)
+
 
 
 @staff_required # Only staff can manage users
