@@ -134,10 +134,11 @@ body.home-page-background::before {
     left: 0;
     right: 0;
     bottom: 0;
-    /* This creates the "orangey" element you requested */
-    background-color: hsla(var(--primary-warm), 0.15); /* 15% opacity of our primary orange */
-    z-index: 0;
+    /* FIX: Set z-index to -1 to guarantee it is behind all page elements */
+    background-color: hsla(var(--primary-warm), 0.15); 
+    z-index: -1; 
 }
+
 
 /* Ensure main content appears ABOVE the overlay for BOTH pages */
 body.login-page-background header,
@@ -229,10 +230,11 @@ h1, .cursive-title {
 
 
 
-/* --- Main Content Area --- */
 main {
  padding-top: 30px;
  flex-grow: 1; /* Allows main to take available space, pushing footer down */
+ position: relative; /* Ensure the main content establishes a high stacking context */
+ z-index: 2; /* Give main content a slightly higher z-index for safety */
 }
 
 /* --- Hero Section (for HomePage, can be adapted) --- */
