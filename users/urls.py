@@ -1,4 +1,4 @@
-# users/urls.py
+
 from django.urls import path
 from .views import (
     login_view, logout_view, register_view,
@@ -9,15 +9,15 @@ from .views import (
     admin_remove_user_view,
     admin_adoption_processing_view,
     admin_put_for_adoption_view,
-    home_view # <-- ADDED
+    home_view 
 )
 
 app_name = 'users' 
 
 urlpatterns = [
-    # --- HTML Rendering URLs ---
-    path('', home_view, name='home'), # <-- NEW ROOT: Home Page
-    path('login/', login_view, name='login'), # <-- LOGIN is now explicit
+    
+    path('', home_view, name='home'), 
+    path('login/', login_view, name='login'), 
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('pets/', pets_list_view, name='pets_list'),

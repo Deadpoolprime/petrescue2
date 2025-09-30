@@ -13,9 +13,7 @@
     <p class="auth-subtitle">Join our community to help pets find homes!</p>
 
     <form id="registrationForm" method="post" action="{% url 'users:register' %}">
-      {% csrf_token %}
-
-            <!-- ================= ERROR DISPLAY BLOCK ================= -->
+      {% csrf_token %}   
       {% if form.errors %}
         <div class="alert alert-danger">
           <p><strong>Please correct the errors below:</strong></p>
@@ -32,9 +30,7 @@
           </ul>
         </div>
       {% endif %}
-      <!-- ======================================================== -->
-
-      <!-- --- ALL FORM FIELDS GO HERE --- -->
+      
       <div class="form-group">
         {{ form.username.label_tag }}
         {{ form.username }}
@@ -75,9 +71,6 @@
         {{ form.password2.label_tag }}
         {{ form.password2 }}
       </div>
-      <!-- ----------------------------------- -->
-
-      <!-- --- Fields for Admin Registration --- -->
       <div class="form-group admin-toggle">
         <label for="{{ form.is_admin_registration.id_for_label }}">
           {{ form.is_admin_registration }}
@@ -89,8 +82,6 @@
         {{ form.admin_passcode.label_tag }}
         {{ form.admin_passcode }}
       </div>
-      <!-- ----------------------------------- -->
-
       <button type="submit" class="btn btn-primary btn-full">Register</button>
     </form>
 

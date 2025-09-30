@@ -1,4 +1,4 @@
-# users/views.py
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -14,28 +14,23 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
-# --- API ViewSets ---
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    # permission_classes = [IsAuthenticated] # Uncomment if API access should be restricted
 
 class PetReportViewSet(viewsets.ModelViewSet):
     queryset = PetReport.objects.all()
     serializer_class = PetReportSerializer
-    # permission_classes = [IsAuthenticated]
 
 class PetForAdoptionViewSet(viewsets.ModelViewSet):
     queryset = PetForAdoption.objects.all()
     serializer_class = PetForAdoptionSerializer
-    # permission_classes = [IsAuthenticated]
+
 
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    # permission_classes = [IsAuthenticated]
 
-# --- API View for Registration ---
 class RegisterView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -51,18 +46,11 @@ class RegisterView(APIView):
             return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.create_user(username=username, email=email, password=password)
-        Profile.objects.create(user=user) # Creates profile with default values
+        Profile.objects.create(user=user) 
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
-# --- HTML Rendering Views ---
-
-# Home View (Public Entry Point)
 def home_view(request):
-    """
-    Displays the main landing page with featured adoption pets.
-    """
-    # Fetch a few featured pets (e.g., 3 random pets)
     featured_pets = PetForAdoption.objects.filter(status='Available').order_by('?')[:3]
 
     context = {
@@ -71,7 +59,6 @@ def home_view(request):
     return render(request, 'users/home.html', context)
 
 
-# Login View
 def login_view(request):
     if request.method == 'POST':
         form_username = request.POST.get('username')
@@ -82,26 +69,19 @@ def login_view(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, "Welcome back! You are logged in.")
-            # Redirect to the dashboard after successful login
             return redirect('users:dashboard')
         else:
-            # Authentication failed
             messages.error(request, "Invalid username or password. Please try again.")
-            return render(request, 'users/login.html') # Re-render login page with error message
+            return render(request, 'users/login.html') 
     else:
-        # GET request: show the login form
-        # If user is already authenticated, redirect them away from the login page.
         if request.user.is_authenticated:
-            return redirect('users:dashboard') # Redirect logged-in users to dashboard
+            return redirect('users:dashboard')
         return render(request, 'users/login.html')
 
-# Logout View
 def logout_view(request):
     auth_logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect('users:home') # Redirect to login after logout
-
-# Registration Form
+    return redirect('users:home') 
 class RegistrationForm(forms.Form):
     username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
@@ -118,34 +98,27 @@ class RegistrationForm(forms.Form):
         label="Admin Passcode"
     )
 
-    # We need a custom validation method to check the passcode
     def clean(self):
         cleaned_data = super().clean()
         is_admin = cleaned_data.get('is_admin_registration')
         passcode = cleaned_data.get('admin_passcode')
 
         if is_admin:
-            # If the admin box is checked, the passcode is required
             if not passcode:
                 raise forms.ValidationError(
                     "Admin passcode is required when registering as an admin."
                 )
-
-            # Check if the passcode is correct
             from django.conf import settings
             if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
                 raise forms.ValidationError("Invalid admin passcode.")
 
-            # --- NEW LOGIC: CHECK ADMIN LIMIT ---
-            # An "Admin" is a staff member who is NOT a superuser.
             current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-            # We allow a maximum of 3 admins.
             if current_admin_count >= 3:
                 raise forms.ValidationError(
                     "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
                 )
-            # ------------------------------------
+            
 
         return cleaned_data
 
@@ -178,7 +151,6 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("Email already exists.")
         return email
 
-# Registration View (Modified for correct form handling and redirection)
 def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -186,7 +158,7 @@ def register_view(request):
             cleaned_data = form.cleaned_data
             is_admin = cleaned_data.get('is_admin_registration')
 
-            # Step 1: Create the User
+            
             user = User.objects.create_user(
                 username=cleaned_data['username'],
                 email=cleaned_data['email'],
@@ -198,8 +170,7 @@ def register_view(request):
                 user.is_staff = True
                 user.save()
 
-            # Step 2: Explicitly create the Profile with all the form data
-            # This is the crucial part that creates the row in the `users_profile` table.
+            
             Profile.objects.create(
                 user=user,
                 role='admin' if is_admin else 'user',
@@ -208,27 +179,26 @@ def register_view(request):
                 phone_number=cleaned_data.get('phone_number')
             )
 
-            # Step 3: Log in and redirect
+            
             auth_login(request, user)
             messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
             return redirect('users:dashboard')
         else:
-            form = RegistrationForm(request.POST) # Pass back POST data to retain user input
+            form = RegistrationForm(request.POST) 
 
     else:
         form = RegistrationForm()
 
     return render(request, 'users/register.html', {'form': form})
 
-# Dashboard View
+
 @login_required
 def dashboard_view(request):
-    # Fetch user's profile to display their info at the top.
+   
     profile = None
     if hasattr(request.user, 'profile'):
         profile = request.user.profile
 
-    # Fetch all open pet reports (both Lost and Found)
     open_reports = PetReport.objects.filter(status='Open').order_by('-date_reported')
 
     context = {
@@ -239,7 +209,7 @@ def dashboard_view(request):
 
 
 def create_pet_report_view(request, report_type):
- # Ensure user is logged in
+
  if not request.user.is_authenticated:
   messages.error(request, "You need to be logged in to report a pet.")
   return redirect('users:login')
@@ -249,16 +219,16 @@ def create_pet_report_view(request, report_type):
   return redirect('users:dashboard')
 
  if request.method == 'POST':
-  form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
+  form = PetReportForm(request.POST, request.FILES) 
   if form.is_valid():
    
-   # Conditional saving for injury field (only relevant for Found reports)
+   
    injury_detail = form.cleaned_data.get('injury') if report_type == 'Found' else None
    
    pet_report = PetReport.objects.create(
     report_type=report_type,
     reporter=request.user,
-    name=form.cleaned_data.get('name'), # Use form.cleaned_data directly
+    name=form.cleaned_data.get('name'), 
     age=form.cleaned_data.get('age'), 
     gender=form.cleaned_data.get('gender'), 
     pet_type=form.cleaned_data['pet_type'],
@@ -267,27 +237,26 @@ def create_pet_report_view(request, report_type):
     pet_image=form.cleaned_data['pet_image'],
     location=form.cleaned_data['location'],
     contact_info=form.cleaned_data['contact_info'],
-    # --- NEW FIELDS ---
+    
     health_information=form.cleaned_data.get('health_information'),
     injury=injury_detail,
-    # ------------------
-    # status defaults to 'Open'
+   
    )
    messages.success(request, f"Your {report_type} pet report has been submitted successfully!")
    return redirect('users:dashboard')
-  # If form is not valid, 'form' still holds the invalid data and errors.
+  
  else:
-  # GET request: Initialize an empty form
+  
   form = PetReportForm()
 
  context = {
   'form': form,
-  'report_type': report_type, # Pass to template for dynamic title/heading
-  'is_found_report': report_type == 'Found' # Pass flag for conditional display in template
+  'report_type': report_type, 
+  'is_found_report': report_type == 'Found' 
  }
- return render(request, 'users/create_pet_report.html', context) # New template
-# View to show a single pet report's details
-@login_required # Protect this view
+ return render(request, 'users/create_pet_report.html', context) 
+
+@login_required 
 def pet_report_detail_view(request, report_id):
     try:
         report = PetReport.objects.get(pk=report_id)
@@ -300,7 +269,7 @@ def pet_report_detail_view(request, report_id):
     }
     return render(request, 'users/pet_report_detail.html', context)
 
-# --- Form for Reporting Lost/Found Pet ---
+
 class PetReportForm(forms.Form):
  pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
  breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
@@ -311,18 +280,18 @@ class PetReportForm(forms.Form):
  name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
  gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
- # --- NEW FIELDS ADDED ---
+ 
  health_information = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Known medical issues, required medications, temperament, etc."}), label="Health Information")
  injury = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Visible injuries, limp, signs of distress (Found reports only)."}), label="Observed Injury")
 
-# --- Placeholder views for About, Contact, etc. ---
+
 def about_view(request):
     return render(request, 'users/about.html')
 
 def contact_view(request):
     return render(request, 'users/contact.html')
 
-# View for listing all adoptable pets
+
 def pets_list_view(request):
     all_pets = PetForAdoption.objects.filter(status='Available')
     context = {
@@ -330,8 +299,8 @@ def pets_list_view(request):
     }
     return render(request, 'users/pets_list.html', context)
 
-# View for viewing a single adoptable pet's details
-@login_required # Protect this view, requiring login to view details
+
+@login_required 
 def pet_detail_view(request, pet_id):
     """
     Displays detailed information for a pet listed for adoption (PetForAdoption model).
@@ -349,7 +318,7 @@ def admin_adoption_processing_view(request):
     """
     Lists pets that are pending adoption and need admin action.
     """
-    # Find all PetReports marked as 'Pending Adoption'
+    
     pets_to_process = PetReport.objects.filter(status='Pending Adoption')
 
     context = {
@@ -357,12 +326,12 @@ def admin_adoption_processing_view(request):
     }
     return render(request, 'admin/process_adoption.html', context)
 
-# Form for putting a pet up for adoption
+
 class PutForAdoptionForm(forms.ModelForm):
-    # We can inherit from PetForAdoption and add fields
+    
     class Meta:
         model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description'] # Fields the admin will fill in
+        fields = ['name', 'age', 'gender', 'description'] 
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
         }
@@ -381,24 +350,24 @@ def admin_put_for_adoption_view(request, report_id):
     if request.method == 'POST':
         form = PutForAdoptionForm(request.POST)
         if form.is_valid():
-            # Create the new PetForAdoption record
-            new_adoption_pet = form.save(commit=False) # Don't save to DB yet
+            
+            new_adoption_pet = form.save(commit=False) 
             new_adoption_pet.pet_type = report.pet_type
             new_adoption_pet.breed = report.breed
             new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image # Directly assign the image file
-            new_adoption_pet.lister = request.user # The admin is the lister
+            new_adoption_pet.image = report.pet_image 
+            new_adoption_pet.lister = request.user 
             new_adoption_pet.status = 'Available'
             new_adoption_pet.save()
 
-            # Close the original report
+            
             report.status = 'Closed'
             report.save()
 
             messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
             return redirect('users:admin_adoption_processing')
     else:
-        # Pre-populate the form with data from the report
+        
         initial_data = {
            'name': report.name if report.name else f"Friendly {report.pet_type}",
            'age': report.age or None,
@@ -413,17 +382,17 @@ def admin_put_for_adoption_view(request, report_id):
     }
     return render(request, 'admin/put_for_adoption_form.html', context)
 
-@staff_required # Only staff (Admins and Superusers) can access this
+@staff_required 
 def admin_dashboard_view(request):
   """
   Displays statistics for the admin dashboard.
   (UPDATED to separate user counts)
   """
-  # Calculate Admin count (is_staff=True AND is_superuser=False)
+  
   total_admins = User.objects.filter(is_staff=True, is_superuser=False).count()
   
-  # Calculate Normal User count (is_staff=False)
-  # Superusers are excluded implicitly, but we must ensure we only count non-staff users
+  
+  
   total_normal_users = User.objects.filter(is_staff=False).count()
   
   pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
@@ -441,12 +410,12 @@ def admin_dashboard_view(request):
 
 
 
-@staff_required # Only staff can manage users
+@staff_required 
 def admin_manage_users_view(request):
     """
     Lists all non-superuser users for management.
     """
-    # Exclude superusers so they cannot be managed from this interface
+    
     users_to_manage = User.objects.filter(is_superuser=False).select_related('profile')
 
     context = {
@@ -455,18 +424,18 @@ def admin_manage_users_view(request):
     return render(request, 'admin/manage_users.html', context)
 
 
-@superuser_required # ONLY a superuser can promote another user to admin
+@superuser_required 
 def admin_promote_user_view(request, user_id):
     if request.method == 'POST':
-        # --- NEW LOGIC: Check the current number of admins ---
-        # An "Admin" is a staff member who is NOT a superuser.
+        
+        
         current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-        # We allow a maximum of 3 admins.
+        
         if current_admin_count >= 3:
             messages.error(request, "Cannot promote user. The maximum number of 3 admins has been reached.")
             return redirect('users:admin_manage_users')
-        # ---------------------------------------------------
+        
 
         try:
             user_to_promote = User.objects.get(pk=user_id)
@@ -474,7 +443,7 @@ def admin_promote_user_view(request, user_id):
             if user_to_promote.is_superuser or user_to_promote.is_staff:
                 messages.warning(request, "This user is already a superuser or admin.")
             else:
-                # Promote the user
+                
                 user_to_promote.is_staff = True
                 user_to_promote.save()
 
@@ -489,18 +458,18 @@ def admin_promote_user_view(request, user_id):
     return redirect('users:admin_manage_users')
 
 
-@staff_required # Any staff member can attempt to remove a user
+@staff_required 
 def admin_remove_user_view(request, user_id):
     if request.method == 'POST':
         try:
             user_to_remove = User.objects.get(pk=user_id)
 
-            # Security check: Prevent non-superusers from removing admins.
+            
             if user_to_remove.is_staff and not request.user.is_superuser:
                 messages.error(request, "You do not have permission to remove an admin user.")
                 return redirect('users:admin_manage_users')
 
-            # Prevent anyone from removing a superuser via this view
+            
             if user_to_remove.is_superuser:
                 messages.error(request, "Superusers cannot be removed from this interface.")
                 return redirect('users:admin_manage_users')
@@ -525,7 +494,7 @@ def admin_adoption_processing_view(request):
     return render(request, 'admin/process_adoption.html', context)
 
 
-# Form for putting a pet up for adoption (can be defined here or with other forms)
+
 class PutForAdoptionForm(forms.ModelForm):
     class Meta:
         model = PetForAdoption
@@ -554,24 +523,24 @@ def admin_put_for_adoption_view(request, report_id):
     if request.method == 'POST':
         form = PutForAdoptionForm(request.POST)
         if form.is_valid():
-            # Create the new PetForAdoption record
+            
             new_adoption_pet = form.save(commit=False)
             new_adoption_pet.pet_type = report.pet_type
             new_adoption_pet.breed = report.breed
             new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image # Directly assign the image file
-            new_adoption_pet.lister = request.user # The admin is the lister
+            new_adoption_pet.image = report.pet_image 
+            new_adoption_pet.lister = request.user 
             new_adoption_pet.status = 'Available'
             new_adoption_pet.save()
 
-            # Close the original report
+            
             report.status = 'Closed'
             report.save()
 
             messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
             return redirect('users:admin_adoption_processing')
     else:
-        # Pre-populate the form with data from the report for GET request
+        
         initial_data = {
            'name': report.name if report.name else f"Friendly {report.pet_type}",
            'age': report.age or None,

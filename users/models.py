@@ -11,7 +11,6 @@ class Profile(models.Model):
   profile_picture = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics/', null=True, blank=True)
   def __str__(self): return f"{self.user.username} Profile"
 
-# This table handles both LOST and FOUND pet "incidents".
 class PetReport(models.Model):
   REPORT_TYPE_CHOICES = (('Lost', 'Lost pet'), ('Found', 'Found pet'))
   STATUS_CHOICES = (('Open', 'Open'),('Pending Adoption', 'Pending Adoption'), ('Closed', 'Closed'))
@@ -20,7 +19,6 @@ class PetReport(models.Model):
   report_type = models.CharField(max_length=20, choices=REPORT_TYPE_CHOICES)
   reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pet_reports')
 
-  # NEW FIELDS ADDED:
   name = models.CharField(max_length=100, blank=True, null=True, help_text="Pet's name (if known)") # Optional name
   age = models.PositiveIntegerField(null=True, blank=True, help_text="Pet's age in years (if known)") # Optional age
   gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown', help_text="Pet's gender") # Gender field
@@ -29,11 +27,8 @@ class PetReport(models.Model):
   breed = models.CharField(max_length=100, blank=True, null=True)
   color = models.CharField(max_length=50)
   
-  # --- NEW FIELDS FOR HEALTH/INJURY ---
   health_information = models.TextField(blank=True, null=True, help_text="Any known health issues or required medication (Lost pet report).")
   injury = models.TextField(blank=True, null=True, help_text="Describe any injuries observed on the pet (Found pet report).")
-  # ------------------------------------
-  
   pet_image = models.ImageField(upload_to='pet_images/')
   location = models.CharField(max_length=255, help_text="Area where the pet was lost or found.")
   contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
@@ -41,11 +36,9 @@ class PetReport(models.Model):
   date_reported = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
-    # FIX: Corrected f-string syntax
     pet_name = self.name if self.name else "Unnamed Pet"
     return f"{self.get_report_type_display()}: {pet_name} ({self.pet_type}) by {self.reporter.username}"
 
-# This separate table is a catalog for pets available for ADOPTION.
 class PetForAdoption(models.Model):
     GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown'))
     ADOPTION_STATUS_CHOICES = (('Available', 'Available'), ('Pending', 'Adoption Pending'), ('Adopted', 'Adopted'))
@@ -62,7 +55,7 @@ class PetForAdoption(models.Model):
     date_listed = models.DateTimeField(auto_now_add=True)
     def __str__(self): return f"{self.name} ({self.pet_type}) - {self.get_status_display()}"
 
-# This table handles notifications from the system/admins to users.
+
 class Notification(models.Model):
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     pet_report = models.ForeignKey(PetReport, on_delete=models.CASCADE, null=True, blank=True)
