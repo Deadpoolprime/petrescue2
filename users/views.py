@@ -325,15 +325,19 @@ def admin_adoption_processing_view(request):
         'pets_to_process': pets_to_process,
     }
     return render(request, 'admin/process_adoption.html', context)
-
+        
 
 class PutForAdoptionForm(forms.ModelForm):
-    
     class Meta:
         model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description'] 
+        fields = ['name', 'age', 'gender', 'description']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
+        }
+        labels = {
+            'name': "Pet's New Name (for adoption listing)",
+            'age': "Estimated Age",
+            'description': "Adoption Profile Description",
         }
 
 @staff_required
@@ -492,21 +496,6 @@ def admin_adoption_processing_view(request):
     pets_to_process = PetReport.objects.filter(status='Pending Adoption')
     context = {'pets_to_process': pets_to_process}
     return render(request, 'admin/process_adoption.html', context)
-
-
-
-class PutForAdoptionForm(forms.ModelForm):
-    class Meta:
-        model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-        }
-        labels = {
-            'name': "Pet's New Name (for adoption listing)",
-            'age': "Estimated Age",
-            'description': "Adoption Profile Description",
-        }
 
 
 @staff_required
