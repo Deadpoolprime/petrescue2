@@ -358,8 +358,23 @@ main {
 }
 
 .pet-card:hover {
- transform: translateY(-5px);
- box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+}
+
+.dashboard-pets-section .pet-card {
+    /* Base Shadow: Subtle orange glow (Opacity 15%) */
+    box-shadow: 0 5px 20px hsl(var(--primary-warm) / 0.25); 
+    
+    /* If you added the frosted background previously, you should keep it here: */
+    /* background-color: rgba(255, 255, 255, 0.85); */
+    /* backdrop-filter: blur(5px); */
+}
+
+.dashboard-pets-section .pet-card:hover {
+    /* Intense orange glow on hover (Opacity 40%) */
+    /* This overrides the less specific .pet-card:hover above */
+    box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.4); 
 }
 
 .report-type-badge {
@@ -759,7 +774,7 @@ main {
 }
 
 .pet-card-info h3 {
- font-family: 'Pacifico', cursive;
+ font-family: 'Quicksand';
  color: var(--foreground);
  margin-bottom: 10px;
  font-size: 1.6em;
@@ -1303,7 +1318,7 @@ tbody tr:hover {
 
 .step-card:hover {
  transform: translateY(-10px);
- box-shadow: var(--shadow-warm);
+ box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.35);
 }
 
 .step-card .step-icon {

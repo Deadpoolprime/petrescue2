@@ -32,6 +32,7 @@
             <li><a href="{% url 'users:logout' %}">Logout</a></li>
           {% else %}
             {# Links for logged-out users #}
+            <li><a href="{% url 'users:home' %}">Home</a></li>
             <li><a href="{% url 'users:register' %}">Register</a></li>
             <li><a href="{% url 'users:login' %}">Login</a></li>
           {% endif %}
