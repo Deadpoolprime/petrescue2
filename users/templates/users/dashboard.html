@@ -6,89 +6,99 @@
 {% block body_class %}home-page-background{% endblock %}
 {% block content %}
 <section class="dashboard-section">
-  <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
+ <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
 
  {% comment %}
-  {# Display User Information - Keep this for context #}
-  {% if profile %}
-    <div class="user-info-box">
-      <h3>Your Account Details</h3>
-      <p><strong>Username:</strong> {{ user.username }}</p>
-      <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-      <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
-      <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
-      <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
-      <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
-      {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
-      {% else %}
-        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
-      {% endif %}
-    </div>
-  {% else %}
-    <p></p>
-  {% endif %}
+ {# Display User Information - Keep this for context #}
+ {% if profile %}
+  <div class="user-info-box">
+   <h3>Your Account Details</h3>
+   <p><strong>Username:</strong> {{ user.username }}</p>
+   <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
+   <p><strong>Email:</strong> {{ user.email }}</p>
+   <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
+   <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
+   <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
+   <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
+   {% if profile.profile_picture %}
+    <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
+   {% else %}
+    <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
+   {% endif %}
+  </div>
+ {% else %}
+  <p></p>
+ {% endif %}
 {% endcomment %}
 
-  {# Action Buttons - Links updated #}
-  <div class="dashboard-actions">
-    <h2>What would you like to do?</h2>
-    <div class="action-buttons">
-      {# These buttons now correctly link to the report URLs #}
-      <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
-      <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-primary">Report a Found Pet</a>
-      <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
-    </div>
+ {# Action Buttons - Links updated #}
+ <div class="dashboard-actions">
+  <h2>What would you like to do?</h2>
+  <div class="action-buttons">
+   {# These buttons now correctly link to the report URLs #}
+   <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
+   <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-primary">Report a Found Pet</a>
+   <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
   </div>
+ </div>
 
-  {# Display Found Pets Available for Adoption --- This is the new part #}
-  {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
-  {# Display Open Lost and Found Reports #}
+ {# Display Found Pets Available for Adoption --- This is the new part #}
+ {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
+ {# Display Open Lost and Found Reports #}
  {% if open_reports %}
-  <section class="dashboard-pets-section">
-   <h3 class="section-title">Open Lost & Found Reports</h3>
-   <div class="pet-grid">
-    {% for report in open_reports %}
-     <div class="pet-card">
-      {# Add a visual indicator for Lost vs. Found #}
-      <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
+ <section class="dashboard-pets-section">
+  <h3 class="section-title">Open Lost & Found Reports</h3>
+  <div class="pet-grid">
+  {% for report in open_reports %}
+   <div class="pet-card">
+   {# Add a visual indicator for Lost vs. Found #}
+   <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
 
-      <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
-      <div class="pet-card-info">
-       {# Use pet's name if available, otherwise the pet type #}
-       <h3>{{ report.name|default:report.pet_type }}</h3>
-       <p><strong>Type:</strong> {{ report.pet_type }}</p>
-       <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
-       <p><strong>Color:</strong> {{ report.color }}</p>
-       <p><strong>Age:</strong> {{ report.age|default:"Unknown" }}</p>
-       <p><strong>Location:</strong> {{ report.location }}</p>
-       <p><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
-       {# The link should go to the report detail page #}
-       <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-secondary">View Report</a>
-      </div>
-     </div>
-    {% endfor %}
+   <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
+   <div class="pet-card-info">
+    {# Use pet's name if available, otherwise the pet type #}
+    <h3>{{ report.name|default:report.pet_type }}</h3>
+    <p><strong>Type:</strong> {{ report.pet_type }}</p>
+    <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+    <p><strong>Color:</strong> {{ report.color }}</p>
+    <p><strong>Age:</strong> {{ report.age|default:"Unknown" }}</p>
+    <p><strong>Location:</strong> {{ report.location }}</p>
+    {# WRAP BUTTONS FOR BETTER LAYOUT #}
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+      {# NEW: Map Link using the new btn-map style #}
+      <a href="https://www.google.com/maps/search/?api=1&query={{ report.location|urlencode }}" 
+         target="_blank" class="btn btn-small btn-map">View on Map</a>
+      
+      {# Existing: View Report Link #}
+      <a href="{% url 'users:pet_report_detail' report.id %}" 
+         class="btn btn-small btn-secondary">View Report</a>
+    </div>
+
+    <p style="margin-top: 10px;"><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
    </div>
-  </section>
+   </div>
+  {% endfor %}
+  </div>
+ </section>
  {% else %}
-  <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">There are no open lost or found reports at this time.</p>
+ <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">There are no open lost or found reports at this time.</p>
  {% endif %}
 
-  {# User's Reports (Optional: for dashboard) #}
-  {% if reports %}
-    <div class="user-reports-box">
-      <h3>Your Pet Reports</h3>
-      <ul>
-      {% for report in reports %}
-        <li>
-          <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
-          - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
-        </li>
-      {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
+ {# User's Reports (Optional: for dashboard) #}
+ {% if reports %}
+  <div class="user-reports-box">
+   <h3>Your Pet Reports</h3>
+   <ul>
+   {% for report in reports %}
+    <li>
+     <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
+     - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
+    </li>
+   {% endfor %}
+   </ul>
+  </div>
+ {% endif %}
 
 </section>
 {% endblock %}
+

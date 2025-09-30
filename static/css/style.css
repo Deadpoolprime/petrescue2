@@ -332,6 +332,22 @@ main {
 .btn-full {
  width: 100%;
 }
+.btn-map {
+    background-color: var(--card); /* White background */
+    color: var(--foreground); /* Black/Dark text */
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft); /* Subtle orange glow */
+}
+
+.btn-map:hover {
+    transform: translateY(-2px);
+    /* Stronger orange glow on hover */
+    box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
+}
+
+.btn-map:active {
+    transform: translateY(0);
+}
 
 /* --- Pet Cards (for lists) --- */
 .featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
