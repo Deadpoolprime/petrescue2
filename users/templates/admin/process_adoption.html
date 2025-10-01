@@ -1,43 +1,132 @@
+
 {# users/templates/admin/process_adoption.html #}
 {% extends 'users/base.html' %}
 {% load static %}
-{% block title %}Process Pending Adoptions{% endblock %}
-
+{% block title %}Manage Pet Reports{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
 {% block content %}
-<section class="manage-users-section"> {# Reusing some styles #}
-    <h2 class="section-title">Pets Pending Adoption</h2>
-    <p class="auth-subtitle">These pets were reported as "Found" more than 15 days ago and are now eligible to be listed for adoption.</p>
+<section class="manage-reports-section manage-users-section"> 
     <div class="admin-nav">
         <a href="{% url 'users:admin_dashboard' %}">&larr; Back to Admin Dashboard</a>
     </div>
+
+    {# ---------------------------------------------------------------------- #}
+    {# SECTION 1: Reports Ready for Adoption (Pending Status) #}
+    {# ---------------------------------------------------------------------- #}
+    <h3 class="section-title" style="margin-top: 40px; color: var(--success-green);">
+        Pets Ready for Listing (Pending Adoption Status)
+    </h3>
+    <p class="auth-subtitle">These reports have met the 15-day unclaimed period or were manually prioritized. Finalize their details to list them for adoption.</p>
 
     <div class="user-table-container">
         <table>
             <thead>
                 <tr>
-                    <th>Report ID</th>
+                    <th>ID</th>
                     <th>Pet Type</th>
                     <th>Reported On</th>
                     <th>Location</th>
-                    <th>Actions</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for report in pets_to_process %}
+                {% for report in pending_adoption_reports %}
                 <tr>
                     <td>{{ report.id }}</td>
                     <td>{{ report.pet_type }}</td>
                     <td>{{ report.date_reported|date:"Y-m-d" }}</td>
                     <td>{{ report.location }}</td>
                     <td>
-                        <a href="{% url 'users:admin_put_for_adoption' report.id %}" class="btn btn-small btn-primary">Process</a>
+                        <a href="{% url 'users:admin_put_for_adoption' report.id %}" class="btn btn-small btn-primary">Finalize Listing</a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5">There are no pets pending adoption at this time.</td>
+                    <td colspan="5">No pets currently in the Pending Adoption queue.</td>
                 </tr>
-                {% endfor %}
+                {% endfor %} {# <-- Closing tag for pending_adoption_reports #}
+            </tbody>
+        </table>
+    </div>
+
+    {# ---------------------------------------------------------------------- #}
+    {# SECTION 2: Open Found Reports (Manual Override Option) #}
+    {# ---------------------------------------------------------------------- #}
+    <h3 class="section-title" style="margin-top: 60px; color: var(--primary-warm);">
+        Open Found Reports (Manual Processing)
+    </h3>
+    <p class="auth-subtitle">Found reports that are still in 'Open' status. You can manually push them to the adoption listing page if the waiting period is deemed unnecessary.</p>
+
+    <div class="user-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Pet Type</th>
+                    <th>Reported On</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in open_found_reports %}
+                <tr>
+                    <td>{{ report.id }}</td>
+                    <td>{{ report.pet_type }}</td>
+                    <td>{{ report.date_reported|date:"Y-m-d" }}</td>
+                    <td>{{ report.location }}</td>
+                    <td>
+                        <a href="{% url 'users:admin_put_for_adoption' report.id %}" 
+                           class="btn btn-small btn-secondary" 
+                           onclick="return confirm('WARNING: Are you sure you want to bypass the waiting period and process this found pet for adoption now?');">
+                            Process for Adoption
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No open Found Reports awaiting action.</td>
+                </tr>
+                {% endfor %} {# <-- Closing tag for open_found_reports #}
+            </tbody>
+        </table>
+    </div>
+
+    {# ---------------------------------------------------------------------- #}
+    {# SECTION 3: Open Lost Reports (For Monitoring Only) #}
+    {# ---------------------------------------------------------------------- #}
+    <h3 class="section-title" style="margin-top: 60px; color: var(--accent-purple);">
+        Open Lost Reports (Monitoring)
+    </h3>
+    <p class="auth-subtitle">These pets are currently being sought by their owners. You can view the report details here.</p>
+
+    <div class="user-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Pet Type</th>
+                    <th>Reported By</th>
+                    <th>Location</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in open_lost_reports %}
+                <tr>
+                    <td>{{ report.id }}</td>
+                    <td>{{ report.pet_type }}</td>
+                    <td>{{ report.reporter.username }}</td>
+                    <td>{{ report.location }}</td>
+                    <td>
+                        <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-map">View Details</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No open Lost Reports.</td>
+                </tr>
+                {% endfor %} {# <-- ADDED MISSING ENDFOR HERE #}
             </tbody>
         </table>
     </div>

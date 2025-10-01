@@ -361,10 +361,10 @@ File: .\static\css\style.css
  --ring: 25 85% 55%;
 
  /* PurPaws brand colors - using HSL values for flexibility */
- --primary-warm: 25 85% 55%;  /* Warm orange for primary actions */
- --primary-soft: 35 40% 88%;  /* Softer peach/orange for backgrounds */
+ --primary-warm: 25 85% 55%; /* Warm orange for primary actions */
+ --primary-soft: 35 40% 88%; /* Softer peach/orange for backgrounds */
  --success-green: 120 45% 55%; /* Nice green for success messages */
- --earth-brown: 25 25% 35%;  /* Darker brown/earth tone */
+ --earth-brown: 25 25% 35%; /* Darker brown/earth tone */
  --accent-purple: 255 40% 55%; /* A nice purple for accents */
  --accent-purple-soft: 255 40% 88%; /* Lighter purple */
 
@@ -454,24 +454,24 @@ body.register-page-background::before {
 }
 
 body.home-page-background {
-    background-image: url('../images/home-hero-bg.jpg'); /* CHANGE THIS TO YOUR IMAGE NAME */
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;
-    position: relative;
+  background-image: url('../images/home-hero-bg.jpg'); /* CHANGE THIS TO YOUR IMAGE NAME */
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  position: relative;
 }
 
 /* Overlay for the home page background - use a warm, low opacity overlay */
 body.home-page-background::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* FIX: Set z-index to -1 to guarantee it is behind all page elements */
-    background-color: hsla(var(--primary-warm), 0.15); 
-    z-index: -1; 
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* FIX: Set z-index to -1 to guarantee it is behind all page elements */
+  background-color: hsla(var(--primary-warm), 0.15); 
+  z-index: -1; 
 }
 
 
@@ -668,26 +668,26 @@ main {
  width: 100%;
 }
 .btn-map {
-    background-color: var(--card); /* White background */
-    color: var(--foreground); /* Black/Dark text */
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-soft); /* Subtle orange glow */
+  background-color: var(--card); /* White background */
+  color: var(--foreground); /* Black/Dark text */
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft); /* Subtle orange glow */
 }
 
 .btn-map:hover {
-    transform: translateY(-2px);
-    /* Stronger orange glow on hover */
-    box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
+  transform: translateY(-2px);
+  /* Stronger orange glow on hover */
+  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
 }
 
 .btn-map:active {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 /* --- Pet Cards (for lists) --- */
 .featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
-  margin-bottom: 50px;
-  padding: 30px 0;
+ margin-bottom: 50px;
+ padding: 30px 0;
 }
 
 .pet-grid {
@@ -709,23 +709,23 @@ main {
 }
 
 .pet-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+ transform: translateY(-5px);
+ box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
 }
 
 .dashboard-pets-section .pet-card {
-    /* Base Shadow: Subtle orange glow (Opacity 15%) */
-    box-shadow: 0 5px 20px hsl(var(--primary-warm) / 0.25); 
-    
-    /* If you added the frosted background previously, you should keep it here: */
-    /* background-color: rgba(255, 255, 255, 0.85); */
-    /* backdrop-filter: blur(5px); */
+  /* Base Shadow: Subtle orange glow (Opacity 15%) */
+  box-shadow: 0 5px 20px hsl(var(--primary-warm) / 0.25); 
+
+  /* If you added the frosted background previously, you should keep it here: */
+  /* background-color: rgba(255, 255, 255, 0.85); */
+  /* backdrop-filter: blur(5px); */
 }
 
 .dashboard-pets-section .pet-card:hover {
-    /* Intense orange glow on hover (Opacity 40%) */
-    /* This overrides the less specific .pet-card:hover above */
-    box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.4); 
+  /* Intense orange glow on hover (Opacity 40%) */
+  /* This overrides the less specific .pet-card:hover above */
+  box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.4); 
 }
 
 .report-type-badge {
@@ -745,13 +745,13 @@ main {
 
 .report-type-badge.lost {
  background-color: white; /* Change background to white */
- color: var(--foreground);  /* Change text color to dark (black-ish) */
+ color: var(--foreground); /* Change text color to dark (black-ish) */
  border: 1px solid var(--border); /* Add a light border to help it stand out */
 }
 
 .report-type-badge.found {
  background-color: white; 
- color: var(--foreground);  /* Change text color to dark (black-ish) */
+ color: var(--foreground); /* Change text color to dark (black-ish) */
  border: 1px solid var(--border);/* A nice green for 'Found' */
 }
 
@@ -859,7 +859,8 @@ main {
 .form-group input[type="email"],
 .form-group input[type="password"],
 .form-group input[type="number"],
-.form-group input[type="tel"] {
+.form-group input[type="tel"],
+.form-group select { /* Added select here */
  width: 100%;
  padding: 12px 15px;
  border: 1px solid var(--border); /* Using border variable */
@@ -871,7 +872,8 @@ main {
  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
  border-color: var(--primary); /* Primary color on focus */
  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2); /* Ring effect on focus */
 }
@@ -1190,7 +1192,8 @@ main {
 .report-box input[type="password"],
 .report-box input[type="number"],
 .report-box input[type="tel"],
-.report-box input[type="file"] {
+.report-box input[type="file"],
+.report-box select {
  width: 100%;
  padding: 12px 15px;
  border: 1px solid var(--border);
@@ -1202,7 +1205,8 @@ main {
  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.report-box input:focus {
+.report-box input:focus,
+.report-box select:focus {
  border-color: var(--primary);
  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }
@@ -1492,88 +1496,134 @@ tbody tr:hover {
  background-color: #c0392b;
  border-radius: 50%;
 }
+
+/* --- Dashboard Filtering Tabs --- */
+.report-filter-tabs {
+  display: flex;
+  justify-content: center;
+  margin: 30px auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-width: 450px;
+  box-shadow: var(--shadow-soft);
+}
+
+.filter-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 15px;
+  text-decoration: none; /* Crucial: Remove underline */
+  font-weight: bold;
+  color: var(--muted-foreground); /* Use muted color for inactive link text */
+  background-color: var(--card); /* White background */
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.filter-tab:first-child {
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+}
+
+.filter-tab:last-child {
+  border-top-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+.filter-tab.active {
+  background-color: hsl(25, 85%, 55%); /* Primary Warm HSL */
+  color: white; /* Ensure text is white when active */
+  border-color: hsl(25, 85%, 55%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-tab:not(.active):hover {
+  background-color: var(--input);
+  color: var(--foreground); /* Ensure hover text color is dark/readable */
+}
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
  .site-header .container, .site-footer .container {
-  flex-direction: column;
-  text-align: center;
+ flex-direction: column;
+ text-align: center;
  }
  .site-header nav ul {
-  flex-direction: column;
-  margin-top: 15px;
+ flex-direction: column;
+ margin-top: 15px;
  }
  .site-header nav li {
-  margin: 5px 0;
+ margin: 5px 0;
  }
  .logo {
-  margin-bottom: 15px;
+ margin-bottom: 15px;
  }
  /* Hero section adjustments */
  .hero-section {
-  flex-direction: column;
-  text-align: center;
-  padding: 40px 0;
+ flex-direction: column;
+ text-align: center;
+ padding: 40px 0;
  }
  .hero-content {
-  padding-right: 0;
-  margin-bottom: 30px;
+ padding-right: 0;
+ margin-bottom: 30px;
  }
  .hero-content h2 {
-  font-size: 2.5em; /* Smaller heading on mobile */
+ font-size: 2.5em; /* Smaller heading on mobile */
  }
  .hero-content p {
-  font-size: 1.1em;
+ font-size: 1.1em;
  }
  .hero-image img {
-  height: 250px; /* Smaller image on mobile */
+ height: 250px; /* Smaller image on mobile */
  }
  .hero-actions {
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 15px;
-  align-items: center;
+ flex-direction: column; /* Stack buttons vertically */
+ gap: 15px;
+ align-items: center;
  }
  .btn {
-  width: 80%; /* Make buttons wider */
+ width: 80%; /* Make buttons wider */
  }
 
  /* Pet Cards */
  .pet-grid {
-  grid-template-columns: 1fr; /* Stack cards on smaller screens */
+ grid-template-columns: 1fr; /* Stack cards on smaller screens */
  }
 
  /* Auth and Report Boxes */
  .auth-box, .report-box {
-  max-width: 90%;
-  padding: 30px;
+ max-width: 90%;
+ padding: 30px;
  }
 
  /* Social Links */
  .social-links {
-  margin-top: 15px;
+ margin-top: 15px;
  }
 
  /* Dashboard Actions */
  .dashboard-actions h2 {
-  font-size: 1.8em;
+ font-size: 1.8em;
  }
  .action-buttons {
-  flex-direction: column;
-  align-items: center;
+ flex-direction: column;
+ align-items: center;
  }
  .action-buttons .btn {
-  width: 80%;
+ width: 80%;
  }
 
  /* Report Detail Page */
  .report-detail-container {
-  flex-direction: column;
-  align-items: center;
+ flex-direction: column;
+ align-items: center;
  }
  .report-image-large {
-  max-width: 80%;
+ max-width: 80%;
  }
  .report-details {
-  text-align: center;
+ text-align: center;
  }
 }
 
@@ -1714,11 +1764,39 @@ tbody tr:hover {
 /* --- Responsive adjustments for About Page --- */
 @media (max-width: 768px) {
  .about-hero-section h1 {
-  font-size: 2.5em;
+ font-size: 2.5em;
  }
  .about-mission {
-  flex-direction: column;
+ flex-direction: column;
  }
+}
+
+.contact-card {
+    margin: 50px auto;
+    padding: 30px;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    max-width: 700px;
+    text-align: left;
+}
+
+.contact-card h3 {
+    color: var(--primary-warm);
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+}
+
+.contact-card p {
+    margin-bottom: 5px;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  /* ... (existing responsive styles) ... */
 }
 
 
@@ -1971,7 +2049,6 @@ urlpatterns = [
 File: .\users\views.py
 ================================================================================
 
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -1988,259 +2065,272 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+  queryset = Profile.objects.all()
+  serializer_class = ProfileSerializer
 
 class PetReportViewSet(viewsets.ModelViewSet):
-    queryset = PetReport.objects.all()
-    serializer_class = PetReportSerializer
+  queryset = PetReport.objects.all()
+  serializer_class = PetReportSerializer
 
 class PetForAdoptionViewSet(viewsets.ModelViewSet):
-    queryset = PetForAdoption.objects.all()
-    serializer_class = PetForAdoptionSerializer
+  queryset = PetForAdoption.objects.all()
+  serializer_class = PetForAdoptionSerializer
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
+  queryset = Notification.objects.all()
+  serializer_class = NotificationSerializer
 
 class RegisterView(APIView):
-    permission_classes = [AllowAny]
-    def post(self, request):
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
+  permission_classes = [AllowAny]
+  def post(self, request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
 
-        if not username or not password or not email:
-            return Response({'error': 'Username, email, and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(username=username).exists():
-            return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(email=email).exists():
-            return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not username or not password or not email:
+      return Response({'error': 'Username, email, and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(username=username).exists():
+      return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(email=email).exists():
+      return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=username, email=email, password=password)
-        Profile.objects.create(user=user) 
-        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+    user = User.objects.create_user(username=username, email=email, password=password)
+    Profile.objects.create(user=user) 
+    return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
 def home_view(request):
-    featured_pets = PetForAdoption.objects.filter(status='Available').order_by('?')[:3]
+  featured_pets = PetForAdoption.objects.filter(status='Available').order_by('?')[:3]
 
-    context = {
-        'featured_pets': featured_pets,
-    }
-    return render(request, 'users/home.html', context)
+  context = {
+    'featured_pets': featured_pets,
+  }
+  return render(request, 'users/home.html', context)
 
 
 def login_view(request):
-    if request.method == 'POST':
-        form_username = request.POST.get('username')
-        form_password = request.POST.get('password')
+  if request.method == 'POST':
+    form_username = request.POST.get('username')
+    form_password = request.POST.get('password')
 
-        user = authenticate(request, username=form_username, password=form_password)
+    user = authenticate(request, username=form_username, password=form_password)
 
-        if user is not None:
-            auth_login(request, user)
-            messages.success(request, "Welcome back! You are logged in.")
-            return redirect('users:dashboard')
-        else:
-            messages.error(request, "Invalid username or password. Please try again.")
-            return render(request, 'users/login.html') 
+    if user is not None:
+      auth_login(request, user)
+      messages.success(request, "Welcome back! You are logged in.")
+      return redirect('users:dashboard')
     else:
-        if request.user.is_authenticated:
-            return redirect('users:dashboard')
-        return render(request, 'users/login.html')
+      messages.error(request, "Invalid username or password. Please try again.")
+      return render(request, 'users/login.html') 
+  else:
+    if request.user.is_authenticated:
+      return redirect('users:dashboard')
+    return render(request, 'users/login.html')
 
 def logout_view(request):
-    auth_logout(request)
-    messages.info(request, "You have been logged out.")
-    return redirect('users:home') 
+  auth_logout(request)
+  messages.info(request, "You have been logged out.")
+  return redirect('users:home') 
 class RegistrationForm(forms.Form):
-    username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
-    first_name = forms.CharField(label="Full Name",max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_first_name', 'class': 'form-input'}))
-    age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'id': 'id_age', 'class': 'form-input'}))
-    city = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_city', 'class': 'form-input'}))
-    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'id': 'id_phone_number', 'class': 'form-input'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password1', 'class': 'form-input'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password2', 'class': 'form-input'}), label="Confirm Password")
-    is_admin_registration = forms.BooleanField(required=False, label="Register as Admin")
-    admin_passcode = forms.CharField(
-        widget=forms.PasswordInput,
-        required=False,
-        label="Admin Passcode"
-    )
+  username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
+  email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
+  first_name = forms.CharField(label="Full Name",max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_first_name', 'class': 'form-input'}))
+  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'id': 'id_age', 'class': 'form-input'}))
+  city = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'id': 'id_city', 'class': 'form-input'}))
+  phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'id': 'id_phone_number', 'class': 'form-input'}))
+  password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password1', 'class': 'form-input'}))
+  password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password2', 'class': 'form-input'}), label="Confirm Password")
+  is_admin_registration = forms.BooleanField(required=False, label="Register as Admin")
+  admin_passcode = forms.CharField(
+    widget=forms.PasswordInput,
+    required=False,
+    label="Admin Passcode"
+  )
 
-    def clean(self):
-        cleaned_data = super().clean()
-        is_admin = cleaned_data.get('is_admin_registration')
-        passcode = cleaned_data.get('admin_passcode')
+  def clean(self):
+    cleaned_data = super().clean()
+    is_admin = cleaned_data.get('is_admin_registration')
+    passcode = cleaned_data.get('admin_passcode')
 
-        if is_admin:
-            if not passcode:
-                raise forms.ValidationError(
-                    "Admin passcode is required when registering as an admin."
-                )
-            from django.conf import settings
-            if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
-                raise forms.ValidationError("Invalid admin passcode.")
+    if is_admin:
+      if not passcode:
+        raise forms.ValidationError(
+          "Admin passcode is required when registering as an admin."
+        )
+      from django.conf import settings
+      if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
+        raise forms.ValidationError("Invalid admin passcode.")
 
-            current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
+      current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-            if current_admin_count >= 3:
-                raise forms.ValidationError(
-                    "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
-                )
-            
+      if current_admin_count >= 3:
+        raise forms.ValidationError(
+          "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
+        )
 
-        return cleaned_data
 
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if password:
-            if len(password) < 8: raise forms.ValidationError("Password must contain at least 8 characters.")
-            if not any(c.islower() for c in password): raise forms.ValidationError("Password must contain at least one lowercase letter.")
-            if not any(c.isupper() for c in password): raise forms.ValidationError("Password must contain at least one uppercase letter.")
-            if not any(c.isdigit() for c in password): raise forms.ValidationError("Password must contain at least one number.")
-            if not any(not c.isalnum() for c in password): raise forms.ValidationError("Password must contain at least one special character.")
-        return password
+    return cleaned_data
 
-    def clean_password2(self):
-        password = self.cleaned_data.get("password")
-        password2 = self.cleaned_data.get("password2")
-        if password and password2 and password != password2:
-            raise forms.ValidationError("Passwords do not match.")
-        return password
+  def clean_password(self):
+    password = self.cleaned_data.get("password")
+    if password:
+      if len(password) < 8: raise forms.ValidationError("Password must contain at least 8 characters.")
+      if not any(c.islower() for c in password): raise forms.ValidationError("Password must contain at least one lowercase letter.")
+      if not any(c.isupper() for c in password): raise forms.ValidationError("Password must contain at least one uppercase letter.")
+      if not any(c.isdigit() for c in password): raise forms.ValidationError("Password must contain at least one number.")
+      if not any(not c.isalnum() for c in password): raise forms.ValidationError("Password must contain at least one special character.")
+    return password
 
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username already exists.")
-        return username
+  def clean_password2(self):
+    password = self.cleaned_data.get("password")
+    password2 = self.cleaned_data.get("password2")
+    if password and password2 and password != password2:
+      raise forms.ValidationError("Passwords do not match.")
+    return password
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already exists.")
-        return email
+  def clean_username(self):
+    username = self.cleaned_data.get('username')
+    if User.objects.filter(username=username).exists():
+      raise forms.ValidationError("Username already exists.")
+    return username
+
+  def clean_email(self):
+    email = self.cleaned_data.get('email')
+    if User.objects.filter(email=email).exists():
+      raise forms.ValidationError("Email already exists.")
+    return email
 
 def register_view(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            cleaned_data = form.cleaned_data
-            is_admin = cleaned_data.get('is_admin_registration')
+  if request.method == 'POST':
+    form = RegistrationForm(request.POST)
+    if form.is_valid():
+      cleaned_data = form.cleaned_data
+      is_admin = cleaned_data.get('is_admin_registration')
 
-            
-            user = User.objects.create_user(
-                username=cleaned_data['username'],
-                email=cleaned_data['email'],
-                password=cleaned_data['password'],
-                first_name=cleaned_data.get('first_name', '')
-            )
 
-            if is_admin:
-                user.is_staff = True
-                user.save()
+      user = User.objects.create_user(
+        username=cleaned_data['username'],
+        email=cleaned_data['email'],
+        password=cleaned_data['password'],
+        first_name=cleaned_data.get('first_name', '')
+      )
 
-            
-            Profile.objects.create(
-                user=user,
-                role='admin' if is_admin else 'user',
-                age=cleaned_data.get('age'),
-                city=cleaned_data.get('city'),
-                phone_number=cleaned_data.get('phone_number')
-            )
+      if is_admin:
+        user.is_staff = True
+        user.save()
 
-            
-            auth_login(request, user)
-            messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
-            return redirect('users:dashboard')
-        else:
-            form = RegistrationForm(request.POST) 
 
+      Profile.objects.create(
+        user=user,
+        role='admin' if is_admin else 'user',
+        age=cleaned_data.get('age'),
+        city=cleaned_data.get('city'),
+        phone_number=cleaned_data.get('phone_number')
+      )
+
+
+      auth_login(request, user)
+      messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
+      return redirect('users:dashboard')
     else:
-        form = RegistrationForm()
+      form = RegistrationForm(request.POST) 
 
-    return render(request, 'users/register.html', {'form': form})
+  else:
+    form = RegistrationForm()
+
+  return render(request, 'users/register.html', {'form': form})
 
 
 @login_required
 def dashboard_view(request):
-   
-    profile = None
-    if hasattr(request.user, 'profile'):
-        profile = request.user.profile
 
-    open_reports = PetReport.objects.filter(status='Open').order_by('-date_reported')
+  profile = None
+  if hasattr(request.user, 'profile'):
+    profile = request.user.profile
 
-    context = {
-        'profile': profile,
-        'open_reports': open_reports,
-    }
-    return render(request, 'users/dashboard.html', context)
+  
+  
+  view_filter = request.GET.get('view')
+
+  open_reports_qs = PetReport.objects.filter(status='Open').order_by('-date_reported')
+  
+  if view_filter == 'lost':
+    open_reports_qs = open_reports_qs.filter(report_type='Lost')
+  elif view_filter == 'found':
+    open_reports_qs = open_reports_qs.filter(report_type='Found')
+  
+  open_reports = list(open_reports_qs) 
+
+  context = {
+    'profile': profile,
+    'open_reports': open_reports,
+    'current_view': view_filter or 'all', 
+  }
+  
+  return render(request, 'users/dashboard.html', context)
 
 
 def create_pet_report_view(request, report_type):
 
  if not request.user.is_authenticated:
-  messages.error(request, "You need to be logged in to report a pet.")
-  return redirect('users:login')
+    messages.error(request, "You need to be logged in to report a pet.")
+    return redirect('users:login')
 
  if report_type not in ['Lost', 'Found']:
-  messages.error(request, "Invalid report type.")
-  return redirect('users:dashboard')
+    messages.error(request, "Invalid report type.")
+    return redirect('users:dashboard')
 
  if request.method == 'POST':
-  form = PetReportForm(request.POST, request.FILES) 
-  if form.is_valid():
-   
-   
-   injury_detail = form.cleaned_data.get('injury') if report_type == 'Found' else None
-   
-   pet_report = PetReport.objects.create(
-    report_type=report_type,
-    reporter=request.user,
-    name=form.cleaned_data.get('name'), 
-    age=form.cleaned_data.get('age'), 
-    gender=form.cleaned_data.get('gender'), 
-    pet_type=form.cleaned_data['pet_type'],
-    breed=form.cleaned_data.get('breed'),
-    color=form.cleaned_data['color'],
-    pet_image=form.cleaned_data['pet_image'],
-    location=form.cleaned_data['location'],
-    contact_info=form.cleaned_data['contact_info'],
-    
-    health_information=form.cleaned_data.get('health_information'),
-    injury=injury_detail,
-   
-   )
-   messages.success(request, f"Your {report_type} pet report has been submitted successfully!")
-   return redirect('users:dashboard')
-  
+    form = PetReportForm(request.POST, request.FILES) 
+    if form.is_valid():
+
+
+        injury_detail = form.cleaned_data.get('injury') if report_type == 'Found' else None
+
+        pet_report = PetReport.objects.create(
+        report_type=report_type,
+        reporter=request.user,
+        name=form.cleaned_data.get('name'), 
+        age=form.cleaned_data.get('age'), 
+        gender=form.cleaned_data.get('gender'), 
+        pet_type=form.cleaned_data['pet_type'],
+        breed=form.cleaned_data.get('breed'),
+        color=form.cleaned_data['color'],
+        pet_image=form.cleaned_data['pet_image'],
+        location=form.cleaned_data['location'],
+        contact_info=form.cleaned_data['contact_info'],
+
+        health_information=form.cleaned_data.get('health_information'),
+        injury=injury_detail,
+
+  )
+    messages.success(request, f"Your  pet report has been submitted successfully!")
+    return redirect('users:dashboard')
+
  else:
-  
-  form = PetReportForm()
+
+    form = PetReportForm()
 
  context = {
-  'form': form,
-  'report_type': report_type, 
-  'is_found_report': report_type == 'Found' 
+ 'form': form,
+ 'report_type': report_type, 
+ 'is_found_report': report_type == 'Found' 
  }
  return render(request, 'users/create_pet_report.html', context) 
 
 @login_required 
 def pet_report_detail_view(request, report_id):
-    try:
-        report = PetReport.objects.get(pk=report_id)
-    except PetReport.DoesNotExist:
-        messages.error(request, "Report not found.")
-        return redirect('users:dashboard')
+  try:
+    report = PetReport.objects.get(pk=report_id)
+  except PetReport.DoesNotExist:
+    messages.error(request, "Report not found.")
+    return redirect('users:dashboard')
 
-    context = {
-        'report': report
-    }
-    return render(request, 'users/pet_report_detail.html', context)
+  context = {
+    'report': report
+  }
+  return render(request, 'users/pet_report_detail.html', context)
 
 
 class PetReportForm(forms.Form):
@@ -2253,269 +2343,269 @@ class PetReportForm(forms.Form):
  name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
  gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
- 
+
  health_information = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Known medical issues, required medications, temperament, etc."}), label="Health Information")
  injury = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Visible injuries, limp, signs of distress (Found reports only)."}), label="Observed Injury")
 
 
 def about_view(request):
-    return render(request, 'users/about.html')
+  return render(request, 'users/about.html')
 
 def contact_view(request):
-    return render(request, 'users/contact.html')
+  return render(request, 'users/contact.html')
 
 
 def pets_list_view(request):
-    all_pets = PetForAdoption.objects.filter(status='Available')
-    context = {
-        'pets': all_pets
-    }
-    return render(request, 'users/pets_list.html', context)
+  all_pets = PetForAdoption.objects.filter(status='Available')
+  context = {
+    'pets': all_pets
+  }
+  return render(request, 'users/pets_list.html', context)
 
 
 @login_required 
 def pet_detail_view(request, pet_id):
-    """
-    Displays detailed information for a pet listed for adoption (PetForAdoption model).
-    """
-    pet = get_object_or_404(PetForAdoption, pk=pet_id, status='Available')
-    
-    context = {
-        'pet': pet
-    }
-    return render(request, 'users/pet_detail.html', context)
+  """
+  Displays detailed information for a pet listed for adoption (PetForAdoption model).
+  """
+  pet = get_object_or_404(PetForAdoption, pk=pet_id, status='Available')
+
+  context = {
+    'pet': pet
+  }
+  return render(request, 'users/pet_detail.html', context)
 
 
 @staff_required
 def admin_adoption_processing_view(request):
-    """
-    Lists pets that are pending adoption and need admin action.
-    """
-    
-    pets_to_process = PetReport.objects.filter(status='Pending Adoption')
+  """
+  Lists pets that are pending adoption and need admin action.
+  """
 
-    context = {
-        'pets_to_process': pets_to_process,
-    }
-    return render(request, 'admin/process_adoption.html', context)
-        
+  pets_to_process = PetReport.objects.filter(status='Pending Adoption')
+
+  context = {
+    'pets_to_process': pets_to_process,
+  }
+  return render(request, 'admin/process_adoption.html', context)
+
 
 class PutForAdoptionForm(forms.ModelForm):
-    class Meta:
-        model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-        }
-        labels = {
-            'name': "Pet's New Name (for adoption listing)",
-            'age': "Estimated Age",
-            'description': "Adoption Profile Description",
-        }
+  class Meta:
+    model = PetForAdoption
+    fields = ['name', 'age', 'gender', 'description']
+    widgets = {
+      'description': forms.Textarea(attrs={'rows': 4}),
+    }
+    labels = {
+      'name': "Pet's New Name (for adoption listing)",
+      'age': "Estimated Age",
+      'description': "Adoption Profile Description",
+    }
 
 @staff_required
 def admin_put_for_adoption_view(request, report_id):
-    """
-    Handles the form for an admin to name a pet and put it up for adoption.
-    """
-    try:
-        report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
-    except PetReport.DoesNotExist:
-        messages.error(request, "This pet report was not found or is not pending adoption.")
-        return redirect('users:admin_adoption_processing')
+  """
+  Handles the form for an admin to name a pet and put it up for adoption.
+  """
+  try:
+    report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
+  except PetReport.DoesNotExist:
+    messages.error(request, "This pet report was not found or is not pending adoption.")
+    return redirect('users:admin_adoption_processing')
 
-    if request.method == 'POST':
-        form = PutForAdoptionForm(request.POST)
-        if form.is_valid():
-            
-            new_adoption_pet = form.save(commit=False) 
-            new_adoption_pet.pet_type = report.pet_type
-            new_adoption_pet.breed = report.breed
-            new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image 
-            new_adoption_pet.lister = request.user 
-            new_adoption_pet.status = 'Available'
-            new_adoption_pet.save()
+  if request.method == 'POST':
+    form = PutForAdoptionForm(request.POST)
+    if form.is_valid():
 
-            
-            report.status = 'Closed'
-            report.save()
+      new_adoption_pet = form.save(commit=False) 
+      new_adoption_pet.pet_type = report.pet_type
+      new_adoption_pet.breed = report.breed
+      new_adoption_pet.color = report.color
+      new_adoption_pet.image = report.pet_image 
+      new_adoption_pet.lister = request.user 
+      new_adoption_pet.status = 'Available'
+      new_adoption_pet.save()
 
-            messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
-            return redirect('users:admin_adoption_processing')
-    else:
-        
-        initial_data = {
-           'name': report.name if report.name else f"Friendly {report.pet_type}",
-           'age': report.age or None,
-           'gender': report.gender,
-           'description': f"This lovely {report.pet_type} was found near {report.location}. We are looking for a forever home for them!"
-        }
-        form = PutForAdoptionForm(initial=initial_data)
 
-    context = {
-        'form': form,
-        'report': report,
+      report.status = 'Closed'
+      report.save()
+
+      messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
+      return redirect('users:admin_adoption_processing')
+  else:
+
+    initial_data = {
+      'name': report.name if report.name else f"Friendly {report.pet_type}",
+      'age': report.age or None,
+      'gender': report.gender,
+      'description': f"This lovely {report.pet_type} was found near {report.location}. We are looking for a forever home for them!"
     }
-    return render(request, 'admin/put_for_adoption_form.html', context)
+    form = PutForAdoptionForm(initial=initial_data)
+
+  context = {
+    'form': form,
+    'report': report,
+  }
+  return render(request, 'admin/put_for_adoption_form.html', context)
 
 @staff_required 
 def admin_dashboard_view(request):
-  """
-  Displays statistics for the admin dashboard.
-  (UPDATED to separate user counts)
-  """
-  
-  total_admins = User.objects.filter(is_staff=True, is_superuser=False).count()
-  
-  
-  
-  total_normal_users = User.objects.filter(is_staff=False).count()
-  
-  pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
-  lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
-  found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
+ """
+ Displays statistics for the admin dashboard.
+ (UPDATED to separate user counts)
+ """
 
-  context = {
-    'total_normal_users': total_normal_users,
-    'total_admins': total_admins,
-    'pets_for_adoption_count': pets_for_adoption_count,
-    'lost_reports_count': lost_reports_count,
-    'found_reports_count': found_reports_count,
-  }
-  return render(request, 'admin/dashboard.html', context)
+ total_admins = User.objects.filter(is_staff=True, is_superuser=False).count()
+
+
+
+ total_normal_users = User.objects.filter(is_staff=False).count()
+
+ pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
+ lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
+ found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
+
+ context = {
+  'total_normal_users': total_normal_users,
+  'total_admins': total_admins,
+  'pets_for_adoption_count': pets_for_adoption_count,
+  'lost_reports_count': lost_reports_count,
+  'found_reports_count': found_reports_count,
+ }
+ return render(request, 'admin/dashboard.html', context)
 
 
 
 @staff_required 
 def admin_manage_users_view(request):
-    """
-    Lists all non-superuser users for management.
-    """
-    
-    users_to_manage = User.objects.filter(is_superuser=False).select_related('profile')
+  """
+  Lists all non-superuser users for management.
+  """
 
-    context = {
-        'users': users_to_manage,
-    }
-    return render(request, 'admin/manage_users.html', context)
+  users_to_manage = User.objects.filter(is_superuser=False).select_related('profile')
+
+  context = {
+    'users': users_to_manage,
+  }
+  return render(request, 'admin/manage_users.html', context)
 
 
 @superuser_required 
 def admin_promote_user_view(request, user_id):
-    if request.method == 'POST':
-        
-        
-        current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
+  if request.method == 'POST':
 
-        
-        if current_admin_count >= 3:
-            messages.error(request, "Cannot promote user. The maximum number of 3 admins has been reached.")
-            return redirect('users:admin_manage_users')
-        
 
-        try:
-            user_to_promote = User.objects.get(pk=user_id)
+    current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-            if user_to_promote.is_superuser or user_to_promote.is_staff:
-                messages.warning(request, "This user is already a superuser or admin.")
-            else:
-                
-                user_to_promote.is_staff = True
-                user_to_promote.save()
 
-                user_to_promote.profile.role = 'admin'
-                user_to_promote.profile.save()
+    if current_admin_count >= 3:
+      messages.error(request, "Cannot promote user. The maximum number of 3 admins has been reached.")
+      return redirect('users:admin_manage_users')
 
-                messages.success(request, f"User '{user_to_promote.username}' has been promoted to Admin.")
 
-        except User.DoesNotExist:
-            messages.error(request, "User not found.")
+    try:
+      user_to_promote = User.objects.get(pk=user_id)
 
-    return redirect('users:admin_manage_users')
+      if user_to_promote.is_superuser or user_to_promote.is_staff:
+        messages.warning(request, "This user is already a superuser or admin.")
+      else:
+
+        user_to_promote.is_staff = True
+        user_to_promote.save()
+
+        user_to_promote.profile.role = 'admin'
+        user_to_promote.profile.save()
+
+        messages.success(request, f"User '{user_to_promote.username}' has been promoted to Admin.")
+
+    except User.DoesNotExist:
+      messages.error(request, "User not found.")
+
+  return redirect('users:admin_manage_users')
 
 
 @staff_required 
 def admin_remove_user_view(request, user_id):
-    if request.method == 'POST':
-        try:
-            user_to_remove = User.objects.get(pk=user_id)
+  if request.method == 'POST':
+    try:
+      user_to_remove = User.objects.get(pk=user_id)
 
-            
-            if user_to_remove.is_staff and not request.user.is_superuser:
-                messages.error(request, "You do not have permission to remove an admin user.")
-                return redirect('users:admin_manage_users')
 
-            
-            if user_to_remove.is_superuser:
-                messages.error(request, "Superusers cannot be removed from this interface.")
-                return redirect('users:admin_manage_users')
+      if user_to_remove.is_staff and not request.user.is_superuser:
+        messages.error(request, "You do not have permission to remove an admin user.")
+        return redirect('users:admin_manage_users')
 
-            username = user_to_remove.username
-            user_to_remove.delete()
-            messages.success(request, f"User '{username}' has been removed successfully.")
 
-        except User.DoesNotExist:
-            messages.error(request, "User not found.")
+      if user_to_remove.is_superuser:
+        messages.error(request, "Superusers cannot be removed from this interface.")
+        return redirect('users:admin_manage_users')
 
-    return redirect('users:admin_manage_users')
+      username = user_to_remove.username
+      user_to_remove.delete()
+      messages.success(request, f"User '' has been removed successfully.")
+
+    except User.DoesNotExist:
+      messages.error(request, "User not found.")
+
+  return redirect('users:admin_manage_users')
 
 
 @staff_required
 def admin_adoption_processing_view(request):
-    """
-    Lists pets that are pending adoption and need admin action.
-    """
-    pets_to_process = PetReport.objects.filter(status='Pending Adoption')
-    context = {'pets_to_process': pets_to_process}
-    return render(request, 'admin/process_adoption.html', context)
+  """
+  Lists pets that are pending adoption and need admin action.
+  """
+  pets_to_process = PetReport.objects.filter(status='Pending Adoption')
+  context = {'pets_to_process': pets_to_process}
+  return render(request, 'admin/process_adoption.html', context)
 
 
 @staff_required
 def admin_put_for_adoption_view(request, report_id):
-    """
-    Handles the form for an admin to name a pet and put it up for adoption.
-    """
-    try:
-        report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
-    except PetReport.DoesNotExist:
-        messages.error(request, "This pet report was not found or is not pending adoption.")
-        return redirect('users:admin_adoption_processing')
+  """
+  Handles the form for an admin to name a pet and put it up for adoption.
+  """
+  try:
+    report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
+  except PetReport.DoesNotExist:
+    messages.error(request, "This pet report was not found or is not pending adoption.")
+    return redirect('users:admin_adoption_processing')
 
-    if request.method == 'POST':
-        form = PutForAdoptionForm(request.POST)
-        if form.is_valid():
-            
-            new_adoption_pet = form.save(commit=False)
-            new_adoption_pet.pet_type = report.pet_type
-            new_adoption_pet.breed = report.breed
-            new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image 
-            new_adoption_pet.lister = request.user 
-            new_adoption_pet.status = 'Available'
-            new_adoption_pet.save()
+  if request.method == 'POST':
+    form = PutForAdoptionForm(request.POST)
+    if form.is_valid():
 
-            
-            report.status = 'Closed'
-            report.save()
+      new_adoption_pet = form.save(commit=False)
+      new_adoption_pet.pet_type = report.pet_type
+      new_adoption_pet.breed = report.breed
+      new_adoption_pet.color = report.color
+      new_adoption_pet.image = report.pet_image 
+      new_adoption_pet.lister = request.user 
+      new_adoption_pet.status = 'Available'
+      new_adoption_pet.save()
 
-            messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
-            return redirect('users:admin_adoption_processing')
-    else:
-        
-        initial_data = {
-           'name': report.name if report.name else f"Friendly {report.pet_type}",
-           'age': report.age or None,
-           'gender': report.gender,
-           'description': f"This lovely {report.pet_type} was found near {report.location}. We are looking for a forever home for them!"
-        }
-        form = PutForAdoptionForm(initial=initial_data)
 
-    context = {
-        'form': form,
-        'report': report,
+      report.status = 'Closed'
+      report.save()
+
+      messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
+      return redirect('users:admin_adoption_processing')
+  else:
+
+    initial_data = {
+      'name': report.name if report.name else f"Friendly {report.pet_type}",
+      'age': report.age or None,
+      'gender': report.gender,
+      'description': f"This lovely {report.pet_type} was found near {report.location}. We are looking for a forever home for them!"
     }
-    return render(request, 'admin/put_for_adoption_form.html', context)
+    form = PutForAdoptionForm(initial=initial_data)
+
+  context = {
+    'form': form,
+    'report': report,
+  }
+  return render(request, 'admin/put_for_adoption_form.html', context)
 
 
 ================================================================================
@@ -3093,54 +3183,73 @@ File: .\users\templates\users\about.html
 {% block body_class %}home-page-background{% endblock %}
 {% block content %}
 <section class="about-hero-section">
-    <div class="container">
-        <h1>Our Story</h1>
-        <p>Connecting Paws with Hearts, One Home at a Time</p>
-        <p>It’s your purpaws to give every paw a chance at love.</p>
-    </div>
+  <div class="container">
+    <h1>Our Story</h1>
+    <p>Connecting Paws with Hearts, One Home at a Time</p>
+    <p>It’s your purpaws to give every paw a chance at love.</p>
+  </div>
 </section>
 
 <section class="about-content-section container">
-    
-    <div class="about-mission">
-        <div class="about-text">
-            <h2>Our Mission</h2>
-            <p>At PurPaws, our mission is simple: to create a world where every pet has a safe, loving, and permanent home. We believe that the bond between a pet and a person is a special one, and we are dedicated to facilitating that connection. We built this platform to bridge the gap between lost pets and their worried owners, and to give unclaimed animals a second chance at a happy life through adoption.</p>
-        </div>
-        <div class="about-image">
-            <img src="{% static 'images/about-mission.jpg' %}" alt="A happy dog being petted by its owner">
-        </div>
-    </div>
 
-    <div class="how-it-works">
-        <h2 class="section-title">How PurPaws Works</h2>
-        <div class="steps-container">
-            <div class="step-card">
-                <div class="step-icon">🐾</div>
-                <h3>1. Report a Pet</h3>
-                <p>If you've lost a beloved pet or found a stray, you can create a report in seconds. Provide details and photos to help increase the chances of a happy reunion.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon">❤️</div>
-                <h3>2. Community Network</h3>
-                <p>Our platform acts as a digital neighborhood watch, connecting people in the same area. Users can view lost and found reports to help identify and locate pets.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon">🏠</div>
-                <h3>3. A Second Chance</h3>
-                <p>Found pets that remain unclaimed after a certain period are given a new opportunity. Our dedicated admins review their cases and list them for adoption, ensuring they can find a new forever home.</p>
-            </div>
-        </div>
+  <div class="about-mission">
+    <div class="about-text">
+      <h2>Our Mission</h2>
+      <p>At PurPaws, our mission is simple: to create a world where every pet has a safe, loving, and permanent home. We believe that the bond between a pet and a person is a special one, and we are dedicated to facilitating that connection. We built this platform to bridge the gap between lost pets and their worried owners, and to give unclaimed animals a second chance at a happy life through adoption.</p>
     </div>
+    <div class="about-image">
+      <img src="{% static 'images/about-mission.jpg' %}" alt="A happy dog being petted by its owner">
+    </div>
+  </div>
 
-    <div class="call-to-action">
-        <h2>Join Our Community Today</h2>
-        <p>Whether you're looking to adopt, have lost a pet, or just want to help, your participation makes a difference.</p>
-        <a href="{% url 'users:register' %}" class="btn btn-primary">Get Started</a>
+  <div class="how-it-works">
+    <h2 class="section-title">How PurPaws Works</h2>
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-icon">🐾</div>
+        <h3>1. Report a Pet</h3>
+        <p>If you've lost a beloved pet or found a stray, you can create a report in seconds. Provide details and photos to help increase the chances of a happy reunion.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">❤️</div>
+        <h3>2. Community Network</h3>
+        <p>Our platform acts as a digital neighborhood watch, connecting people in the same area. Users can view lost and found reports to help identify and locate pets.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🏠</div>
+        <h3>3. A Second Chance</h3>
+        <p>Found pets that remain unclaimed after a certain period are given a new opportunity. Our dedicated admins review their cases and list them for adoption, ensuring they can find a new forever home.</p>
+      </div>
     </div>
+  </div>
+
+  {# --- NEW: Contact Information Card --- #}
+  <div class="contact-card">
+      <h2 class="section-title" style="margin-bottom: 20px;">Contact Us</h2>
+      
+      <h3>General Inquiries</h3>
+      <p>Email: <a href="mailto:info@purpaws.org" style="color: var(--primary-warm);">info@purpaws.org</a></p>
+
+      <h3>Emergency & Lost Pet Hotline</h3>
+      <p>Phone: <strong>(800) PAW-HELP</strong> (800-729-4357)</p>
+      <p>Available 24/7 for urgent lost/found reports.</p>
+
+      <h3>Mailing Address</h3>
+      <p>PurPaws Foundation Headquarters</p>
+      <p>Banyan Tower, 4th Floor, 12 MG Road, Koramangala, Bengaluru, Karnataka 560034, India</p>
+  </div>
+  {# --- END: Contact Information Card --- #}
+
+  <div class="call-to-action">
+    <h2>Join Our Community Today</h2>
+    <p>Whether you're looking to adopt, have lost a pet, or just want to help, your participation makes a difference.</p>
+    <a href="{% url 'users:register' %}" class="btn btn-primary">Get Started</a>
+  </div>
 
 </section>
 {% endblock %}
+
+
 
 
 ================================================================================
@@ -3389,98 +3498,117 @@ File: .\users\templates\users\dashboard.html
  {% comment %}
  {# Display User Information - Keep this for context #}
  {% if profile %}
-  <div class="user-info-box">
-   <h3>Your Account Details</h3>
-   <p><strong>Username:</strong> {{ user.username }}</p>
-   <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
-   <p><strong>Email:</strong> {{ user.email }}</p>
-   <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
-   <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
-   <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
-   <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
-   {% if profile.profile_picture %}
-    <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
-   {% else %}
-    <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
-   {% endif %}
-  </div>
+ <div class="user-info-box">
+  <h3>Your Account Details</h3>
+  <p><strong>Username:</strong> {{ user.username }}</p>
+  <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
+  <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
+  <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
+  <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
+  {% if profile.profile_picture %}
+  <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
+  {% else %}
+  <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
+  {% endif %}
+ </div>
  {% else %}
-  <p></p>
+ <p></p>
  {% endif %}
 {% endcomment %}
 
  {# Action Buttons - Links updated #}
  <div class="dashboard-actions">
-  <h2>What would you like to do?</h2>
-  <div class="action-buttons">
-   {# These buttons now correctly link to the report URLs #}
-   <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
-   <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-primary">Report a Found Pet</a>
-   <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
-  </div>
+ <h2>What would you like to do?</h2>
+ <div class="action-buttons">
+  {# These buttons now correctly link to the report URLs #}
+  <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
+  <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-primary">Report a Found Pet</a>
+  <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
+ </div>
  </div>
 
- {# Display Found Pets Available for Adoption --- This is the new part #}
- {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
  {# Display Open Lost and Found Reports #}
- {% if open_reports %}
+ {% if open_reports or current_view %}
  <section class="dashboard-pets-section">
-  <h3 class="section-title">Open Lost & Found Reports</h3>
-  <div class="pet-grid">
-  {% for report in open_reports %}
-   <div class="pet-card">
-   {# Add a visual indicator for Lost vs. Found #}
-   <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
+ <h3 class="section-title">Open Reports</h3>
 
-   <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
-   <div class="pet-card-info">
-    {# Use pet's name if available, otherwise the pet type #}
-    <h3>{{ report.name|default:report.pet_type }}</h3>
-    <p><strong>Type:</strong> {{ report.pet_type }}</p>
-    <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
-    <p><strong>Color:</strong> {{ report.color }}</p>
-    <p><strong>Age:</strong> {{ report.age|default:"Unknown" }}</p>
-    <p><strong>Location:</strong> {{ report.location }}</p>
-    {# WRAP BUTTONS FOR BETTER LAYOUT #}
-    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-      {# NEW: Map Link using the new btn-map style #}
-      <a href="https://www.google.com/maps/search/?api=1&query={{ report.location|urlencode }}" 
-         target="_blank" class="btn btn-small btn-map">View on Map</a>
-      
-      {# Existing: View Report Link #}
-      <a href="{% url 'users:pet_report_detail' report.id %}" 
-         class="btn btn-small btn-secondary">View Report</a>
+    {# --- NEW FILTER TABS --- #}
+    <div class="report-filter-tabs">
+      <a href="{% url 'users:dashboard' %}" class="filter-tab {% if current_view == 'all' %}active{% endif %}">
+        All Reports
+      </a>
+      <a href="{% url 'users:dashboard' %}?view=lost" class="filter-tab {% if current_view == 'lost' %}active{% endif %}">
+        Lost Reports
+      </a>
+      <a href="{% url 'users:dashboard' %}?view=found" class="filter-tab {% if current_view == 'found' %}active{% endif %}">
+        Found Reports
+      </a>
     </div>
+    {# --- END NEW FILTER TABS --- #}
 
-    <p style="margin-top: 10px;"><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
-   </div>
-   </div>
-  {% endfor %}
+ <div class="pet-grid">
+ {% for report in open_reports %}
+  <div class="pet-card">
+  {# Add a visual indicator for Lost vs. Found #}
+  <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
+
+  <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
+  <div class="pet-card-info">
+  {# Use pet's name if available, otherwise the pet type #}
+  <h3>{{ report.name|default:report.pet_type }}</h3>
+  <p><strong>Type:</strong> {{ report.pet_type }}</p>
+  <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+  <p><strong>Color:</strong> {{ report.color }}</p>
+  <p><strong>Age:</strong> {{ report.age|default:"Unknown" }}</p>
+  <p><strong>Location:</strong> {{ report.location }}</p>
+  {# WRAP BUTTONS FOR BETTER LAYOUT #}
+  <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+   {# NEW: Map Link using the new btn-map style #}
+   <a href="https://www.google.com/maps/search/?api=1&query={{ report.location|urlencode }}" 
+     target="_blank" class="btn btn-small btn-map">View on Map</a>
+
+   {# Existing: View Report Link #}
+   <a href="{% url 'users:pet_report_detail' report.id %}" 
+     class="btn btn-small btn-secondary">View Report</a>
   </div>
- </section>
+
+  <p style="margin-top: 10px;"><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
+  </div>
+  </div>
+ {% endfor %}
+ </div>
  {% else %}
- <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">There are no open lost or found reports at this time.</p>
+ <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">
+    {% if current_view == 'lost' %}
+        There are currently no open reports for lost pets.
+    {% elif current_view == 'found' %}
+        There are currently no open reports for found pets.
+    {% else %}
+        There are no open lost or found reports at this time.
+    {% endif %}
+</p>
  {% endif %}
+ </section>
 
  {# User's Reports (Optional: for dashboard) #}
  {% if reports %}
-  <div class="user-reports-box">
-   <h3>Your Pet Reports</h3>
-   <ul>
-   {% for report in reports %}
-    <li>
-     <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
-     - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
-    </li>
-   {% endfor %}
-   </ul>
-  </div>
+ <div class="user-reports-box">
+  <h3>Your Pet Reports</h3>
+  <ul>
+  {% for report in reports %}
+  <li>
+   <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
+   - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
+  </li>
+  {% endfor %}
+  </ul>
+ </div>
  {% endif %}
 
 </section>
 {% endblock %}
-
-
 
 
 ================================================================================

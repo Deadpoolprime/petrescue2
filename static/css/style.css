@@ -139,6 +139,16 @@ body.home-page-background::before {
   z-index: -1; 
 }
 
+body.admin-page-background {
+  background-image: url('../images/admin-bg.jpg'); /* Fictional image for admin */
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Overlay for the admin page background (Subtle dark overlay) */
+
 
 /* Ensure main content appears ABOVE the overlay for BOTH pages */
 body.login-page-background header,

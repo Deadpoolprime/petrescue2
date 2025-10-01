@@ -503,22 +503,40 @@ def admin_remove_user_view(request, user_id):
 @staff_required
 def admin_adoption_processing_view(request):
   """
-  Lists pets that are pending adoption and need admin action.
+  Lists pets that are pending adoption, and also lists open reports for management and manual processing.
   """
-  pets_to_process = PetReport.objects.filter(status='Pending Adoption')
-  context = {'pets_to_process': pets_to_process}
+  
+  # 1. Reports that are ready or pending adoption (Automated/Ready to finalize)
+  pending_adoption_reports = PetReport.objects.filter(status='Pending Adoption').order_by('-date_reported')
+
+  # 2. Open Found Reports (Manual override option)
+  open_found_reports = PetReport.objects.filter(report_type='Found', status='Open').order_by('-date_reported')
+
+  # 3. Open Lost Reports (For monitoring)
+  open_lost_reports = PetReport.objects.filter(report_type='Lost', status='Open').order_by('-date_reported')
+
+
+  context = {
+    'pending_adoption_reports': pending_adoption_reports,
+    'open_found_reports': open_found_reports,
+    'open_lost_reports': open_lost_reports,
+  }
+  # Renders the new comprehensive template
   return render(request, 'admin/process_adoption.html', context)
+
 
 
 @staff_required
 def admin_put_for_adoption_view(request, report_id):
   """
   Handles the form for an admin to name a pet and put it up for adoption.
+  Updated to allow processing of 'Open' reports (Found type only) for manual override.
   """
   try:
-    report = PetReport.objects.get(pk=report_id, status='Pending Adoption')
+    # Allow processing if status is 'Pending Adoption' OR 'Open' AND it's a Found report
+    report = PetReport.objects.get(pk=report_id, report_type='Found', status__in=['Pending Adoption', 'Open'])
   except PetReport.DoesNotExist:
-    messages.error(request, "This pet report was not found or is not pending adoption.")
+    messages.error(request, "This report was not found or is not a Found report eligible for adoption processing.")
     return redirect('users:admin_adoption_processing')
 
   if request.method == 'POST':
