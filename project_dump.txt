@@ -1,11 +1,11 @@
 
 ================================================================================
-File: .\dump_project.py test2
+File: .\dump_project.py
 ================================================================================
 
 import os
 
-# Set your project root (current folder)
+# Set your project root (current folder). test
 project_root = "."
 
 # Output file
@@ -143,7 +143,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-45j6)$4tek)sn#--qcqp#wwj22gcro_n-v+hy)xqg+2hj!1wy^'
-ADMIN_REGISTRATION_PASSCODE = "FindAPaw!Admin#2025"
+ADMIN_REGISTRATION_PASSCODE = "3Dl81s+z,JYRPm&"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -666,6 +666,22 @@ main {
 
 .btn-full {
  width: 100%;
+}
+.btn-map {
+    background-color: var(--card); /* White background */
+    color: var(--foreground); /* Black/Dark text */
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft); /* Subtle orange glow */
+}
+
+.btn-map:hover {
+    transform: translateY(-2px);
+    /* Stronger orange glow on hover */
+    box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
+}
+
+.btn-map:active {
+    transform: translateY(0);
 }
 
 /* --- Pet Cards (for lists) --- */
@@ -1720,11 +1736,9 @@ File: .\users\admin.py
 from django.contrib import admin
 from .models import Profile, PetReport, PetForAdoption, Notification
 
-# These classes customize how the models are displayed in the admin interface.
 
 class PetReportAdmin(admin.ModelAdmin):
-  """Customizes the display for PetReport in the admin."""
-  # UPDATED list_display
+  
   list_display = ('id', 'report_type', 'pet_type', 'status', 'reporter', 'date_reported', 'location', 'health_information', 'injury')
   list_filter = ('status', 'report_type', 'pet_type')
   search_fields = ('location', 'breed', 'reporter__username')
@@ -1732,19 +1746,19 @@ class PetReportAdmin(admin.ModelAdmin):
   list_per_page = 25
 
 class PetForAdoptionAdmin(admin.ModelAdmin):
-    """Customizes the display for PetForAdoption in the admin."""
+    
     list_display = ('name', 'pet_type', 'status', 'lister', 'date_listed')
     list_filter = ('status', 'pet_type', 'gender')
     search_fields = ('name', 'breed', 'lister__username')
     readonly_fields = ('date_listed',)
 
 class ProfileAdmin(admin.ModelAdmin):
-    """Customizes the display for user Profiles."""
+    
     list_display = ('user', 'role', 'city', 'phone_number')
     search_fields = ('user__username', 'city')
 
 class NotificationAdmin(admin.ModelAdmin):
-    """Customizes the display for Notifications."""
+    
     list_display = ('recipient', 'message_summary', 'is_read', 'created_at')
     list_filter = ('is_read',)
     search_fields = ('recipient__username', 'message')
@@ -1753,7 +1767,7 @@ class NotificationAdmin(admin.ModelAdmin):
         return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
     message_summary.short_description = 'Message'
 
-# Register your models with the admin site
+
 admin.site.register(PetReport, PetReportAdmin)
 admin.site.register(PetForAdoption, PetForAdoptionAdmin)
 admin.site.register(Profile, ProfileAdmin)
@@ -1777,27 +1791,21 @@ class UsersConfig(AppConfig):
 File: .\users\decorators.py
 ================================================================================
 
-# users/decorators.py
+
 from django.contrib.auth.decorators import user_passes_test
 
 def staff_required(view_func):
-    """
-    Decorator for views that checks that the user is logged in and is a staff member.
-    """
     decorated_view = user_passes_test(
         lambda u: u.is_authenticated and u.is_staff,
-        login_url='users:login', # Redirect to your login page if test fails
+        login_url='users:login', 
         redirect_field_name=None
     )
     return decorated_view(view_func)
 
 def superuser_required(view_func):
-    """
-    Decorator for views that checks that the user is logged in and is a superuser.
-    """
     decorated_view = user_passes_test(
         lambda u: u.is_authenticated and u.is_superuser,
-        login_url='users:login', # Redirect to login if test fails
+        login_url='users:login', 
         redirect_field_name=None
     )
     return decorated_view(view_func)
@@ -1820,7 +1828,6 @@ class Profile(models.Model):
   profile_picture = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics/', null=True, blank=True)
   def __str__(self): return f"{self.user.username} Profile"
 
-# This table handles both LOST and FOUND pet "incidents".
 class PetReport(models.Model):
   REPORT_TYPE_CHOICES = (('Lost', 'Lost pet'), ('Found', 'Found pet'))
   STATUS_CHOICES = (('Open', 'Open'),('Pending Adoption', 'Pending Adoption'), ('Closed', 'Closed'))
@@ -1829,7 +1836,6 @@ class PetReport(models.Model):
   report_type = models.CharField(max_length=20, choices=REPORT_TYPE_CHOICES)
   reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pet_reports')
 
-  # NEW FIELDS ADDED:
   name = models.CharField(max_length=100, blank=True, null=True, help_text="Pet's name (if known)") # Optional name
   age = models.PositiveIntegerField(null=True, blank=True, help_text="Pet's age in years (if known)") # Optional age
   gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown', help_text="Pet's gender") # Gender field
@@ -1838,11 +1844,8 @@ class PetReport(models.Model):
   breed = models.CharField(max_length=100, blank=True, null=True)
   color = models.CharField(max_length=50)
   
-  # --- NEW FIELDS FOR HEALTH/INJURY ---
   health_information = models.TextField(blank=True, null=True, help_text="Any known health issues or required medication (Lost pet report).")
   injury = models.TextField(blank=True, null=True, help_text="Describe any injuries observed on the pet (Found pet report).")
-  # ------------------------------------
-  
   pet_image = models.ImageField(upload_to='pet_images/')
   location = models.CharField(max_length=255, help_text="Area where the pet was lost or found.")
   contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
@@ -1850,11 +1853,9 @@ class PetReport(models.Model):
   date_reported = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
-    # FIX: Corrected f-string syntax
     pet_name = self.name if self.name else "Unnamed Pet"
     return f"{self.get_report_type_display()}: {pet_name} ({self.pet_type}) by {self.reporter.username}"
 
-# This separate table is a catalog for pets available for ADOPTION.
 class PetForAdoption(models.Model):
     GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown'))
     ADOPTION_STATUS_CHOICES = (('Available', 'Available'), ('Pending', 'Adoption Pending'), ('Adopted', 'Adopted'))
@@ -1871,7 +1872,7 @@ class PetForAdoption(models.Model):
     date_listed = models.DateTimeField(auto_now_add=True)
     def __str__(self): return f"{self.name} ({self.pet_type}) - {self.get_status_display()}"
 
-# This table handles notifications from the system/admins to users.
+
 class Notification(models.Model):
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     pet_report = models.ForeignKey(PetReport, on_delete=models.CASCADE, null=True, blank=True)
@@ -1928,7 +1929,7 @@ File: .\users\tests.py
 File: .\users\urls.py
 ================================================================================
 
-# users/urls.py
+
 from django.urls import path
 from .views import (
     login_view, logout_view, register_view,
@@ -1939,15 +1940,15 @@ from .views import (
     admin_remove_user_view,
     admin_adoption_processing_view,
     admin_put_for_adoption_view,
-    home_view # <-- ADDED
+    home_view 
 )
 
 app_name = 'users' 
 
 urlpatterns = [
-    # --- HTML Rendering URLs ---
-    path('', home_view, name='home'), # <-- NEW ROOT: Home Page
-    path('login/', login_view, name='login'), # <-- LOGIN is now explicit
+    
+    path('', home_view, name='home'), 
+    path('login/', login_view, name='login'), 
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('pets/', pets_list_view, name='pets_list'),
@@ -1970,7 +1971,7 @@ urlpatterns = [
 File: .\users\views.py
 ================================================================================
 
-# users/views.py
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -1986,28 +1987,23 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
-# --- API ViewSets ---
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    # permission_classes = [IsAuthenticated] # Uncomment if API access should be restricted
 
 class PetReportViewSet(viewsets.ModelViewSet):
     queryset = PetReport.objects.all()
     serializer_class = PetReportSerializer
-    # permission_classes = [IsAuthenticated]
 
 class PetForAdoptionViewSet(viewsets.ModelViewSet):
     queryset = PetForAdoption.objects.all()
     serializer_class = PetForAdoptionSerializer
-    # permission_classes = [IsAuthenticated]
+
 
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    # permission_classes = [IsAuthenticated]
 
-# --- API View for Registration ---
 class RegisterView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -2023,18 +2019,11 @@ class RegisterView(APIView):
             return Response({'error': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.create_user(username=username, email=email, password=password)
-        Profile.objects.create(user=user) # Creates profile with default values
+        Profile.objects.create(user=user) 
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
-# --- HTML Rendering Views ---
-
-# Home View (Public Entry Point)
 def home_view(request):
-    """
-    Displays the main landing page with featured adoption pets.
-    """
-    # Fetch a few featured pets (e.g., 3 random pets)
     featured_pets = PetForAdoption.objects.filter(status='Available').order_by('?')[:3]
 
     context = {
@@ -2043,7 +2032,6 @@ def home_view(request):
     return render(request, 'users/home.html', context)
 
 
-# Login View
 def login_view(request):
     if request.method == 'POST':
         form_username = request.POST.get('username')
@@ -2054,26 +2042,19 @@ def login_view(request):
         if user is not None:
             auth_login(request, user)
             messages.success(request, "Welcome back! You are logged in.")
-            # Redirect to the dashboard after successful login
             return redirect('users:dashboard')
         else:
-            # Authentication failed
             messages.error(request, "Invalid username or password. Please try again.")
-            return render(request, 'users/login.html') # Re-render login page with error message
+            return render(request, 'users/login.html') 
     else:
-        # GET request: show the login form
-        # If user is already authenticated, redirect them away from the login page.
         if request.user.is_authenticated:
-            return redirect('users:dashboard') # Redirect logged-in users to dashboard
+            return redirect('users:dashboard')
         return render(request, 'users/login.html')
 
-# Logout View
 def logout_view(request):
     auth_logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect('users:home') # Redirect to login after logout
-
-# Registration Form
+    return redirect('users:home') 
 class RegistrationForm(forms.Form):
     username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={'id': 'id_username', 'class': 'form-input'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'id': 'id_email', 'class': 'form-input'}))
@@ -2090,34 +2071,27 @@ class RegistrationForm(forms.Form):
         label="Admin Passcode"
     )
 
-    # We need a custom validation method to check the passcode
     def clean(self):
         cleaned_data = super().clean()
         is_admin = cleaned_data.get('is_admin_registration')
         passcode = cleaned_data.get('admin_passcode')
 
         if is_admin:
-            # If the admin box is checked, the passcode is required
             if not passcode:
                 raise forms.ValidationError(
                     "Admin passcode is required when registering as an admin."
                 )
-
-            # Check if the passcode is correct
             from django.conf import settings
             if passcode != settings.ADMIN_REGISTRATION_PASSCODE:
                 raise forms.ValidationError("Invalid admin passcode.")
 
-            # --- NEW LOGIC: CHECK ADMIN LIMIT ---
-            # An "Admin" is a staff member who is NOT a superuser.
             current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-            # We allow a maximum of 3 admins.
             if current_admin_count >= 3:
                 raise forms.ValidationError(
                     "Cannot register as an admin at this time. The maximum number of admins (3) has been reached."
                 )
-            # ------------------------------------
+            
 
         return cleaned_data
 
@@ -2150,7 +2124,6 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("Email already exists.")
         return email
 
-# Registration View (Modified for correct form handling and redirection)
 def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -2158,7 +2131,7 @@ def register_view(request):
             cleaned_data = form.cleaned_data
             is_admin = cleaned_data.get('is_admin_registration')
 
-            # Step 1: Create the User
+            
             user = User.objects.create_user(
                 username=cleaned_data['username'],
                 email=cleaned_data['email'],
@@ -2170,8 +2143,7 @@ def register_view(request):
                 user.is_staff = True
                 user.save()
 
-            # Step 2: Explicitly create the Profile with all the form data
-            # This is the crucial part that creates the row in the `users_profile` table.
+            
             Profile.objects.create(
                 user=user,
                 role='admin' if is_admin else 'user',
@@ -2180,27 +2152,26 @@ def register_view(request):
                 phone_number=cleaned_data.get('phone_number')
             )
 
-            # Step 3: Log in and redirect
+            
             auth_login(request, user)
             messages.success(request, "🎉 Registration successful! Welcome to PurPaws.")
             return redirect('users:dashboard')
         else:
-            form = RegistrationForm(request.POST) # Pass back POST data to retain user input
+            form = RegistrationForm(request.POST) 
 
     else:
         form = RegistrationForm()
 
     return render(request, 'users/register.html', {'form': form})
 
-# Dashboard View
+
 @login_required
 def dashboard_view(request):
-    # Fetch user's profile to display their info at the top.
+   
     profile = None
     if hasattr(request.user, 'profile'):
         profile = request.user.profile
 
-    # Fetch all open pet reports (both Lost and Found)
     open_reports = PetReport.objects.filter(status='Open').order_by('-date_reported')
 
     context = {
@@ -2211,7 +2182,7 @@ def dashboard_view(request):
 
 
 def create_pet_report_view(request, report_type):
- # Ensure user is logged in
+
  if not request.user.is_authenticated:
   messages.error(request, "You need to be logged in to report a pet.")
   return redirect('users:login')
@@ -2221,16 +2192,16 @@ def create_pet_report_view(request, report_type):
   return redirect('users:dashboard')
 
  if request.method == 'POST':
-  form = PetReportForm(request.POST, request.FILES) # Pass POST data and FILES
+  form = PetReportForm(request.POST, request.FILES) 
   if form.is_valid():
    
-   # Conditional saving for injury field (only relevant for Found reports)
+   
    injury_detail = form.cleaned_data.get('injury') if report_type == 'Found' else None
    
    pet_report = PetReport.objects.create(
     report_type=report_type,
     reporter=request.user,
-    name=form.cleaned_data.get('name'), # Use form.cleaned_data directly
+    name=form.cleaned_data.get('name'), 
     age=form.cleaned_data.get('age'), 
     gender=form.cleaned_data.get('gender'), 
     pet_type=form.cleaned_data['pet_type'],
@@ -2239,27 +2210,26 @@ def create_pet_report_view(request, report_type):
     pet_image=form.cleaned_data['pet_image'],
     location=form.cleaned_data['location'],
     contact_info=form.cleaned_data['contact_info'],
-    # --- NEW FIELDS ---
+    
     health_information=form.cleaned_data.get('health_information'),
     injury=injury_detail,
-    # ------------------
-    # status defaults to 'Open'
+   
    )
    messages.success(request, f"Your {report_type} pet report has been submitted successfully!")
    return redirect('users:dashboard')
-  # If form is not valid, 'form' still holds the invalid data and errors.
+  
  else:
-  # GET request: Initialize an empty form
+  
   form = PetReportForm()
 
  context = {
   'form': form,
-  'report_type': report_type, # Pass to template for dynamic title/heading
-  'is_found_report': report_type == 'Found' # Pass flag for conditional display in template
+  'report_type': report_type, 
+  'is_found_report': report_type == 'Found' 
  }
- return render(request, 'users/create_pet_report.html', context) # New template
-# View to show a single pet report's details
-@login_required # Protect this view
+ return render(request, 'users/create_pet_report.html', context) 
+
+@login_required 
 def pet_report_detail_view(request, report_id):
     try:
         report = PetReport.objects.get(pk=report_id)
@@ -2272,7 +2242,7 @@ def pet_report_detail_view(request, report_id):
     }
     return render(request, 'users/pet_report_detail.html', context)
 
-# --- Form for Reporting Lost/Found Pet ---
+
 class PetReportForm(forms.Form):
  pet_type = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'e.g., Dog, Cat, Bird'}))
  breed = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': 'e.g., Labrador, Siamese'}))
@@ -2283,18 +2253,18 @@ class PetReportForm(forms.Form):
  name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
  gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
- # --- NEW FIELDS ADDED ---
+ 
  health_information = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Known medical issues, required medications, temperament, etc."}), label="Health Information")
  injury = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Visible injuries, limp, signs of distress (Found reports only)."}), label="Observed Injury")
 
-# --- Placeholder views for About, Contact, etc. ---
+
 def about_view(request):
     return render(request, 'users/about.html')
 
 def contact_view(request):
     return render(request, 'users/contact.html')
 
-# View for listing all adoptable pets
+
 def pets_list_view(request):
     all_pets = PetForAdoption.objects.filter(status='Available')
     context = {
@@ -2302,8 +2272,8 @@ def pets_list_view(request):
     }
     return render(request, 'users/pets_list.html', context)
 
-# View for viewing a single adoptable pet's details
-@login_required # Protect this view, requiring login to view details
+
+@login_required 
 def pet_detail_view(request, pet_id):
     """
     Displays detailed information for a pet listed for adoption (PetForAdoption model).
@@ -2321,22 +2291,26 @@ def admin_adoption_processing_view(request):
     """
     Lists pets that are pending adoption and need admin action.
     """
-    # Find all PetReports marked as 'Pending Adoption'
+    
     pets_to_process = PetReport.objects.filter(status='Pending Adoption')
 
     context = {
         'pets_to_process': pets_to_process,
     }
     return render(request, 'admin/process_adoption.html', context)
+        
 
-# Form for putting a pet up for adoption
 class PutForAdoptionForm(forms.ModelForm):
-    # We can inherit from PetForAdoption and add fields
     class Meta:
         model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description'] # Fields the admin will fill in
+        fields = ['name', 'age', 'gender', 'description']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
+        }
+        labels = {
+            'name': "Pet's New Name (for adoption listing)",
+            'age': "Estimated Age",
+            'description': "Adoption Profile Description",
         }
 
 @staff_required
@@ -2353,24 +2327,24 @@ def admin_put_for_adoption_view(request, report_id):
     if request.method == 'POST':
         form = PutForAdoptionForm(request.POST)
         if form.is_valid():
-            # Create the new PetForAdoption record
-            new_adoption_pet = form.save(commit=False) # Don't save to DB yet
+            
+            new_adoption_pet = form.save(commit=False) 
             new_adoption_pet.pet_type = report.pet_type
             new_adoption_pet.breed = report.breed
             new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image # Directly assign the image file
-            new_adoption_pet.lister = request.user # The admin is the lister
+            new_adoption_pet.image = report.pet_image 
+            new_adoption_pet.lister = request.user 
             new_adoption_pet.status = 'Available'
             new_adoption_pet.save()
 
-            # Close the original report
+            
             report.status = 'Closed'
             report.save()
 
             messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
             return redirect('users:admin_adoption_processing')
     else:
-        # Pre-populate the form with data from the report
+        
         initial_data = {
            'name': report.name if report.name else f"Friendly {report.pet_type}",
            'age': report.age or None,
@@ -2385,17 +2359,17 @@ def admin_put_for_adoption_view(request, report_id):
     }
     return render(request, 'admin/put_for_adoption_form.html', context)
 
-@staff_required # Only staff (Admins and Superusers) can access this
+@staff_required 
 def admin_dashboard_view(request):
   """
   Displays statistics for the admin dashboard.
   (UPDATED to separate user counts)
   """
-  # Calculate Admin count (is_staff=True AND is_superuser=False)
+  
   total_admins = User.objects.filter(is_staff=True, is_superuser=False).count()
   
-  # Calculate Normal User count (is_staff=False)
-  # Superusers are excluded implicitly, but we must ensure we only count non-staff users
+  
+  
   total_normal_users = User.objects.filter(is_staff=False).count()
   
   pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
@@ -2413,12 +2387,12 @@ def admin_dashboard_view(request):
 
 
 
-@staff_required # Only staff can manage users
+@staff_required 
 def admin_manage_users_view(request):
     """
     Lists all non-superuser users for management.
     """
-    # Exclude superusers so they cannot be managed from this interface
+    
     users_to_manage = User.objects.filter(is_superuser=False).select_related('profile')
 
     context = {
@@ -2427,18 +2401,18 @@ def admin_manage_users_view(request):
     return render(request, 'admin/manage_users.html', context)
 
 
-@superuser_required # ONLY a superuser can promote another user to admin
+@superuser_required 
 def admin_promote_user_view(request, user_id):
     if request.method == 'POST':
-        # --- NEW LOGIC: Check the current number of admins ---
-        # An "Admin" is a staff member who is NOT a superuser.
+        
+        
         current_admin_count = User.objects.filter(is_staff=True, is_superuser=False).count()
 
-        # We allow a maximum of 3 admins.
+        
         if current_admin_count >= 3:
             messages.error(request, "Cannot promote user. The maximum number of 3 admins has been reached.")
             return redirect('users:admin_manage_users')
-        # ---------------------------------------------------
+        
 
         try:
             user_to_promote = User.objects.get(pk=user_id)
@@ -2446,7 +2420,7 @@ def admin_promote_user_view(request, user_id):
             if user_to_promote.is_superuser or user_to_promote.is_staff:
                 messages.warning(request, "This user is already a superuser or admin.")
             else:
-                # Promote the user
+                
                 user_to_promote.is_staff = True
                 user_to_promote.save()
 
@@ -2461,18 +2435,18 @@ def admin_promote_user_view(request, user_id):
     return redirect('users:admin_manage_users')
 
 
-@staff_required # Any staff member can attempt to remove a user
+@staff_required 
 def admin_remove_user_view(request, user_id):
     if request.method == 'POST':
         try:
             user_to_remove = User.objects.get(pk=user_id)
 
-            # Security check: Prevent non-superusers from removing admins.
+            
             if user_to_remove.is_staff and not request.user.is_superuser:
                 messages.error(request, "You do not have permission to remove an admin user.")
                 return redirect('users:admin_manage_users')
 
-            # Prevent anyone from removing a superuser via this view
+            
             if user_to_remove.is_superuser:
                 messages.error(request, "Superusers cannot be removed from this interface.")
                 return redirect('users:admin_manage_users')
@@ -2497,21 +2471,6 @@ def admin_adoption_processing_view(request):
     return render(request, 'admin/process_adoption.html', context)
 
 
-# Form for putting a pet up for adoption (can be defined here or with other forms)
-class PutForAdoptionForm(forms.ModelForm):
-    class Meta:
-        model = PetForAdoption
-        fields = ['name', 'age', 'gender', 'description']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-        }
-        labels = {
-            'name': "Pet's New Name (for adoption listing)",
-            'age': "Estimated Age",
-            'description': "Adoption Profile Description",
-        }
-
-
 @staff_required
 def admin_put_for_adoption_view(request, report_id):
     """
@@ -2526,24 +2485,24 @@ def admin_put_for_adoption_view(request, report_id):
     if request.method == 'POST':
         form = PutForAdoptionForm(request.POST)
         if form.is_valid():
-            # Create the new PetForAdoption record
+            
             new_adoption_pet = form.save(commit=False)
             new_adoption_pet.pet_type = report.pet_type
             new_adoption_pet.breed = report.breed
             new_adoption_pet.color = report.color
-            new_adoption_pet.image = report.pet_image # Directly assign the image file
-            new_adoption_pet.lister = request.user # The admin is the lister
+            new_adoption_pet.image = report.pet_image 
+            new_adoption_pet.lister = request.user 
             new_adoption_pet.status = 'Available'
             new_adoption_pet.save()
 
-            # Close the original report
+            
             report.status = 'Closed'
             report.save()
 
             messages.success(request, f"Pet '{new_adoption_pet.name}' has been successfully listed for adoption!")
             return redirect('users:admin_adoption_processing')
     else:
-        # Pre-populate the form with data from the report for GET request
+        
         initial_data = {
            'name': report.name if report.name else f"Friendly {report.pet_type}",
            'age': report.age or None,
@@ -3425,92 +3384,103 @@ File: .\users\templates\users\dashboard.html
 {% block body_class %}home-page-background{% endblock %}
 {% block content %}
 <section class="dashboard-section">
-  <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
+ <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
 
  {% comment %}
-  {# Display User Information - Keep this for context #}
-  {% if profile %}
-    <div class="user-info-box">
-      <h3>Your Account Details</h3>
-      <p><strong>Username:</strong> {{ user.username }}</p>
-      <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-      <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
-      <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
-      <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
-      <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
-      {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
-      {% else %}
-        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
-      {% endif %}
-    </div>
-  {% else %}
-    <p></p>
-  {% endif %}
+ {# Display User Information - Keep this for context #}
+ {% if profile %}
+  <div class="user-info-box">
+   <h3>Your Account Details</h3>
+   <p><strong>Username:</strong> {{ user.username }}</p>
+   <p><strong>Full Name:</strong> {{ profile.user.get_full_name|default:"Not provided" }}</p>
+   <p><strong>Email:</strong> {{ user.email }}</p>
+   <p><strong>Age:</strong> {{ profile.age|default:"Not provided" }}</p>
+   <p><strong>City:</strong> {{ profile.city|default:"Not provided" }}</p>
+   <p><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not provided" }}</p>
+   <p><strong>Role:</strong> {{ profile.role|default:"User" }}</p>
+   {% if profile.profile_picture %}
+    <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic-large">
+   {% else %}
+    <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic-large">
+   {% endif %}
+  </div>
+ {% else %}
+  <p></p>
+ {% endif %}
 {% endcomment %}
 
-  {# Action Buttons - Links updated #}
-  <div class="dashboard-actions">
-    <h2>What would you like to do?</h2>
-    <div class="action-buttons">
-      {# These buttons now correctly link to the report URLs #}
-      <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
-      <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-primary">Report a Found Pet</a>
-      <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
-    </div>
+ {# Action Buttons - Links updated #}
+ <div class="dashboard-actions">
+  <h2>What would you like to do?</h2>
+  <div class="action-buttons">
+   {# These buttons now correctly link to the report URLs #}
+   <a href="{% url 'users:create_pet_report' 'Lost' %}" class="btn btn-primary">Report a Lost Pet</a>
+   <a href="{% url 'users:create_pet_report' 'Found' %}" class="btn btn-primary">Report a Found Pet</a>
+   <a href="{% url 'users:pets_list' %}" class="btn btn-primary">View Pets for Adoption</a>
   </div>
+ </div>
 
-  {# Display Found Pets Available for Adoption --- This is the new part #}
-  {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
-  {# Display Open Lost and Found Reports #}
+ {# Display Found Pets Available for Adoption --- This is the new part #}
+ {# Note: This section will show ALL available pets, not specifically 'found but no match for 15 days' yet #}
+ {# Display Open Lost and Found Reports #}
  {% if open_reports %}
-  <section class="dashboard-pets-section">
-   <h3 class="section-title">Open Lost & Found Reports</h3>
-   <div class="pet-grid">
-    {% for report in open_reports %}
-     <div class="pet-card">
-      {# Add a visual indicator for Lost vs. Found #}
-      <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
+ <section class="dashboard-pets-section">
+  <h3 class="section-title">Open Lost & Found Reports</h3>
+  <div class="pet-grid">
+  {% for report in open_reports %}
+   <div class="pet-card">
+   {# Add a visual indicator for Lost vs. Found #}
+   <div class="report-type-badge {{ report.report_type|lower }}">{{ report.report_type }}</div>
 
-      <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
-      <div class="pet-card-info">
-       {# Use pet's name if available, otherwise the pet type #}
-       <h3>{{ report.name|default:report.pet_type }}</h3>
-       <p><strong>Type:</strong> {{ report.pet_type }}</p>
-       <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
-       <p><strong>Color:</strong> {{ report.color }}</p>
-       <p><strong>Age:</strong> {{ report.age|default:"Unknown" }}</p>
-       <p><strong>Location:</strong> {{ report.location }}</p>
-       <p><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
-       {# The link should go to the report detail page #}
-       <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-secondary">View Report</a>
-      </div>
-     </div>
-    {% endfor %}
+   <img src="{{ report.pet_image.url }}" alt="{{ report.pet_type }}" class="pet-card-img">
+   <div class="pet-card-info">
+    {# Use pet's name if available, otherwise the pet type #}
+    <h3>{{ report.name|default:report.pet_type }}</h3>
+    <p><strong>Type:</strong> {{ report.pet_type }}</p>
+    <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+    <p><strong>Color:</strong> {{ report.color }}</p>
+    <p><strong>Age:</strong> {{ report.age|default:"Unknown" }}</p>
+    <p><strong>Location:</strong> {{ report.location }}</p>
+    {# WRAP BUTTONS FOR BETTER LAYOUT #}
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+      {# NEW: Map Link using the new btn-map style #}
+      <a href="https://www.google.com/maps/search/?api=1&query={{ report.location|urlencode }}" 
+         target="_blank" class="btn btn-small btn-map">View on Map</a>
+      
+      {# Existing: View Report Link #}
+      <a href="{% url 'users:pet_report_detail' report.id %}" 
+         class="btn btn-small btn-secondary">View Report</a>
+    </div>
+
+    <p style="margin-top: 10px;"><strong>Reported:</strong> {{ report.date_reported|date:"M d, Y" }}</p>
    </div>
-  </section>
+   </div>
+  {% endfor %}
+  </div>
+ </section>
  {% else %}
-  <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">There are no open lost or found reports at this time.</p>
+ <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">There are no open lost or found reports at this time.</p>
  {% endif %}
 
-  {# User's Reports (Optional: for dashboard) #}
-  {% if reports %}
-    <div class="user-reports-box">
-      <h3>Your Pet Reports</h3>
-      <ul>
-      {% for report in reports %}
-        <li>
-          <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
-          - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
-        </li>
-      {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
+ {# User's Reports (Optional: for dashboard) #}
+ {% if reports %}
+  <div class="user-reports-box">
+   <h3>Your Pet Reports</h3>
+   <ul>
+   {% for report in reports %}
+    <li>
+     <strong>{{ report.get_report_type_display }}</strong>: {{ report.pet_type }} in {{ report.location }} (Status: {{ report.status }})
+     - <a href="{% url 'users:pet_report_detail' report.id %}">View</a>
+    </li>
+   {% endfor %}
+   </ul>
+  </div>
+ {% endif %}
 
 </section>
 {% endblock %}
+
+
 
 
 ================================================================================
@@ -3776,9 +3746,7 @@ File: .\users\templates\users\register.html
     <p class="auth-subtitle">Join our community to help pets find homes!</p>
 
     <form id="registrationForm" method="post" action="{% url 'users:register' %}">
-      {% csrf_token %}
-
-            <!-- ================= ERROR DISPLAY BLOCK ================= -->
+      {% csrf_token %}   
       {% if form.errors %}
         <div class="alert alert-danger">
           <p><strong>Please correct the errors below:</strong></p>
@@ -3795,9 +3763,7 @@ File: .\users\templates\users\register.html
           </ul>
         </div>
       {% endif %}
-      <!-- ======================================================== -->
-
-      <!-- --- ALL FORM FIELDS GO HERE --- -->
+      
       <div class="form-group">
         {{ form.username.label_tag }}
         {{ form.username }}
@@ -3838,9 +3804,6 @@ File: .\users\templates\users\register.html
         {{ form.password2.label_tag }}
         {{ form.password2 }}
       </div>
-      <!-- ----------------------------------- -->
-
-      <!-- --- Fields for Admin Registration --- -->
       <div class="form-group admin-toggle">
         <label for="{{ form.is_admin_registration.id_for_label }}">
           {{ form.is_admin_registration }}
@@ -3852,8 +3815,6 @@ File: .\users\templates\users\register.html
         {{ form.admin_passcode.label_tag }}
         {{ form.admin_passcode }}
       </div>
-      <!-- ----------------------------------- -->
-
       <button type="submit" class="btn btn-primary btn-full">Register</button>
     </form>
 

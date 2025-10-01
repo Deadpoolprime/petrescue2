@@ -26,10 +26,10 @@
  --ring: 25 85% 55%;
 
  /* PurPaws brand colors - using HSL values for flexibility */
- --primary-warm: 25 85% 55%;  /* Warm orange for primary actions */
- --primary-soft: 35 40% 88%;  /* Softer peach/orange for backgrounds */
+ --primary-warm: 25 85% 55%; /* Warm orange for primary actions */
+ --primary-soft: 35 40% 88%; /* Softer peach/orange for backgrounds */
  --success-green: 120 45% 55%; /* Nice green for success messages */
- --earth-brown: 25 25% 35%;  /* Darker brown/earth tone */
+ --earth-brown: 25 25% 35%; /* Darker brown/earth tone */
  --accent-purple: 255 40% 55%; /* A nice purple for accents */
  --accent-purple-soft: 255 40% 88%; /* Lighter purple */
 
@@ -119,24 +119,24 @@ body.register-page-background::before {
 }
 
 body.home-page-background {
-    background-image: url('../images/home-hero-bg.jpg'); /* CHANGE THIS TO YOUR IMAGE NAME */
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;
-    position: relative;
+  background-image: url('../images/home-hero-bg.jpg'); /* CHANGE THIS TO YOUR IMAGE NAME */
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  position: relative;
 }
 
 /* Overlay for the home page background - use a warm, low opacity overlay */
 body.home-page-background::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* FIX: Set z-index to -1 to guarantee it is behind all page elements */
-    background-color: hsla(var(--primary-warm), 0.15); 
-    z-index: -1; 
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* FIX: Set z-index to -1 to guarantee it is behind all page elements */
+  background-color: hsla(var(--primary-warm), 0.15); 
+  z-index: -1; 
 }
 
 
@@ -333,26 +333,26 @@ main {
  width: 100%;
 }
 .btn-map {
-    background-color: var(--card); /* White background */
-    color: var(--foreground); /* Black/Dark text */
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-soft); /* Subtle orange glow */
+  background-color: var(--card); /* White background */
+  color: var(--foreground); /* Black/Dark text */
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft); /* Subtle orange glow */
 }
 
 .btn-map:hover {
-    transform: translateY(-2px);
-    /* Stronger orange glow on hover */
-    box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
+  transform: translateY(-2px);
+  /* Stronger orange glow on hover */
+  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
 }
 
 .btn-map:active {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 /* --- Pet Cards (for lists) --- */
 .featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
-  margin-bottom: 50px;
-  padding: 30px 0;
+ margin-bottom: 50px;
+ padding: 30px 0;
 }
 
 .pet-grid {
@@ -374,23 +374,23 @@ main {
 }
 
 .pet-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+ transform: translateY(-5px);
+ box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
 }
 
 .dashboard-pets-section .pet-card {
-    /* Base Shadow: Subtle orange glow (Opacity 15%) */
-    box-shadow: 0 5px 20px hsl(var(--primary-warm) / 0.25); 
-    
-    /* If you added the frosted background previously, you should keep it here: */
-    /* background-color: rgba(255, 255, 255, 0.85); */
-    /* backdrop-filter: blur(5px); */
+  /* Base Shadow: Subtle orange glow (Opacity 15%) */
+  box-shadow: 0 5px 20px hsl(var(--primary-warm) / 0.25); 
+
+  /* If you added the frosted background previously, you should keep it here: */
+  /* background-color: rgba(255, 255, 255, 0.85); */
+  /* backdrop-filter: blur(5px); */
 }
 
 .dashboard-pets-section .pet-card:hover {
-    /* Intense orange glow on hover (Opacity 40%) */
-    /* This overrides the less specific .pet-card:hover above */
-    box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.4); 
+  /* Intense orange glow on hover (Opacity 40%) */
+  /* This overrides the less specific .pet-card:hover above */
+  box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.4); 
 }
 
 .report-type-badge {
@@ -410,13 +410,13 @@ main {
 
 .report-type-badge.lost {
  background-color: white; /* Change background to white */
- color: var(--foreground);  /* Change text color to dark (black-ish) */
+ color: var(--foreground); /* Change text color to dark (black-ish) */
  border: 1px solid var(--border); /* Add a light border to help it stand out */
 }
 
 .report-type-badge.found {
  background-color: white; 
- color: var(--foreground);  /* Change text color to dark (black-ish) */
+ color: var(--foreground); /* Change text color to dark (black-ish) */
  border: 1px solid var(--border);/* A nice green for 'Found' */
 }
 
@@ -524,7 +524,8 @@ main {
 .form-group input[type="email"],
 .form-group input[type="password"],
 .form-group input[type="number"],
-.form-group input[type="tel"] {
+.form-group input[type="tel"],
+.form-group select { /* Added select here */
  width: 100%;
  padding: 12px 15px;
  border: 1px solid var(--border); /* Using border variable */
@@ -536,7 +537,8 @@ main {
  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
  border-color: var(--primary); /* Primary color on focus */
  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2); /* Ring effect on focus */
 }
@@ -855,7 +857,8 @@ main {
 .report-box input[type="password"],
 .report-box input[type="number"],
 .report-box input[type="tel"],
-.report-box input[type="file"] {
+.report-box input[type="file"],
+.report-box select {
  width: 100%;
  padding: 12px 15px;
  border: 1px solid var(--border);
@@ -867,7 +870,8 @@ main {
  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.report-box input:focus {
+.report-box input:focus,
+.report-box select:focus {
  border-color: var(--primary);
  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }
@@ -1157,88 +1161,134 @@ tbody tr:hover {
  background-color: #c0392b;
  border-radius: 50%;
 }
+
+/* --- Dashboard Filtering Tabs --- */
+.report-filter-tabs {
+  display: flex;
+  justify-content: center;
+  margin: 30px auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-width: 450px;
+  box-shadow: var(--shadow-soft);
+}
+
+.filter-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 15px;
+  text-decoration: none; /* Crucial: Remove underline */
+  font-weight: bold;
+  color: var(--muted-foreground); /* Use muted color for inactive link text */
+  background-color: var(--card); /* White background */
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.filter-tab:first-child {
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+}
+
+.filter-tab:last-child {
+  border-top-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+.filter-tab.active {
+  background-color: hsl(25, 85%, 55%); /* Primary Warm HSL */
+  color: white; /* Ensure text is white when active */
+  border-color: hsl(25, 85%, 55%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-tab:not(.active):hover {
+  background-color: var(--input);
+  color: var(--foreground); /* Ensure hover text color is dark/readable */
+}
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
  .site-header .container, .site-footer .container {
-  flex-direction: column;
-  text-align: center;
+ flex-direction: column;
+ text-align: center;
  }
  .site-header nav ul {
-  flex-direction: column;
-  margin-top: 15px;
+ flex-direction: column;
+ margin-top: 15px;
  }
  .site-header nav li {
-  margin: 5px 0;
+ margin: 5px 0;
  }
  .logo {
-  margin-bottom: 15px;
+ margin-bottom: 15px;
  }
  /* Hero section adjustments */
  .hero-section {
-  flex-direction: column;
-  text-align: center;
-  padding: 40px 0;
+ flex-direction: column;
+ text-align: center;
+ padding: 40px 0;
  }
  .hero-content {
-  padding-right: 0;
-  margin-bottom: 30px;
+ padding-right: 0;
+ margin-bottom: 30px;
  }
  .hero-content h2 {
-  font-size: 2.5em; /* Smaller heading on mobile */
+ font-size: 2.5em; /* Smaller heading on mobile */
  }
  .hero-content p {
-  font-size: 1.1em;
+ font-size: 1.1em;
  }
  .hero-image img {
-  height: 250px; /* Smaller image on mobile */
+ height: 250px; /* Smaller image on mobile */
  }
  .hero-actions {
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 15px;
-  align-items: center;
+ flex-direction: column; /* Stack buttons vertically */
+ gap: 15px;
+ align-items: center;
  }
  .btn {
-  width: 80%; /* Make buttons wider */
+ width: 80%; /* Make buttons wider */
  }
 
  /* Pet Cards */
  .pet-grid {
-  grid-template-columns: 1fr; /* Stack cards on smaller screens */
+ grid-template-columns: 1fr; /* Stack cards on smaller screens */
  }
 
  /* Auth and Report Boxes */
  .auth-box, .report-box {
-  max-width: 90%;
-  padding: 30px;
+ max-width: 90%;
+ padding: 30px;
  }
 
  /* Social Links */
  .social-links {
-  margin-top: 15px;
+ margin-top: 15px;
  }
 
  /* Dashboard Actions */
  .dashboard-actions h2 {
-  font-size: 1.8em;
+ font-size: 1.8em;
  }
  .action-buttons {
-  flex-direction: column;
-  align-items: center;
+ flex-direction: column;
+ align-items: center;
  }
  .action-buttons .btn {
-  width: 80%;
+ width: 80%;
  }
 
  /* Report Detail Page */
  .report-detail-container {
-  flex-direction: column;
-  align-items: center;
+ flex-direction: column;
+ align-items: center;
  }
  .report-image-large {
-  max-width: 80%;
+ max-width: 80%;
  }
  .report-details {
-  text-align: center;
+ text-align: center;
  }
 }
 
@@ -1379,9 +1429,9 @@ tbody tr:hover {
 /* --- Responsive adjustments for About Page --- */
 @media (max-width: 768px) {
  .about-hero-section h1 {
-  font-size: 2.5em;
+ font-size: 2.5em;
  }
  .about-mission {
-  flex-direction: column;
+ flex-direction: column;
  }
 }
