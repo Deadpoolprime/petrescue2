@@ -1435,3 +1435,31 @@ tbody tr:hover {
  flex-direction: column;
  }
 }
+
+.contact-card {
+    margin: 50px auto;
+    padding: 30px;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    max-width: 700px;
+    text-align: left;
+}
+
+.contact-card h3 {
+    color: var(--primary-warm);
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+}
+
+.contact-card p {
+    margin-bottom: 5px;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  /* ... (existing responsive styles) ... */
+}
