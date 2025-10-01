@@ -1,13 +1,8 @@
-/* static/css/style.css */
-
-/* --- Basic Reset --- */
 * {
  margin: 0;
  padding: 0;
  box-sizing: border-box;
 }
-
-/* --- Variables (Design System) --- */
 :root {
  --background: hsl(35, 20%, 98%);
  --foreground: hsl(25, 15%, 15%);
@@ -15,35 +10,27 @@
  --card-foreground: hsl(25, 15%, 15%);
  --popover: 0 0% 100%;
  --popover-foreground: 25 15% 15%;
- --primary: hsl(25, 85%, 55%); /* Orange-ish primary */
+ --primary: hsl(25, 85%, 55%);
  --primary-foreground: 0 0% 100%;
- --secondary: hsl(120, 25%, 92%); /* Light green/teal secondary */
+ --secondary: hsl(120, 25%, 92%);
  --secondary-foreground: 25 15% 15%;
  --muted: 35 15% 95%;
  --muted-foreground: 25 10% 50%;
  --border: hsl(35, 20%, 90%);
  --input: hsl(35, 20%, 96%);
  --ring: 25 85% 55%;
-
- /* PurPaws brand colors - using HSL values for flexibility */
- --primary-warm: 25 85% 55%; /* Warm orange for primary actions */
- --primary-soft: 35 40% 88%; /* Softer peach/orange for backgrounds */
- --success-green: 120 45% 55%; /* Nice green for success messages */
- --earth-brown: 25 25% 35%; /* Darker brown/earth tone */
- --accent-purple: 255 40% 55%; /* A nice purple for accents */
- --accent-purple-soft: 255 40% 88%; /* Lighter purple */
-
- /* Gradients */
+ --primary-warm: 25 85% 55%;
+ --primary-soft: 35 40% 88%;
+ --success-green: 120 45% 55%;
+ --earth-brown: 25 25% 35%;
+ --accent-purple: 255 40% 55%;
+ --accent-purple-soft: 255 40% 88%;
  --gradient-warm: linear-gradient(135deg, hsl(var(--primary-warm)), hsl(var(--primary-soft)));
  --gradient-hero: linear-gradient(135deg, hsl(var(--primary-warm) / 0.1), hsl(var(--success-green) / 0.1));
-
- /* Shadows */
  --shadow-soft: 0 4px 20px hsl(var(--primary-warm) / 0.1);
  --shadow-warm: 0 8px 30px hsl(var(--primary-warm) / 0.15);
 
- --radius: 0.5rem; /* Default border radius */
-
- /* Sidebar specific, if needed, otherwise can be removed or adapted */
+ --radius: 0.5rem;
  --sidebar-background: 0 0% 98%;
  --sidebar-foreground: 240 5.3% 26.1%;
  --sidebar-primary: 240 5.9% 10%;
@@ -53,38 +40,23 @@
  --sidebar-border: 220 13% 91%;
  --sidebar-ring: 217.2 91.2% 59.8%;
 }
-
-/* Tailwind-like directives - If you are actually using Tailwind, this would be processed by its build tool.
- For direct CSS, these are treated as comments or potentially unusual syntax.
- Assuming these are descriptive comments or if they come from a pre-processor like PostCSS.
-*/
-/* @layer base { */
-/* * { @apply border-border; } */
-/* body { @apply bg-background text-foreground; } */
-/* } */
-
-/* --- General Body Styling --- */
 body {
  font-family: 'Quicksand', sans-serif;
  line-height: 1.6;
  color: #333;
- background-color: #f9f9f9; /* Default background for ALL pages */
+ background-color: #f9f9f9;
  min-height: 100vh;
  display: flex;
  flex-direction: column;
- /* REMOVE position: relative; from the general body */
-}
 
-/* --- LOGIN PAGE SPECIFIC BACKGROUND --- */
+}
 body.login-page-background {
  background-image: url('../images/loginpet.png');
  background-size: cover;
  background-position: center center;
  background-attachment: fixed;
- position: relative; /* Add position: relative; ONLY here */
+ position: relative;
 }
-
-/* Overlay for the login page background */
 body.login-page-background::before {
  content: '';
  position: absolute;
@@ -95,18 +67,13 @@ body.login-page-background::before {
  background-color: rgba(0, 0, 0, 0);
  z-index: 0;
 }
-
-
-/* --- REGISTRATION PAGE SPECIFIC BACKGROUND --- */
 body.register-page-background {
- background-image: url('../images/registerpet.png'); /* ✅ FIX: Reverted to use the intended separate image */
+ background-image: url('../images/registerpet.png');
  background-size: cover;
  background-position: center center;
  background-attachment: fixed;
  position: relative;
 }
-
-/* Overlay for the registration page background */
 body.register-page-background::before {
  content: '';
  position: absolute;
@@ -114,19 +81,17 @@ body.register-page-background::before {
  left: 0;
  right: 0;
  bottom: 0;
- background-color: rgba(0, 0, 0, 0.05); /* Slight dark overlay for readability */
+ background-color: rgba(0, 0, 0, 0.05);
  z-index: 0;
 }
 
 body.home-page-background {
-  background-image: url('../images/home-hero-bg.jpg'); /* CHANGE THIS TO YOUR IMAGE NAME */
+  background-image: url('../images/home-hero-bg.jpg');
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
   position: relative;
 }
-
-/* Overlay for the home page background - use a warm, low opacity overlay */
 body.home-page-background::before {
   content: '';
   position: absolute;
@@ -134,23 +99,18 @@ body.home-page-background::before {
   left: 0;
   right: 0;
   bottom: 0;
-  /* FIX: Set z-index to -1 to guarantee it is behind all page elements */
-  background-color: hsla(var(--primary-warm), 0.15); 
-  z-index: -1; 
+
+  background-color: hsla(var(--primary-warm), 0.15);
+  z-index: -1;
 }
 
 body.admin-page-background {
-  background-image: url('../images/admin-bg.jpg'); /* Fictional image for admin */
+  background-image: url('../images/admin-bg.jpg');
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
   position: relative;
 }
-
-/* Overlay for the admin page background (Subtle dark overlay) */
-
-
-/* Ensure main content appears ABOVE the overlay for BOTH pages */
 body.login-page-background header,
 body.login-page-background main,
 body.login-page-background footer,
@@ -160,19 +120,11 @@ body.register-page-background footer {
  position: relative;
  z-index: 1;
 }
-
-
-
-/* --- You may need to add back a background for headers/footers on OTHER pages --- */
-/* If your header and footer look transparent on other pages now, add this: */
 header, footer {
- background-color: #ffffff; /* Or var(--card) if you prefer */
+ background-color: #ffffff;
 }
-
-/* --- Typography --- */
-/* Apply cursive font only to h1 tags by default, and to any element with the .cursive-title class */
 h1, .cursive-title {
- font-family: 'Pacifico', cursive; /* Cute title font */
+ font-family: 'Pacifico', cursive;
  color: var(--primary-warm);
 }
 
@@ -182,18 +134,14 @@ h1, .cursive-title {
  font-size: 2em;
  color: var(--primary-warm);
 }
-
-/* --- Layout & Containers --- */
 .container {
  width: 90%;
  max-width: 1200px;
  margin: 0 auto;
  padding: 20px 0;
 }
-
-/* --- Header --- */
 .site-header {
- background-color: var(--card); /* White card background */
+ background-color: var(--card);
  padding: 10px 0;
  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -205,25 +153,23 @@ h1, .cursive-title {
 }
 
 .logo-full-img {
- height: 85px; /* You can adjust this height to fit your logo's design */
- width: auto; /* This keeps the aspect ratio correct */
+ height: 85px;
+ width: auto;
  display: block;
- margin-left: -120px; /* Ensures it behaves as a block element within the link */
+ margin-left: -120px;
 }
 .logo {
  display: flex;
  align-items: center;
  cursor: pointer;
 }
-
-
 .site-header nav ul {
  list-style: none;
  display: flex;
 }
 
 .site-header nav a:hover {
- color: rgb(236, 109, 19); /* Change link color on hover */
+ color: rgb(236, 109, 19);
 }
 
 .site-header nav li {
@@ -232,24 +178,19 @@ h1, .cursive-title {
 
 .site-header nav a {
  text-decoration: none;
- color: var(--muted-foreground); /* Muted color for links */
+ color: var(--muted-foreground);
  font-weight: bold;
  font-size: 1.1em;
  transition: color 0.3s ease;
 }
-
-
-
 main {
  padding-top: 30px;
- flex-grow: 1; /* Allows main to take available space, pushing footer down */
- position: relative; /* Ensure the main content establishes a high stacking context */
- z-index: 2; /* Give main content a slightly higher z-index for safety */
+ flex-grow: 1;
+ position: relative;
+ z-index: 2;
 }
-
-/* --- Hero Section (for HomePage, can be adapted) --- */
 .hero-section {
- background-color: var(--primary-soft); /* Soft primary color */
+ background-color: var(--primary-soft);
  padding: 60px 0;
  display: flex;
  justify-content: space-between;
@@ -267,7 +208,7 @@ main {
 .hero-content h2 {
  font-size: 3em;
  margin-bottom: 20px;
- color: var(--sidebar-primary); /* Using a darker accent for contrast */
+ color: var(--sidebar-primary);
 }
 
 .hero-content p {
@@ -287,44 +228,42 @@ main {
  display: flex;
  gap: 20px;
 }
-
-/* --- Buttons --- */
 .btn {
  display: inline-block;
  padding: 12px 25px;
  border: none;
- border-radius: var(--radius); /* Using variable for radius */
+ border-radius: var(--radius);
  text-decoration: none;
  font-weight: bold;
  cursor: pointer;
- transition: all 0.2s ease; /* Transition for hover and active effects */
+ transition: all 0.2s ease;
  font-size: 1.1em;
- box-shadow: var(--shadow-soft); /* Using shadow variable */
+ box-shadow: var(--shadow-soft);
 }
 
 .btn-primary {
- background: var(--gradient-warm); /* Using gradient variable */
+ background: var(--gradient-warm);
  color: var(--primary-foreground);
 }
 
 .btn-primary:hover {
- background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%)); /* Darker gradient on hover */
+ background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%));
  transform: translateY(-2px);
- box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25); /* Stronger shadow on hover */
+ box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25);
 }
 
 .btn-primary:active {
- transform: translateY(0); /* Remove transform on click */
- box-shadow: var(--shadow-soft); /* Restore shadow */
+ transform: translateY(0);
+ box-shadow: var(--shadow-soft);
 }
 
 .btn-secondary {
- background: var(--gradient-warm); /* Using gradient variable */
+ background: var(--gradient-warm);
  color: var(--primary-foreground);
 }
 
 .btn-secondary:hover {
- background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%)); /* Darker gradient on hover */
+ background: linear-gradient(to right, hsl(25, 85%, 50%), hsl(25, 85%, 50%));
  transform: translateY(-2px);
  box-shadow: 0 6px 25px hsl(var(--primary-warm) / 0.25);
 }
@@ -343,24 +282,22 @@ main {
  width: 100%;
 }
 .btn-map {
-  background-color: var(--card); /* White background */
-  color: var(--foreground); /* Black/Dark text */
+  background-color: var(--card);
+  color: var(--foreground);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-soft); /* Subtle orange glow */
+  box-shadow: var(--shadow-soft);
 }
 
 .btn-map:hover {
   transform: translateY(-2px);
-  /* Stronger orange glow on hover */
+
   box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
 }
 
 .btn-map:active {
   transform: translateY(0);
 }
-
-/* --- Pet Cards (for lists) --- */
-.featured-pets-section, .dashboard-pets-section { /* Applied to multiple sections */
+.featured-pets-section, .dashboard-pets-section {
  margin-bottom: 50px;
  padding: 30px 0;
 }
@@ -372,10 +309,10 @@ main {
 }
 
 .pet-card {
- position: relative; /* Make it a positioning context for the badge */
- background-color: var(--card); /* Using card color variable */
+ position: relative;
+ background-color: var(--card);
  border-radius: var(--radius);
- box-shadow: var(--shadow-soft); /* Using soft shadow variable */
+ box-shadow: var(--shadow-soft);
  overflow: hidden;
  text-align: center;
  transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -385,22 +322,16 @@ main {
 
 .pet-card:hover {
  transform: translateY(-5px);
- box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12); /* Slightly stronger shadow on hover */
+ box-shadow: 0 8px 20px hsl(var(--primary-warm) / 0.12);
 }
 
 .dashboard-pets-section .pet-card {
-  /* Base Shadow: Subtle orange glow (Opacity 15%) */
-  box-shadow: 0 5px 20px hsl(var(--primary-warm) / 0.25); 
 
-  /* If you added the frosted background previously, you should keep it here: */
-  /* background-color: rgba(255, 255, 255, 0.85); */
-  /* backdrop-filter: blur(5px); */
+  box-shadow: 0 5px 20px hsl(var(--primary-warm) / 0.25);
 }
 
 .dashboard-pets-section .pet-card:hover {
-  /* Intense orange glow on hover (Opacity 40%) */
-  /* This overrides the less specific .pet-card:hover above */
-  box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.4); 
+  box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.4);
 }
 
 .report-type-badge {
@@ -412,22 +343,22 @@ main {
  font-size: 0.8em;
  font-weight: bold;
  color: white;
- z-index: 1; /* Make sure it's above the image */
+ z-index: 1;
  text-transform: uppercase;
  letter-spacing: 0.5px;
  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .report-type-badge.lost {
- background-color: white; /* Change background to white */
- color: var(--foreground); /* Change text color to dark (black-ish) */
- border: 1px solid var(--border); /* Add a light border to help it stand out */
+ background-color: white;
+ color: var(--foreground);
+ border: 1px solid var(--border);
 }
 
 .report-type-badge.found {
- background-color: white; 
- color: var(--foreground); /* Change text color to dark (black-ish) */
- border: 1px solid var(--border);/* A nice green for 'Found' */
+ background-color: white;
+ color: var(--foreground);
+ border: 1px solid var(--border);
 }
 
 .pet-card-img {
@@ -446,23 +377,21 @@ main {
 
 .pet-card-info h3 {
  font-family: 'Pacifico', cursive;
- color: var(--foreground); /* Using general foreground color */
+ color: var(--foreground);
  margin-bottom: 10px;
  font-size: 1.6em;
 }
 
 .pet-card-info p {
  margin-bottom: 8px;
- color: var(--muted-foreground); /* Muted color for details */
+ color: var(--muted-foreground);
 }
 
 .pet-card-info .btn-small {
  margin-top: 15px;
 }
-
-/* --- About Section --- */
 .about-purpaws-section {
- background-color: var(--accent); /* Using accent for background */
+ background-color: var(--accent);
  padding: 50px 0;
  text-align: center;
  border-radius: var(--radius);
@@ -478,15 +407,13 @@ main {
  height: 50px;
  width: auto;
  margin-bottom: 20px;
- opacity: 0.7; /* Slightly faded icon */
+ opacity: 0.7;
 }
 
 .about-content p {
  font-size: 1.1em;
  color: var(--foreground);
 }
-
-/* --- Authentication Forms (Login & Register) --- */
 .auth-section {
  display: flex;
  justify-content: center;
@@ -495,11 +422,11 @@ main {
 }
 
 .auth-box {
- background: var(--card); /* Using card background variable */
- backdrop-filter: blur(8px); /* Frosted glass effect */
- border: 1px solid var(--border); /* Using border variable */
+ background: var(--card);
+ backdrop-filter: blur(8px);
+ border: 1px solid var(--border);
  border-radius: var(--radius);
- box-shadow: var(--shadow-warm); /* Using shadow variable */
+ box-shadow: var(--shadow-warm);
  padding: 40px;
  width: 100%;
  max-width: 450px;
@@ -526,7 +453,7 @@ main {
 .form-group label {
  display: block;
  margin-bottom: 8px;
- font-weight: 500; /* Slightly less bold than headings */
+ font-weight: 500;
  color: var(--foreground);
 }
 
@@ -535,12 +462,12 @@ main {
 .form-group input[type="password"],
 .form-group input[type="number"],
 .form-group input[type="tel"],
-.form-group select { /* Added select here */
+.form-group select {
  width: 100%;
  padding: 12px 15px;
- border: 1px solid var(--border); /* Using border variable */
+ border: 1px solid var(--border);
  border-radius: var(--radius);
- background: var(--input); /* Using input background variable */
+ background: var(--input);
  color: var(--foreground);
  font-size: 0.875rem;
  outline: none;
@@ -549,8 +476,8 @@ main {
 
 .form-group input:focus,
 .form-group select:focus {
- border-color: var(--primary); /* Primary color on focus */
- box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2); /* Ring effect on focus */
+ border-color: var(--primary);
+ box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }
 
 .password-rules {
@@ -567,18 +494,16 @@ main {
 
 .auth-switch a {
  margin-left: 5px;
- color: var(--primary); /* Primary color for links */
+ color: var(--primary);
  text-decoration: none;
  font-weight: 500;
 }
 
 .auth-switch a:hover {
  text-decoration: underline;
- color: hsl(25, 85%, 50%); /* Darker primary on hover */
+ color: hsl(25, 85%, 50%);
 }
-
-/* Alerts */
-.messages { /* Changed from '.alert' to '.messages' for consistency with Django messages */
+.messages {
  list-style: none;
  padding: 0;
  margin: 20px 0;
@@ -590,43 +515,38 @@ main {
  border-radius: var(--radius);
  font-size: 0.9em;
  text-align: center;
- border: 1px solid transparent; /* Base border */
+ border: 1px solid transparent;
 }
-
-/* Specific message type styling (matches Django's default tags) */
 .messages li.success {
- background-color: hsl(120, 45%, 90%); /* Soft success green */
- color: hsl(120, 45%, 35%); /* Darker success green text */
+ background-color: hsl(120, 45%, 90%);
+ color: hsl(120, 45%, 35%);
  border-color: hsl(120, 45%, 70%);
 }
 
 .messages li.error {
- background-color: hsl(0, 62%, 90%); /* Soft error red */
- color: hsl(0, 62%, 30%); /* Darker error red text */
+ background-color: hsl(0, 62%, 90%);
+ color: hsl(0, 62%, 30%);
  border-color: hsl(0, 62%, 70%);
 }
 
 .messages li.info {
- background-color: hsl(210, 45%, 90%); /* Soft info blue */
+ background-color: hsl(210, 45%, 90%);
  color: hsl(210, 45%, 35%);
  border-color: hsl(210, 45%, 70%);
 }
 
 .messages li.warning {
- background-color: hsl(40, 85%, 90%); /* Soft warning yellow */
+ background-color: hsl(40, 85%, 90%);
  color: hsl(40, 85%, 30%);
  border-color: hsl(40, 85%, 70%);
 }
-
-
-/* --- Dashboard Section --- */
 .dashboard-section {
  padding: 40px 0;
- ; /* Light background */
+ ;
 }
 
 .dashboard-section .section-title {
- color: var(--primary-warm); /* Orange title */
+ color: var(--primary-warm);
  margin-bottom: 40px;
 }
 
@@ -660,22 +580,22 @@ main {
  border-radius: 50%;
  object-fit: cover;
  margin-top: 20px;
- border: 3px solid var(--primary-warm); /* Warm primary border */
+ border: 3px solid var(--primary-warm);
 }
 
 .dashboard-actions {
- background-color: var(--accent); /* Soft accent color for actions */
+ background-color: var(--accent);
  padding: 30px;
  border-radius: var(--radius);
  margin-bottom: 40px;
  text-align: center;
- box-shadow: var(--shadow-soft);
+ box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.35);
 }
 
 .dashboard-actions h2 {
  font-size: 2.2em;
  margin-bottom: 25px;
- color: var(--sidebar-primary); /* Dark accent for heading */
+ color: var(--sidebar-primary);
 }
 
 .action-buttons {
@@ -687,9 +607,9 @@ main {
 
 .action-buttons .btn {
  min-width: 200px;
- background: var(--gradient-warm); /* Use gradient for primary action buttons */
+ background: var(--gradient-warm);
  color: var(--primary-foreground);
- border: none; /* Ensure no extra border */
+ border: none;
 }
 
 .action-buttons .btn:hover {
@@ -709,7 +629,7 @@ main {
 }
 
 .user-reports-box {
- background-color: var(--input); /* Using input background for a lighter box */
+ background-color: var(--input);
  padding: 25px;
  border-radius: var(--radius);
  margin-top: 30px;
@@ -727,7 +647,7 @@ main {
 }
 
 .user-reports-box li {
- background-color: var(--card); /* Card background for list items */
+ background-color: var(--card);
  padding: 15px;
  border-radius: var(--radius);
  margin-bottom: 12px;
@@ -739,21 +659,19 @@ main {
 }
 
 .user-reports-box li strong {
- color: var(--primary-warm); /* Orange for emphasis */
+ color: var(--primary-warm);
 }
 
 .user-reports-box li a {
- color: var(--primary); /* Primary color for links */
+ color: var(--primary);
  text-decoration: none;
  font-weight: 500;
 }
 
 .user-reports-box li a:hover {
  text-decoration: underline;
- color: hsl(25, 85%, 50%); /* Darker primary on hover */
+ color: hsl(25, 85%, 50%);
 }
-
-/* --- Pets List Section --- */
 .featured-pets-section, .dashboard-pets-section {
  margin-bottom: 50px;
  padding: 30px 0;
@@ -761,17 +679,15 @@ main {
 
 .pets-adoption-section .section-title,
 .featured-pets-section .section-title,
-.dashboard-pets-section .section-title { /* Applied to multiple sections */
- color: var(--accent-purple); /* Purple for pet section titles */
+.dashboard-pets-section .section-title {
+ color: var(--accent-purple);
 }
 
 .pet-grid {
  display: grid;
- /* MODIFIED: Changed 1fr to 350px max, allowing a max-width for the column tracks. */
- /* This prevents extreme stretching when few items are present. */
- grid-template-columns: repeat(auto-fit, minmax(250px, 350px)); 
- justify-content: center; /* Center the grid items if there are few columns */
- gap: 40px; /* Increased gap */
+ grid-template-columns: repeat(auto-fit, minmax(225px, 325px));
+ justify-content: center;
+ gap: 40px;
 }
 
 .pet-card {
@@ -819,21 +735,19 @@ main {
 .pet-card-info .btn-small {
  margin-top: 15px;
 }
-
-/* --- Report Pet Form Section --- */
 .report-section {
- padding: 40px 0; /* Increased padding */
+ padding: 40px 0;
  display: flex;
  justify-content: center;
  align-items: center;
 }
 
 .report-box {
- background: var(--card); /* Using card background */
- backdrop-filter: blur(8px); /* Frosted glass effect */
- border: 1px solid var(--border); /* Using border variable */
+ background: var(--card);
+ backdrop-filter: blur(8px);
+ border: 1px solid var(--border);
  border-radius: var(--radius);
- box-shadow: var(--shadow-warm); /* Using shadow variable */
+ box-shadow: var(--shadow-warm);
  padding: 40px;
  width: 100%;
  max-width: 550px;
@@ -851,8 +765,6 @@ main {
  color: var(--muted-foreground);
  margin-bottom: 30px;
 }
-
-/* Re-use form-group and input styling from auth-box */
 .report-box .form-group {
  margin-bottom: 20px;
  text-align: left;
@@ -900,9 +812,6 @@ main {
  color: var(--muted-foreground);
  margin-top: 5px;
 }
-
-
-/* --- Pet Report Detail Section --- */
 .report-detail-section {
  padding: 40px 0;
 }
@@ -930,14 +839,14 @@ main {
 }
 
 .report-header p strong {
- color: var(--primary-warm); /* Orange for emphasis */
+ color: var(--primary-warm);
 }
 
 .report-image-large {
  width: 100%;
  max-width: 400px;
  margin: 0 auto 30px auto;
- text-align: center; /* Center the image */
+ text-align: center;
 }
 
 .report-image-large img {
@@ -959,10 +868,8 @@ main {
 }
 
 .report-details p strong {
- color: var(--accent-purple); /* Purple for detail labels */
+ color: var(--accent-purple);
 }
-
-/* --- Messages Styling --- */
 .messages {
  list-style: none;
  padding: 0;
@@ -1002,18 +909,13 @@ main {
  color: hsl(40, 85%, 30%);
  border-color: hsl(40, 85%, 70%);
 }
-
-
-/* Override the curly font for all headings within admin pages */
 .admin-dashboard-section h2,
 .admin-dashboard-section h3,
 .manage-users-section h2,
 .manage-users-section h3 {
- font-family: 'Quicksand', sans-serif; /* Use the regular body font */
- font-weight: 700; /* Make it bold to stand out */
+ font-family: 'Quicksand', sans-serif;
+ font-weight: 700;
 }
-
-/* --- Admin Dashboard --- */
 .stats-grid {
  display: grid;
  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1029,13 +931,13 @@ main {
  border: 1px solid var(--border);
 }
 .stat-card h3 {
- font-size: 0.9em; /* Make the card title a bit smaller */
+ font-size: 0.9em;
  color: var(--muted-foreground);
- text-transform: uppercase; /* A common style for stat cards */
+ text-transform: uppercase;
  letter-spacing: 1px;
 }
 .stat-card p {
- font-family: 'Quicksand', sans-serif; /* Also apply to the number itself */
+ font-family: 'Quicksand', sans-serif;
  font-size: 2.8em;
  font-weight: 700;
  color: var(--primary-warm);
@@ -1052,8 +954,6 @@ main {
 .admin-actions h3 {
  margin-bottom: 20px;
 }
-
-/* --- Manage Users Page --- */
 .admin-nav {
  margin-bottom: 20px;
 }
@@ -1067,7 +967,7 @@ main {
 }
 
 .user-table-container {
- overflow-x: auto; /* Allows horizontal scrolling on small screens */
+ overflow-x: auto;
  background-color: var(--card);
  padding: 20px;
  border-radius: var(--radius);
@@ -1080,7 +980,7 @@ table {
 }
 th, td {
  padding: 12px 15px;
- border-bottom: 1px solid var(--border); /* Use bottom borders for a cleaner look */
+ border-bottom: 1px solid var(--border);
  text-align: left;
  vertical-align: middle;
 }
@@ -1093,10 +993,8 @@ thead th {
  letter-spacing: 0.5px;
 }
 tbody tr:hover {
- background-color: hsl(var(--primary-warm) / 0.05); /* Subtle hover effect */
+ background-color: hsl(var(--primary-warm) / 0.05);
 }
-
-/* Styling for the action buttons in the table */
 .action-cell {
  display: flex;
  gap: 10px;
@@ -1106,10 +1004,8 @@ tbody tr:hover {
 .action-form {
  margin: 0;
 }
-
-/* Remove Button */
 .btn-danger {
- background-color: rgb(231, 76, 60); /* A strong red */
+ background-color: rgb(231, 76, 60);
  color: white;
  border: none;
  padding: 6px 12px;
@@ -1117,28 +1013,26 @@ tbody tr:hover {
  cursor: pointer;
  font-size: 0.85em;
  font-weight: bold;
- transition: background-color 0.2s ease; /* Add transition */
+ transition: background-color 0.2s ease;
 }
 .btn-danger:hover {
- background-color: rgb(192, 57, 43); /* Darker red on hover */
+ background-color: rgb(192, 57, 43);
 }
-
-/* Promote Button */
 .btn-promote {
- background-color: rgb(231, 76, 60); /* A strong, clear green */
- color: white; /* Explicitly set text color to white */
+ background-color: rgb(231, 76, 60);
+ color: white;
  border: none;
  padding: 6px 12px;
  border-radius: var(--radius);
  cursor: pointer;
  font-size: 0.85em;
  font-weight: bold;
- transition: background-color 0.2s ease; /* Add transition */
+ transition: background-color 0.2s ease;
 }
 .btn-promote:hover {
- background-color: rgb(192, 57,43); /* Darker green on hover */
+ background-color: rgb(192, 57,43);
 }
-/* Role badges in the user table */
+
 .role-admin {
  background-color: var(--primary-warm);
  color: rgb(0, 0, 0);
@@ -1155,15 +1049,11 @@ tbody tr:hover {
  font-size: 0.8em;
  font-weight: bold;
 }
-
-/* --- Style for the Admin link in main navigation --- */
 .admin-link {
- color: #c0392b !important; /* A distinct red color */
+ color: #c0392b !important;
  font-weight: bold;
  position: relative;
 }
-
-/* Optional: add a small dot to the admin link */
 .admin-link::after {
  content: '';
  position: absolute;
@@ -1174,8 +1064,6 @@ tbody tr:hover {
  background-color: #c0392b;
  border-radius: 50%;
 }
-
-/* --- Dashboard Filtering Tabs --- */
 .report-filter-tabs {
   display: flex;
   justify-content: center;
@@ -1190,10 +1078,10 @@ tbody tr:hover {
   flex: 1;
   text-align: center;
   padding: 10px 15px;
-  text-decoration: none; /* Crucial: Remove underline */
+  text-decoration: none;
   font-weight: bold;
-  color: var(--muted-foreground); /* Use muted color for inactive link text */
-  background-color: var(--card); /* White background */
+  color: var(--muted-foreground);
+  background-color: var(--card);
   border: 1px solid var(--border);
   transition: all 0.2s ease;
   cursor: pointer;
@@ -1210,17 +1098,17 @@ tbody tr:hover {
 }
 
 .filter-tab.active {
-  background-color: hsl(25, 85%, 55%); /* Primary Warm HSL */
-  color: white; /* Ensure text is white when active */
+  background-color: hsl(25, 85%, 55%);
+  color: white;
   border-color: hsl(25, 85%, 55%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .filter-tab:not(.active):hover {
   background-color: var(--input);
-  color: var(--foreground); /* Ensure hover text color is dark/readable */
+  color: var(--foreground);
 }
-/* --- Responsive Adjustments --- */
+
 @media (max-width: 768px) {
  .site-header .container, .site-footer .container {
  flex-direction: column;
@@ -1236,7 +1124,7 @@ tbody tr:hover {
  .logo {
  margin-bottom: 15px;
  }
- /* Hero section adjustments */
+
  .hero-section {
  flex-direction: column;
  text-align: center;
@@ -1247,40 +1135,32 @@ tbody tr:hover {
  margin-bottom: 30px;
  }
  .hero-content h2 {
- font-size: 2.5em; /* Smaller heading on mobile */
+ font-size: 2.5em;
  }
  .hero-content p {
  font-size: 1.1em;
  }
  .hero-image img {
- height: 250px; /* Smaller image on mobile */
+ height: 250px;
  }
  .hero-actions {
- flex-direction: column; /* Stack buttons vertically */
+ flex-direction: column;
  gap: 15px;
  align-items: center;
  }
  .btn {
- width: 80%; /* Make buttons wider */
+ width: 80%;
  }
-
- /* Pet Cards */
  .pet-grid {
- grid-template-columns: 1fr; /* Stack cards on smaller screens */
+ grid-template-columns: 1fr;
  }
-
- /* Auth and Report Boxes */
  .auth-box, .report-box {
  max-width: 90%;
  padding: 30px;
  }
-
- /* Social Links */
  .social-links {
  margin-top: 15px;
  }
-
- /* Dashboard Actions */
  .dashboard-actions h2 {
  font-size: 1.8em;
  }
@@ -1291,8 +1171,6 @@ tbody tr:hover {
  .action-buttons .btn {
  width: 80%;
  }
-
- /* Report Detail Page */
  .report-detail-container {
  flex-direction: column;
  align-items: center;
@@ -1307,11 +1185,9 @@ tbody tr:hover {
 
 .about-hero-section h1,
 .about-content-section h2 {
- font-family: 'Quicksand', sans-serif; /* Use the regular body font */
- font-weight: 700; /* Make it bold */
+ font-family: 'Quicksand', sans-serif;
+ font-weight: 700;
 }
-
-
 .about-hero-section {
  background: linear-gradient(rgba(0, 0, 0, 0.618), rgba(0, 0, 0, 0.771)), url('../images/about-hero.jpg');
  background-size: cover;
@@ -1320,7 +1196,7 @@ tbody tr:hover {
  text-align: center;
  padding: 80px 20px;
  margin-bottom: 50px;
- border-radius: 20px; /* round edges */
+ border-radius: 20px;
  overflow: hidden;
 }
 
@@ -1406,7 +1282,7 @@ tbody tr:hover {
 }
 
 .step-card h3 {
- /* The global h3 rule still applies, so we override it here */
+
  font-family: 'Quicksand', sans-serif;
  font-weight: 700;
  font-size: 1.5em;
@@ -1438,8 +1314,6 @@ tbody tr:hover {
  margin-left: auto;
  margin-right: auto;
 }
-
-/* --- Responsive adjustments for About Page --- */
 @media (max-width: 768px) {
  .about-hero-section h1 {
  font-size: 2.5em;
@@ -1470,9 +1344,6 @@ tbody tr:hover {
 .contact-card p {
     margin-bottom: 5px;
 }
-
-
-/* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
-  /* ... (existing responsive styles) ... */
+
 }
