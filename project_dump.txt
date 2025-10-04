@@ -924,7 +924,7 @@ main {
  border-radius: var(--radius);
  margin-bottom: 40px;
  text-align: center;
- box-shadow: var(--shadow-soft);
+ box-shadow: 0 8px 30px hsl(var(--primary-warm) / 0.35);
 }
 
 .dashboard-actions h2 {
@@ -1682,13 +1682,6 @@ tbody tr:hover {
 @media (max-width: 768px) {
 
 }
-
-
-================================================================================
-File: .\static\js\script.js
-================================================================================
-
-
 
 
 ================================================================================
@@ -3481,7 +3474,7 @@ File: .\users\templates\users\dashboard.html
 {% load static %}
 
 {% block title %}Dashboard{% endblock %}
-{% block body_class %}home-page-background{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
 {% block content %}
 <section class="dashboard-section">
  <h2 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h2>
@@ -3800,49 +3793,102 @@ File: .\users\templates\users\pet_report_detail.html
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}Report Detail{% endblock %}
-
+{% block title %}{{ report.get_report_type_display }} Report{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
 {% block content %}
 <section class="report-detail-section">
-  <div class="report-detail-container">
-    <h2 class="section-title">{{ report.get_report_type_display }} Report</h2>
+    <div class="report-detail-container" style="max-width: 900px; margin: 0 auto; display: block;">
+        
+        <div class="report-header" style="padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+            <h2 class="section-title" style="margin-bottom: 5px;">
+                {{ report.get_report_type_display }} Pet Report
+            </h2>
+            <div style="text-align: center; margin-bottom: 15px;">
+                {% if report.report_type == 'Lost' %}
+                    <span class="report-type-badge lost">🐾 Lost Since {{ report.date_reported|date:"M d, Y" }}</span>
+                {% else %}
+                    <span class="report-type-badge found" style="background-color: var(--primary-warm); color: white;">🏡 Found On {{ report.date_reported|date:"M d, Y" }}</span>
+                {% endif %}
+            </div>
+            
+            <p style="font-size: 1.1em;">
+                <strong>Status:</strong> 
+                <span class="{% if report.status == 'Open' %}role-admin{% elif report.status == 'Closed' %}role-user{% else %}role-admin{% endif %}" style="padding: 5px 10px; border-radius: 5px;">
+                    {{ report.get_status_display }}
+                </span>
+            </p>
+        </div>
 
-    <div class="report-header">
-      <p><strong>Reported by:</strong> {{ report.reporter.get_full_name|default:report.reporter.username }}</p>
-      <p><strong>Reported on:</strong> {{ report.date_reported|date:"F d, Y H:i" }}</p>
-      <p><strong>Status:</strong> {{ report.get_status_display }}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 30px;">
+
+            {# LEFT COLUMN: Image #}
+            <div class="report-image-large" style="flex: 1 1 350px;">
+                {% if report.pet_image %}
+                    <img src="{{ report.pet_image.url }}" alt="Pet Image" style="width: 100%; height: 400px; object-fit: cover; border-radius: var(--radius); box-shadow: var(--shadow-warm);">
+                {% else %}
+                    <div style="height: 400px; background-color: var(--input); display: flex; justify-content: center; align-items: center; border-radius: var(--radius); color: var(--muted-foreground);">
+                        No Image Available
+                    </div>
+                {% endif %}
+            </div>
+
+            {# RIGHT COLUMN: Details #}
+            <div class="report-details" style="flex: 1 1 450px;">
+                
+                <h3 style="color: var(--foreground); margin-bottom: 20px; font-size: 1.8em;">
+                    <i class="fas fa-paw"></i> Pet Profile
+                </h3>
+
+                {# Pet Identity #}
+                <div class="detail-group">
+                    <p><strong><i class="fas fa-tag"></i> Name:</strong> {{ report.name|default:"N/A" }}</p>
+                    <p><strong><i class="fas fa-dog"></i> Type:</strong> {{ report.pet_type }}</p>
+                    <p><strong><i class="fas fa-dna"></i> Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+                    <p><strong><i class="fas fa-palette"></i> Color:</strong> {{ report.color }}</p>
+                    <p><strong><i class="fas fa-birthday-cake"></i> Age:</strong> {{ report.age|default:"Unknown" }}</p>
+                    <p><strong><i class="fas fa-venus-mars"></i> Gender:</strong> {{ report.gender }}</p>
+                </div>
+                
+                <hr style="margin: 20px 0;">
+
+                {# Location and Contact #}
+                <h3 style="color: var(--foreground); margin-bottom: 15px; font-size: 1.4em;">
+                    <i class="fas fa-map-marker-alt"></i> Location & Contact
+                </h3>
+                <div class="detail-group">
+                    <p><strong>Location:</strong> {{ report.location }}</p>
+                    <p><strong>Reported By:</strong> {{ report.reporter.get_full_name|default:report.reporter.username }}</p>
+                    <p><strong>Contact Info:</strong> {{ report.contact_info }}</p>
+                </div>
+
+                <hr style="margin: 20px 0;">
+
+                {# Health/Condition Details #}
+                <h3 style="color: var(--foreground); margin-bottom: 15px; font-size: 1.4em;">
+                    <i class="fas fa-notes-medical"></i> Condition
+                </h3>
+                <div class="detail-group">
+                    <p><strong>Health Information:</strong> {{ report.health_information|default:"None provided." }}</p>
+                    {% if report.report_type == 'Found' and report.injury %}
+                    <p><strong>Observed Injury:</strong> {{ report.injury }}</p>
+                    {% endif %}
+                </div>
+
+                {# Action Button #}
+                <div style="margin-top: 30px; text-align: right;">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ report.location|urlencode }}" 
+                       target="_blank" class="btn btn-primary">View Location on Map</a>
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    {% if report.pet_image %}
-      <div class="report-image-large">
-        <img src="{{ report.pet_image.url }}" alt="Pet Image">
-      </div>
-    {% endif %}
-
-    <div class="report-details">
-      <p><strong>Pet Name:</strong> {{ report.name|default:"N/A" }}</p>
-      <p><strong>Pet Type:</strong> {{ report.pet_type }}</p>
-      <p><strong>Breed:</strong> {{ report.breed|default:"N/A" }}</p>
-      <p><strong>Color:</strong> {{ report.color }}</p>
-      <p><strong>Age:</strong> {{ report.age|default:"Unknown" }}</p>
-      <hr>
-      <p><strong>Health Information:</strong> {{ report.health_information|default:"None provided." }}</p>
-      {% if report.report_type == 'Found' and report.injury %}
-      <p><strong>Observed Injury:</strong> {{ report.injury }}</p>
-      {% endif %}
-      <hr>
-      <p><strong>Location:</strong> {{ report.location }}</p>
-      <p><strong>Contact Info:</strong> {{ report.contact_info }}</p>
-    </div>
-
-    {# Add a button for expressing interest or matching later #}
-    {# <a href="#" class="btn btn-primary">Express Interest</a> #}
-  </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
-{# Add any pet detail specific JS here #}
+{# For the icons (fa-paw, fa-map-marker-alt, etc.) to show up, we need Font Awesome. #}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 {% endblock %}
 
 

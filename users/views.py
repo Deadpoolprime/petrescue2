@@ -249,7 +249,7 @@ def create_pet_report_view(request, report_type):
         pet_image=form.cleaned_data['pet_image'],
         location=form.cleaned_data['location'],
         contact_info=form.cleaned_data['contact_info'],
-
+        event_date=form.cleaned_data.get('event_date'),
         health_information=form.cleaned_data.get('health_information'),
         injury=injury_detail,
 
@@ -292,7 +292,7 @@ class PetReportForm(forms.Form):
  name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
  gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
-
+ event_date = forms.DateField(required=True,widget=forms.DateInput(attrs={'type': 'date'}),label="Date Lost/Found")
  health_information = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Known medical issues, required medications, temperament, etc."}), label="Health Information")
  injury = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Visible injuries, limp, signs of distress (Found reports only)."}), label="Observed Injury")
 

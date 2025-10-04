@@ -34,6 +34,7 @@ class PetReport(models.Model):
   contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
   status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
   date_reported = models.DateTimeField(auto_now_add=True)
+  event_date = models.DateField(null=True, blank=True, help_text="Date the pet was lost or found.")
 
   def __str__(self):
     pet_name = self.name if self.name else "Unnamed Pet"

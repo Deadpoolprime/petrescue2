@@ -30,7 +30,7 @@
 
       {# Form fields - NEW FIELDS ADDED #}
       <div class="form-group">
-        <label for="id_name">Pet's Name (Optional):</label>
+        <label for="id_name">Pet's Name:</label>
         <input type="text" id="id_name" name="name" value="{{ form.name.value|default:'' }}">
       </div>
       <div class="form-group">
@@ -54,6 +54,13 @@
 
 
       {# Existing Fields #}
+      <div class="form-group">
+    <label for="{{ form.event_date.id_for_label }}">
+     {% if report_type == 'Lost' %}Date Lost:{% else %}Date Found:{% endif %}
+    </label>
+    {{ form.event_date }}
+    <small>Approximate date the event occurred.</small>
+   </div>
       <div class="form-group">
         <label for="id_pet_type">Pet Type:</label>
         <input type="text" id="id_pet_type" name="pet_type" value="{{ form.pet_type.value|default:'' }}" required>
