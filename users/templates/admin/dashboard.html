@@ -1,4 +1,4 @@
-{# users/templates/admin/dashboard.html #}
+\{# users/templates/admin/dashboard.html #}
 {% extends 'users/base.html' %}
 {% load static %}
 
@@ -10,35 +10,43 @@
  <p class="auth-subtitle">Welcome, {{ request.user.username }}! Here's a summary of the platform.</p>
 
  <div class="stats-grid">
-  <div class="stat-card">
-   <h3>Normal Users</h3>
-   <p>{{ total_normal_users }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Platform Admins</h3>
-   <p>{{ total_admins }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Pets for Adoption</h3>
-   <p>{{ pets_for_adoption_count }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Open Lost Reports</h3>
-   <p>{{ lost_reports_count }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Open Found Reports</h3>
-   <p>{{ found_reports_count }}</p>
-  </div>
+   <div class="stat-card">
+     <h3>Normal Users</h3>
+     <p>{{ total_normal_users }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Platform Admins</h3>
+     <p>{{ total_admins }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Pets for Adoption</h3>
+     <p>{{ pets_for_adoption_count }}</p>
+   </div>
+   <div class="stat-card" {% if unapproved_reports_count > 0 %}style="border: 2px solid var(--primary-warm);"{% endif %}>
+     <h3>Reports Awaiting Approval</h3>
+     <p>{{ unapproved_reports_count }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Open Lost Reports</h3>
+     <p>{{ lost_reports_count }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Open Found Reports</h3>
+     <p>{{ found_reports_count }}</p>
+   </div>
  </div>
 
  <div class="admin-actions">
-  <h3>Management Tools</h3>
-  <div class="action-buttons">
-   <a href="{% url 'users:admin_manage_users' %}" class="btn btn-primary">Manage Users</a>
-   <a href="{% url 'users:admin_adoption_processing' %}" class="btn btn-primary">Manage Pet Reports & Adoptions</a>
-   {# You can add more admin action buttons here as you build more features #}
-  </div>
+   <h3>Management Tools</h3>
+   <div class="action-buttons">
+     <a href="{% url 'users:admin_manage_users' %}" class="btn btn-primary">Manage Users</a>
+     <a href="{% url 'users:admin_adoption_processing' %}" class="btn btn-primary">Manage Pet Reports & Adoptions</a>
+     
+     {# NEW MODERATION BUTTON #}
+     <a href="{% url 'users:admin_moderate_reports' %}" class="btn btn-primary" style="background-color: var(--accent-purple); color: #333;">
+       Moderate New Reports ({{ unapproved_reports_count }})
+     </a>
+   </div>
  </div>
 </section>
 {% endblock %}

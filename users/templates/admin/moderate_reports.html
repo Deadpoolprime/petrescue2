@@ -1,0 +1,59 @@
+{# users/templates/admin/moderate_reports.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Moderate Reports{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
+
+{% block content %}
+<section class="manage-reports-section manage-users-section">
+  <h2 class="section-title">Moderate Pet Reports</h2>
+  <p class="auth-subtitle">Review reports submitted by users before making them public on the dashboard.</p>
+  
+  <div class="admin-nav">
+    <a href="{% url 'users:admin_dashboard' %}">&larr; Back to Admin Dashboard</a>
+  </div>
+
+  <div class="user-table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Pet</th>
+          <th>Location</th>
+          <th>Reported By</th>
+          <th>Date Submitted</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports_to_moderate %}
+        <tr>
+          <td>{{ report.id }}</td>
+          <td>{{ report.get_report_type_display }}</td>
+          <td>{{ report.pet_type }} ({{ report.name|default:'N/A' }})</td>
+          <td>{{ report.location }}</td>
+          <td>{{ report.reporter.username }}</td>
+          <td>{{ report.date_reported|date:"Y-m-d H:i" }}</td>
+          <td class="action-cell">
+            <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-map">View Details</a>
+            
+            <form action="{% url 'users:admin_approve_report' report.id %}" method="post" class="action-form">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-small btn-primary" style="background-color: var(--success-green);">Approve</button>
+            </form>
+            
+            {# Optional: Add a button/form to delete or reject the report #}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7">No reports currently awaiting approval.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

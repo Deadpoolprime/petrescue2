@@ -1806,6 +1806,8 @@ class PetReport(models.Model):
   contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
   status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
   date_reported = models.DateTimeField(auto_now_add=True)
+  event_date = models.DateField(null=True, blank=True, help_text="Date the pet was lost or found.")
+  is_approved = models.BooleanField(default=False)
 
   def __str__(self):
     pet_name = self.name if self.name else "Unnamed Pet"
@@ -1895,6 +1897,8 @@ from .views import (
     admin_remove_user_view,
     admin_adoption_processing_view,
     admin_put_for_adoption_view,
+    admin_moderate_reports_view,
+    admin_approve_report_view,
     home_view 
 )
 
@@ -1919,6 +1923,8 @@ urlpatterns = [
     path('admin_dashboard/users/remove/<int:user_id>/', admin_remove_user_view, name='admin_remove_user'),
     path('admin_dashboard/process-adoption/', admin_adoption_processing_view, name='admin_adoption_processing'),
     path('admin_dashboard/process-adoption/<int:report_id>/', admin_put_for_adoption_view, name='admin_put_for_adoption'),
+    path('admin_dashboard/moderate-reports/', admin_moderate_reports_view, name='admin_moderate_reports'),
+    path('admin_dashboard/moderate-reports/approve/<int:report_id>/', admin_approve_report_view, name='admin_approve_report'),
 ]
 
 
@@ -2130,7 +2136,8 @@ def dashboard_view(request):
   
   view_filter = request.GET.get('view')
 
-  open_reports_qs = PetReport.objects.filter(status='Open').order_by('-date_reported')
+  open_reports_qs = PetReport.objects.filter(status='Open', is_approved=True).order_by('-date_reported')
+
   
   if view_filter == 'lost':
     open_reports_qs = open_reports_qs.filter(report_type='Lost')
@@ -2164,7 +2171,7 @@ def create_pet_report_view(request, report_type):
 
 
         injury_detail = form.cleaned_data.get('injury') if report_type == 'Found' else None
-
+        is_approved_status = False 
         pet_report = PetReport.objects.create(
         report_type=report_type,
         reporter=request.user,
@@ -2177,9 +2184,10 @@ def create_pet_report_view(request, report_type):
         pet_image=form.cleaned_data['pet_image'],
         location=form.cleaned_data['location'],
         contact_info=form.cleaned_data['contact_info'],
-
+        event_date=form.cleaned_data.get('event_date'),
         health_information=form.cleaned_data.get('health_information'),
         injury=injury_detail,
+        is_approved=is_approved_status
 
   )
     messages.success(request, f"Your  pet report has been submitted successfully!")
@@ -2220,7 +2228,7 @@ class PetReportForm(forms.Form):
  name = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'placeholder': "Pet's name (if known)"}))
  age = forms.IntegerField(min_value=0, required=False, widget=forms.NumberInput(attrs={'placeholder': "Pet's age in years (if known)"}))
  gender = forms.ChoiceField(choices=PetReport.GENDER_CHOICES, required=False, widget=forms.Select(attrs={'placeholder': "Select Gender"}))
-
+ event_date = forms.DateField(required=True,widget=forms.DateInput(attrs={'type': 'date'}),label="Date Lost/Found")
  health_information = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Known medical issues, required medications, temperament, etc."}), label="Health Information")
  injury = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3, 'placeholder': "Visible injuries, limp, signs of distress (Found reports only)."}), label="Observed Injury")
 
@@ -2342,17 +2350,49 @@ def admin_dashboard_view(request):
  pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
  lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
  found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
-
+ unapproved_reports_count = PetReport.objects.filter(is_approved=False).count()
  context = {
   'total_normal_users': total_normal_users,
   'total_admins': total_admins,
   'pets_for_adoption_count': pets_for_adoption_count,
   'lost_reports_count': lost_reports_count,
   'found_reports_count': found_reports_count,
+  'unapproved_reports_count': unapproved_reports_count,
  }
  return render(request, 'admin/dashboard.html', context)
 
+@staff_required
+def admin_moderate_reports_view(request):
+ """
+ Admin view to list reports awaiting approval.
+ """
+ reports_to_moderate = PetReport.objects.filter(is_approved=False).order_by('-date_reported')
 
+ context = {
+  'reports_to_moderate': reports_to_moderate
+ }
+ return render(request, 'admin/moderate_reports.html', context)
+
+
+@staff_required
+def admin_approve_report_view(request, report_id):
+ """
+ Admin action to approve a pet report, making it public.
+ """
+ if request.method == 'POST':
+  report = get_object_or_404(PetReport, pk=report_id)
+
+  if report.is_approved:
+   messages.warning(request, f"Report #{report_id} is already approved.")
+   return redirect('users:admin_moderate_reports')
+
+  report.is_approved = True
+  report.save()
+  messages.success(request, f"Report #{report_id} ({report.report_type}) has been successfully approved and is now visible on the dashboard.")
+  return redirect('users:admin_moderate_reports')
+ 
+ messages.error(request, "Invalid request method.")
+ return redirect('users:admin_moderate_reports')
 
 @staff_required 
 def admin_manage_users_view(request):
@@ -2521,58 +2561,58 @@ from users.models import PetReport, Notification, User
 import datetime
 
 class Command(BaseCommand):
-    help = 'Flags unclaimed found pets older than 15 days and notifies admins.'
+  help = 'Flags unclaimed found pets older than 15 days and notifies admins.'
 
-    def handle(self, *args, **options):
-        self.stdout.write("Checking for found pets eligible for adoption...")
+  def handle(self, *args, **options):
+    self.stdout.write("Checking for found pets eligible for adoption...")
 
-        # 1. Define the time threshold (15 days ago)
-        fifteen_days_ago = timezone.now() - datetime.timedelta(days=15)
+    # 1. Define the time threshold (15 days ago, using .date() for comparison with DateField)
+    fifteen_days_ago = timezone.now().date() - datetime.timedelta(days=15)
 
-        # 2. Find all 'Found' pet reports that are still 'Open' and older than 15 days
-        eligible_reports = PetReport.objects.filter(
-            report_type='Found',
-            status='Open',
-            date_reported__lt=fifteen_days_ago
-        )
+    # 2. Find all 'Found' pet reports that are still 'Open' and older than 15 days
+    eligible_reports = PetReport.objects.filter(
+      report_type='Found',
+      status='Open',
+      event_date__lt=fifteen_days_ago
+    )
 
-        if not eligible_reports.exists():
-            self.stdout.write(self.style.SUCCESS("No new pets are eligible for adoption today."))
-            return
+    if not eligible_reports.exists():
+      self.stdout.write(self.style.SUCCESS("No new pets are eligible for adoption today."))
+      return
 
-        # 3. Find all admin users to notify
-        admin_users = User.objects.filter(is_staff=True)
-        if not admin_users.exists():
-            self.stdout.write(self.style.ERROR("No admin users found to notify."))
-            return
+    # 3. Find all admin users to notify
+    admin_users = User.objects.filter(is_staff=True)
+    if not admin_users.exists():
+      self.stdout.write(self.style.ERROR("No admin users found to notify."))
+      return
 
-        notification_count = 0
-        # 4. For each eligible report, create a notification for each admin
-        for report in eligible_reports:
-            # Create a notification message
-            message = (
-                f"The found '{report.pet_type}' (Report ID: {report.id}) "
-                f"reported on {report.date_reported.strftime('%Y-%m-%d')} is now eligible for adoption."
-            )
+    notification_count = 0
+    # 4. For each eligible report, create a notification for each admin
+    for report in eligible_reports:
+      # Create a notification message
+      message = (
+        f"The found '{report.pet_type}' (Report ID: {report.id}) "
+        f"found on {report.event_date.strftime('%Y-%m-%d')} is now eligible for adoption."
+      )
 
-            # Check if a similar notification already exists to avoid duplicates
-            for admin in admin_users:
-                if not Notification.objects.filter(recipient=admin, pet_report=report).exists():
-                    Notification.objects.create(
-                        recipient=admin,
-                        pet_report=report, # Link the notification to the report
-                        message=message
-                    )
-                    notification_count += 1
+      # Check if a similar notification already exists to avoid duplicates
+      for admin in admin_users:
+        if not Notification.objects.filter(recipient=admin, pet_report=report).exists():
+          Notification.objects.create(
+            recipient=admin,
+            pet_report=report, # Link the notification to the report
+            message=message
+          )
+          notification_count += 1
 
-            # IMPORTANT: We change the status of the PetReport to 'Pending Adoption'
-            # This prevents it from being picked up by this script again.
-            report.status = 'Pending Adoption' # You'll need to add this to your STATUS_CHOICES
-            report.save()
+      # IMPORTANT: We change the status of the PetReport to 'Pending Adoption'
+      # This prevents it from being picked up by this script again.
+      report.status = 'Pending Adoption' # You'll need to add this to your STATUS_CHOICES
+      report.save()
 
-        self.stdout.write(self.style.SUCCESS(
-            f"Created {notification_count} new notifications for {eligible_reports.count()} eligible pets."
-        ))
+    self.stdout.write(self.style.SUCCESS(
+      f"Created {notification_count} new notifications for {eligible_reports.count()} eligible pets."
+    ))
 
 
 ================================================================================
@@ -2832,6 +2872,56 @@ class Migration(migrations.Migration):
 
 
 ================================================================================
+File: .\users\migrations\0008_petreport_event_date.py
+================================================================================
+
+# Generated by Django 4.2 on 2025-10-04 15:47
+
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('users', '0007_petreport_health_information_petreport_injury'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='petreport',
+            name='event_date',
+            field=models.DateField(blank=True, help_text='Date the pet was lost or found.', null=True),
+        ),
+    ]
+
+
+
+================================================================================
+File: .\users\migrations\0009_petreport_is_approved.py
+================================================================================
+
+# Generated by Django 4.2 on 2025-10-04 17:12
+
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('users', '0008_petreport_event_date'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='petreport',
+            name='is_approved',
+            field=models.BooleanField(default=False),
+        ),
+    ]
+
+
+
+================================================================================
 File: .\users\migrations\__init__.py
 ================================================================================
 
@@ -2842,7 +2932,7 @@ File: .\users\migrations\__init__.py
 File: .\users\templates\admin\dashboard.html
 ================================================================================
 
-{# users/templates/admin/dashboard.html #}
+\{# users/templates/admin/dashboard.html #}
 {% extends 'users/base.html' %}
 {% load static %}
 
@@ -2854,35 +2944,43 @@ File: .\users\templates\admin\dashboard.html
  <p class="auth-subtitle">Welcome, {{ request.user.username }}! Here's a summary of the platform.</p>
 
  <div class="stats-grid">
-  <div class="stat-card">
-   <h3>Normal Users</h3>
-   <p>{{ total_normal_users }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Platform Admins</h3>
-   <p>{{ total_admins }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Pets for Adoption</h3>
-   <p>{{ pets_for_adoption_count }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Open Lost Reports</h3>
-   <p>{{ lost_reports_count }}</p>
-  </div>
-  <div class="stat-card">
-   <h3>Open Found Reports</h3>
-   <p>{{ found_reports_count }}</p>
-  </div>
+   <div class="stat-card">
+     <h3>Normal Users</h3>
+     <p>{{ total_normal_users }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Platform Admins</h3>
+     <p>{{ total_admins }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Pets for Adoption</h3>
+     <p>{{ pets_for_adoption_count }}</p>
+   </div>
+   <div class="stat-card" {% if unapproved_reports_count > 0 %}style="border: 2px solid var(--primary-warm);"{% endif %}>
+     <h3>Reports Awaiting Approval</h3>
+     <p>{{ unapproved_reports_count }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Open Lost Reports</h3>
+     <p>{{ lost_reports_count }}</p>
+   </div>
+   <div class="stat-card">
+     <h3>Open Found Reports</h3>
+     <p>{{ found_reports_count }}</p>
+   </div>
  </div>
 
  <div class="admin-actions">
-  <h3>Management Tools</h3>
-  <div class="action-buttons">
-   <a href="{% url 'users:admin_manage_users' %}" class="btn btn-primary">Manage Users</a>
-   <a href="{% url 'users:admin_adoption_processing' %}" class="btn btn-primary">Manage Pet Reports & Adoptions</a>
-   {# You can add more admin action buttons here as you build more features #}
-  </div>
+   <h3>Management Tools</h3>
+   <div class="action-buttons">
+     <a href="{% url 'users:admin_manage_users' %}" class="btn btn-primary">Manage Users</a>
+     <a href="{% url 'users:admin_adoption_processing' %}" class="btn btn-primary">Manage Pet Reports & Adoptions</a>
+     
+     {# NEW MODERATION BUTTON #}
+     <a href="{% url 'users:admin_moderate_reports' %}" class="btn btn-secondary" style="background-color: var(--accent-purple); color: white;">
+       Moderate New Reports ({{ unapproved_reports_count }})
+     </a>
+   </div>
  </div>
 </section>
 {% endblock %}
@@ -2953,6 +3051,71 @@ File: .\users\templates\admin\manage_users.html
             </tbody>
         </table>
     </div>
+</section>
+{% endblock %}
+
+
+================================================================================
+File: .\users\templates\admin\moderate_reports.html
+================================================================================
+
+{# users/templates/admin/moderate_reports.html #}
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Moderate Reports{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
+
+{% block content %}
+<section class="manage-reports-section manage-users-section">
+  <h2 class="section-title">Moderate Pet Reports</h2>
+  <p class="auth-subtitle">Review reports submitted by users before making them public on the dashboard.</p>
+  
+  <div class="admin-nav">
+    <a href="{% url 'users:admin_dashboard' %}">&larr; Back to Admin Dashboard</a>
+  </div>
+
+  <div class="user-table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Pet</th>
+          <th>Location</th>
+          <th>Reported By</th>
+          <th>Date Submitted</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports_to_moderate %}
+        <tr>
+          <td>{{ report.id }}</td>
+          <td>{{ report.get_report_type_display }}</td>
+          <td>{{ report.pet_type }} ({{ report.name|default:'N/A' }})</td>
+          <td>{{ report.location }}</td>
+          <td>{{ report.reporter.username }}</td>
+          <td>{{ report.date_reported|date:"Y-m-d H:i" }}</td>
+          <td class="action-cell">
+            <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-map">View Details</a>
+            
+            <form action="{% url 'users:admin_approve_report' report.id %}" method="post" class="action-form">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-small btn-primary" style="background-color: var(--success-green);">Approve</button>
+            </form>
+            
+            {# Optional: Add a button/form to delete or reject the report #}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7">No reports currently awaiting approval.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </section>
 {% endblock %}
 
@@ -3388,7 +3551,7 @@ File: .\users\templates\users\create_pet_report.html
 
       {# Form fields - NEW FIELDS ADDED #}
       <div class="form-group">
-        <label for="id_name">Pet's Name (Optional):</label>
+        <label for="id_name">Pet's Name:</label>
         <input type="text" id="id_name" name="name" value="{{ form.name.value|default:'' }}">
       </div>
       <div class="form-group">
@@ -3412,6 +3575,13 @@ File: .\users\templates\users\create_pet_report.html
 
 
       {# Existing Fields #}
+      <div class="form-group">
+    <label for="{{ form.event_date.id_for_label }}">
+     {% if report_type == 'Lost' %}Date Lost:{% else %}Date Found:{% endif %}
+    </label>
+    {{ form.event_date }}
+    <small>Approximate date the event occurred.</small>
+   </div>
       <div class="form-group">
         <label for="id_pet_type">Pet Type:</label>
         <input type="text" id="id_pet_type" name="pet_type" value="{{ form.pet_type.value|default:'' }}" required>
@@ -3564,14 +3734,14 @@ File: .\users\templates\users\dashboard.html
  {% endfor %}
  </div>
  {% else %}
- <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">
-    {% if current_view == 'lost' %}
-        There are currently no open reports for lost pets.
-    {% elif current_view == 'found' %}
-        There are currently no open reports for found pets.
-    {% else %}
-        There are no open lost or found reports at this time.
-    {% endif %}
+  <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">
+  {% if current_view == 'lost' %}
+    There are currently no approved open reports for lost pets.
+  {% elif current_view == 'found' %}
+    There are currently no approved open reports for found pets.
+  {% else %}
+    There are no approved open lost or found reports at this time.
+  {% endif %}
 </p>
  {% endif %}
  </section>
@@ -3789,6 +3959,7 @@ File: .\users\templates\users\pet_detail.html
 File: .\users\templates\users\pet_report_detail.html
 ================================================================================
 
+
 {# users/templates/users/pet_report_detail.html #}
 {% extends 'users/base.html' %}
 {% load static %}
@@ -3797,92 +3968,107 @@ File: .\users\templates\users\pet_report_detail.html
 {% block body_class %}admin-page-background{% endblock %}
 {% block content %}
 <section class="report-detail-section">
-    <div class="report-detail-container" style="max-width: 900px; margin: 0 auto; display: block;">
-        
-        <div class="report-header" style="padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-            <h2 class="section-title" style="margin-bottom: 5px;">
-                {{ report.get_report_type_display }} Pet Report
-            </h2>
-            <div style="text-align: center; margin-bottom: 15px;">
-                {% if report.report_type == 'Lost' %}
-                    <span class="report-type-badge lost">🐾 Lost Since {{ report.date_reported|date:"M d, Y" }}</span>
-                {% else %}
-                    <span class="report-type-badge found" style="background-color: var(--primary-warm); color: white;">🏡 Found On {{ report.date_reported|date:"M d, Y" }}</span>
-                {% endif %}
-            </div>
-            
-            <p style="font-size: 1.1em;">
-                <strong>Status:</strong> 
-                <span class="{% if report.status == 'Open' %}role-admin{% elif report.status == 'Closed' %}role-user{% else %}role-admin{% endif %}" style="padding: 5px 10px; border-radius: 5px;">
-                    {{ report.get_status_display }}
-                </span>
-            </p>
-        </div>
+  <div class="report-detail-container" style="max-width: 900px; margin: 0 auto; display: block;">
 
-        <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 30px;">
+    <div class="report-header" style="padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+      <h2 class="section-title" style="margin-bottom: 5px;">
+        {{ report.get_report_type_display }} Pet Report
+      </h2>
+      <div style="text-align: center; margin-bottom: 15px;">
+        {% if report.report_type == 'Lost' %}
+          <span class="report-type-badge lost">🐾 Lost Since {{ report.event_date|date:"M d, Y" }}</span>
+        {% else %}
+          <span class="report-type-badge found" style="background-color: var(--primary-warm); color: white;">🏡 Found On {{ report.event_date|date:"M d, Y" }}</span>
+        {% endif %}
+      </div>
 
-            {# LEFT COLUMN: Image #}
-            <div class="report-image-large" style="flex: 1 1 350px;">
-                {% if report.pet_image %}
-                    <img src="{{ report.pet_image.url }}" alt="Pet Image" style="width: 100%; height: 400px; object-fit: cover; border-radius: var(--radius); box-shadow: var(--shadow-warm);">
-                {% else %}
-                    <div style="height: 400px; background-color: var(--input); display: flex; justify-content: center; align-items: center; border-radius: var(--radius); color: var(--muted-foreground);">
-                        No Image Available
-                    </div>
-                {% endif %}
-            </div>
-
-            {# RIGHT COLUMN: Details #}
-            <div class="report-details" style="flex: 1 1 450px;">
-                
-                <h3 style="color: var(--foreground); margin-bottom: 20px; font-size: 1.8em;">
-                    <i class="fas fa-paw"></i> Pet Profile
-                </h3>
-
-                {# Pet Identity #}
-                <div class="detail-group">
-                    <p><strong><i class="fas fa-tag"></i> Name:</strong> {{ report.name|default:"N/A" }}</p>
-                    <p><strong><i class="fas fa-dog"></i> Type:</strong> {{ report.pet_type }}</p>
-                    <p><strong><i class="fas fa-dna"></i> Breed:</strong> {{ report.breed|default:"N/A" }}</p>
-                    <p><strong><i class="fas fa-palette"></i> Color:</strong> {{ report.color }}</p>
-                    <p><strong><i class="fas fa-birthday-cake"></i> Age:</strong> {{ report.age|default:"Unknown" }}</p>
-                    <p><strong><i class="fas fa-venus-mars"></i> Gender:</strong> {{ report.gender }}</p>
-                </div>
-                
-                <hr style="margin: 20px 0;">
-
-                {# Location and Contact #}
-                <h3 style="color: var(--foreground); margin-bottom: 15px; font-size: 1.4em;">
-                    <i class="fas fa-map-marker-alt"></i> Location & Contact
-                </h3>
-                <div class="detail-group">
-                    <p><strong>Location:</strong> {{ report.location }}</p>
-                    <p><strong>Reported By:</strong> {{ report.reporter.get_full_name|default:report.reporter.username }}</p>
-                    <p><strong>Contact Info:</strong> {{ report.contact_info }}</p>
-                </div>
-
-                <hr style="margin: 20px 0;">
-
-                {# Health/Condition Details #}
-                <h3 style="color: var(--foreground); margin-bottom: 15px; font-size: 1.4em;">
-                    <i class="fas fa-notes-medical"></i> Condition
-                </h3>
-                <div class="detail-group">
-                    <p><strong>Health Information:</strong> {{ report.health_information|default:"None provided." }}</p>
-                    {% if report.report_type == 'Found' and report.injury %}
-                    <p><strong>Observed Injury:</strong> {{ report.injury }}</p>
-                    {% endif %}
-                </div>
-
-                {# Action Button #}
-                <div style="margin-top: 30px; text-align: right;">
-                    <a href="https://www.google.com/maps/search/?api=1&query={{ report.location|urlencode }}" 
-                       target="_blank" class="btn btn-primary">View Location on Map</a>
-                </div>
-            </div>
-
-        </div>
+      <p style="font-size: 1.1em;">
+        <strong>Status:</strong> 
+        <span class="{% if report.status == 'Open' %}role-admin{% elif report.status == 'Closed' %}role-user{% else %}role-admin{% endif %}" style="padding: 5px 10px; border-radius: 5px;">
+          {{ report.get_status_display }}
+        </span>
+      </p>
     </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 30px;">
+
+      {# LEFT COLUMN: Image #}
+      <div class="report-image-large" style="flex: 1 1 350px;">
+        {% if report.pet_image %}
+          <img src="{{ report.pet_image.url }}" alt="Pet Image" style="width: 100%; height: 400px; object-fit: cover; border-radius: var(--radius); box-shadow: var(--shadow-warm);">
+        {% else %}
+          <div style="height: 400px; background-color: var(--input); display: flex; justify-content: center; align-items: center; border-radius: var(--radius); color: var(--muted-foreground);">
+            No Image Available
+          </div>
+        {% endif %}
+      </div>
+
+      {# RIGHT COLUMN: Details #}
+      <div class="report-details" style="flex: 1 1 450px;">
+
+        <h3 style="color: var(--foreground); margin-bottom: 20px; font-size: 1.8em;">
+          <i class="fas fa-paw"></i> Pet Profile
+        </h3>
+
+        {# Pet Identity #}
+        <div class="detail-group">
+          <p><strong><i class="fas fa-tag"></i> Name:</strong> {{ report.name|default:"N/A" }}</p>
+          <p><strong><i class="fas fa-dog"></i> Type:</strong> {{ report.pet_type }}</p>
+          <p><strong><i class="fas fa-dna"></i> Breed:</strong> {{ report.breed|default:"N/A" }}</p>
+          <p><strong><i class="fas fa-palette"></i> Color:</strong> {{ report.color }}</p>
+          <p><strong><i class="fas fa-birthday-cake"></i> Age:</strong> {{ report.age|default:"Unknown" }}</p>
+          <p><strong><i class="fas fa-venus-mars"></i> Gender:</strong> {{ report.gender }}</p>
+        </div>
+
+        <hr style="margin: 20px 0;">
+
+        {# NEW DATE DISPLAY BLOCK #}
+        <h3 style="color: var(--foreground); margin-bottom: 15px; font-size: 1.4em;">
+          <i class="fas fa-calendar-alt"></i> Dates
+        </h3>
+        <div class="detail-group">
+          {% if report.report_type == 'Lost' %}
+            <p><strong>Date Lost:</strong> {{ report.event_date|date:"F d, Y"|default:"N/A" }}</p>
+          {% else %}
+            <p><strong>Date Found:</strong> {{ report.event_date|date:"F d, Y"|default:"N/A" }}</p>
+          {% endif %}
+          <p><strong>Report Created On:</strong> {{ report.date_reported|date:"F d, Y" }}</p>
+        </div>
+        <hr style="margin: 20px 0;">
+        {# END NEW DATE DISPLAY BLOCK #}
+
+        {# Location and Contact #}
+        <h3 style="color: var(--foreground); margin-bottom: 15px; font-size: 1.4em;">
+          <i class="fas fa-map-marker-alt"></i> Location & Contact
+        </h3>
+        <div class="detail-group">
+          <p><strong>Location:</strong> {{ report.location }}</p>
+          <p><strong>Reported By:</strong> {{ report.reporter.get_full_name|default:report.reporter.username }}</p>
+          <p><strong>Contact Info:</strong> {{ report.contact_info }}</p>
+        </div>
+
+        <hr style="margin: 20px 0;">
+
+        {# Health/Condition Details #}
+        <h3 style="color: var(--foreground); margin-bottom: 15px; font-size: 1.4em;">
+          <i class="fas fa-notes-medical"></i> Condition
+        </h3>
+        <div class="detail-group">
+          <p><strong>Health Information:</strong> {{ report.health_information|default:"None provided." }}</p>
+          {% if report.report_type == 'Found' and report.injury %}
+          <p><strong>Observed Injury:</strong> {{ report.injury }}</p>
+          {% endif %}
+        </div>
+
+        {# Action Button #}
+        <div style="margin-top: 30px; text-align: right;">
+          <a href="https://www.google.com/maps/search/?api=1&query={{ report.location|urlencode }}" 
+            target="_blank" class="btn btn-primary">View Location on Map</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </section>
 {% endblock %}
 

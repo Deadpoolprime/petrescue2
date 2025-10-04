@@ -202,7 +202,8 @@ def dashboard_view(request):
   
   view_filter = request.GET.get('view')
 
-  open_reports_qs = PetReport.objects.filter(status='Open').order_by('-date_reported')
+  open_reports_qs = PetReport.objects.filter(status='Open', is_approved=True).order_by('-date_reported')
+
   
   if view_filter == 'lost':
     open_reports_qs = open_reports_qs.filter(report_type='Lost')
@@ -236,7 +237,7 @@ def create_pet_report_view(request, report_type):
 
 
         injury_detail = form.cleaned_data.get('injury') if report_type == 'Found' else None
-
+        is_approved_status = False 
         pet_report = PetReport.objects.create(
         report_type=report_type,
         reporter=request.user,
@@ -252,6 +253,7 @@ def create_pet_report_view(request, report_type):
         event_date=form.cleaned_data.get('event_date'),
         health_information=form.cleaned_data.get('health_information'),
         injury=injury_detail,
+        is_approved=is_approved_status
 
   )
     messages.success(request, f"Your  pet report has been submitted successfully!")
@@ -414,17 +416,49 @@ def admin_dashboard_view(request):
  pets_for_adoption_count = PetForAdoption.objects.filter(status='Available').count()
  lost_reports_count = PetReport.objects.filter(report_type='Lost', status='Open').count()
  found_reports_count = PetReport.objects.filter(report_type='Found', status='Open').count()
-
+ unapproved_reports_count = PetReport.objects.filter(is_approved=False).count()
  context = {
   'total_normal_users': total_normal_users,
   'total_admins': total_admins,
   'pets_for_adoption_count': pets_for_adoption_count,
   'lost_reports_count': lost_reports_count,
   'found_reports_count': found_reports_count,
+  'unapproved_reports_count': unapproved_reports_count,
  }
  return render(request, 'admin/dashboard.html', context)
 
+@staff_required
+def admin_moderate_reports_view(request):
+ """
+ Admin view to list reports awaiting approval.
+ """
+ reports_to_moderate = PetReport.objects.filter(is_approved=False).order_by('-date_reported')
 
+ context = {
+  'reports_to_moderate': reports_to_moderate
+ }
+ return render(request, 'admin/moderate_reports.html', context)
+
+
+@staff_required
+def admin_approve_report_view(request, report_id):
+ """
+ Admin action to approve a pet report, making it public.
+ """
+ if request.method == 'POST':
+  report = get_object_or_404(PetReport, pk=report_id)
+
+  if report.is_approved:
+   messages.warning(request, f"Report #{report_id} is already approved.")
+   return redirect('users:admin_moderate_reports')
+
+  report.is_approved = True
+  report.save()
+  messages.success(request, f"Report #{report_id} ({report.report_type}) has been successfully approved and is now visible on the dashboard.")
+  return redirect('users:admin_moderate_reports')
+ 
+ messages.error(request, "Invalid request method.")
+ return redirect('users:admin_moderate_reports')
 
 @staff_required 
 def admin_manage_users_view(request):

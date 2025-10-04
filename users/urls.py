@@ -9,6 +9,8 @@ from .views import (
     admin_remove_user_view,
     admin_adoption_processing_view,
     admin_put_for_adoption_view,
+    admin_moderate_reports_view,
+    admin_approve_report_view,
     home_view 
 )
 
@@ -33,4 +35,6 @@ urlpatterns = [
     path('admin_dashboard/users/remove/<int:user_id>/', admin_remove_user_view, name='admin_remove_user'),
     path('admin_dashboard/process-adoption/', admin_adoption_processing_view, name='admin_adoption_processing'),
     path('admin_dashboard/process-adoption/<int:report_id>/', admin_put_for_adoption_view, name='admin_put_for_adoption'),
+    path('admin_dashboard/moderate-reports/', admin_moderate_reports_view, name='admin_moderate_reports'),
+    path('admin_dashboard/moderate-reports/approve/<int:report_id>/', admin_approve_report_view, name='admin_approve_report'),
 ]

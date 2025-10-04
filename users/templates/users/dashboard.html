@@ -93,14 +93,14 @@
  {% endfor %}
  </div>
  {% else %}
- <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">
-    {% if current_view == 'lost' %}
-        There are currently no open reports for lost pets.
-    {% elif current_view == 'found' %}
-        There are currently no open reports for found pets.
-    {% else %}
-        There are no open lost or found reports at this time.
-    {% endif %}
+  <p class="no-pets-message" style="text-align: center; margin-top: 20px; font-size: 1.1em;">
+  {% if current_view == 'lost' %}
+    There are currently no approved open reports for lost pets.
+  {% elif current_view == 'found' %}
+    There are currently no approved open reports for found pets.
+  {% else %}
+    There are no approved open lost or found reports at this time.
+  {% endif %}
 </p>
  {% endif %}
  </section>
