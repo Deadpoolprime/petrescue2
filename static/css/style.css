@@ -111,6 +111,15 @@ body.admin-page-background {
   background-attachment: fixed;
   position: relative;
 }
+
+body.new-background1 {
+  background-image: url('../images/newbg1.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  position: relative;
+}
+
 body.login-page-background header,
 body.login-page-background main,
 body.login-page-background footer,
