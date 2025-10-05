@@ -17,7 +17,7 @@
         {% if report.report_type == 'Lost' %}
           <span class="report-type-badge lost">🐾 Lost Since {{ report.event_date|date:"M d, Y" }}</span>
         {% else %}
-          <span class="report-type-badge found" style="background-color: var(--primary-warm); color: white;">🏡 Found On {{ report.event_date|date:"M d, Y" }}</span>
+          <span class="report-type-badge found" style="background-color: var(--primary-warm); color: rgb(0, 0, 0);">🏡 Found On {{ report.event_date|date:"M d, Y" }}</span>
         {% endif %}
       </div>
 
