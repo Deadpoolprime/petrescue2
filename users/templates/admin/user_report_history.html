@@ -3,11 +3,36 @@
 <head>
   <title>Report History for {{ user.username }}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link href="https://fonts.googleapis.com/css?family=Quicksand:600,700&display=swap" rel="stylesheet">
+  <style>
+    h2, h1 {
+      font-family: 'Quicksand', Arial, sans-serif;
+      font-weight: 700;
+    }
+  </style>
 </head>
 <body class="admin-page-background">
   <div class="container" style="margin-top: 20px;">
-    <h2 style="margin-bottom: 32px;">Report History for {{ user.username }}</h2>
+    <h2 style="margin-bottom: 32px;">User Profile Details</h2>
+    <div class="user-profile-card" style="margin-bottom: 32px; padding: 18px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      {% if user.profile.phone_number %}
+        <p><strong>Phone Number:</strong> {{ user.profile.phone_number }}</p>
+      {% endif %}
+      {% if user.first_name %}
+        <p><strong>First Name:</strong> {{ user.first_name }}</p>
+      {% endif %}
+      {% if user.last_name %}
+        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+      {% endif %}
+      {% if user.date_joined %}
+        <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+      {% endif %}
+      <!-- Add more fields as needed -->
+    </div>
 
+    <h2 style="margin-bottom: 32px;">Report History for {{ user.username }}</h2>
     {% if reports %}
       <div class="user-table-container">
         <table>
