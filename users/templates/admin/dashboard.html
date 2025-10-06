@@ -11,28 +11,30 @@
 
  <div class="stats-grid">
    <div class="stat-card">
+     <span class="stat-icon" style="color: var(--primary-warm);">&#128100;</span>
      <h3>Normal Users</h3>
      <p>{{ total_normal_users }}</p>
    </div>
    <div class="stat-card">
+     <span class="stat-icon" style="color: var(--accent-purple);">&#128110;</span>
      <h3>Platform Admins</h3>
      <p>{{ total_admins }}</p>
    </div>
    <div class="stat-card">
+     <span class="stat-icon" style="color: var(--primary-green);">&#128054;</span>
      <h3>Pets for Adoption</h3>
      <p>{{ pets_for_adoption_count }}</p>
    </div>
    <div class="stat-card" {% if unapproved_reports_count > 0 %}style="border: 2px solid var(--primary-warm);"{% endif %}>
+     <span class="stat-icon" style="color: var(--primary-warm);">&#128221;</span>
      <h3>Reports Awaiting Approval</h3>
      <p>{{ unapproved_reports_count }}</p>
    </div>
    <div class="stat-card">
-     <h3>Open Lost Reports</h3>
-     <p>{{ lost_reports_count }}</p>
-   </div>
-   <div class="stat-card">
-     <h3>Open Found Reports</h3>
-     <p>{{ found_reports_count }}</p>
+     <span class="stat-icon" style="color: var(--primary-blue);">&#128196;</span>
+     <h3>Total Reports</h3>
+     <p>{{ lost_reports_count|add:found_reports_count }}</p>
+     <small>Lost + Found</small>
    </div>
  </div>
 
