@@ -1,0 +1,43 @@
+{% load static %}
+<html>
+<head>
+  <title>Report History for {{ user.username }}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="admin-page-background">
+  <div class="container" style="margin-top: 20px;">
+    <h2 style="margin-bottom: 32px;">Report History for {{ user.username }}</h2>
+
+    {% if reports %}
+      <div class="user-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Report Type</th>
+              <th>Pet Type</th>
+              <th>Event Date</th>
+              <th>Status</th>
+              <th>Date Reported</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for report in reports %}
+              <tr>
+                <td>{{ report.get_report_type_display }}</td>
+                <td>{{ report.pet_type }}</td>
+                <td>{{ report.event_date }}</td>
+                <td>{{ report.status }}</td>
+                <td>{{ report.date_reported }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>No reports found for this user.</p>
+    {% endif %}
+
+    <a href="{% url 'users:admin_manage_users' %}" class="btn btn-primary" style="margin-top: 32px; display: inline-block;">Back to Manage Users</a>
+  </div>
+</body>
+</html>

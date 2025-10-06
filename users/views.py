@@ -428,37 +428,83 @@ def admin_dashboard_view(request):
  return render(request, 'admin/dashboard.html', context)
 
 @staff_required
-def admin_moderate_reports_view(request):
- """
- Admin view to list reports awaiting approval.
- """
- reports_to_moderate = PetReport.objects.filter(is_approved=False).order_by('-date_reported')
+def admin_remove_user_view(request, user_id):
+    if request.method == 'POST':
+        try:
+            user_to_remove = User.objects.get(pk=user_id)
 
- context = {
-  'reports_to_moderate': reports_to_moderate
- }
- return render(request, 'admin/moderate_reports.html', context)
+            # Only superusers can remove staff members
+            if user_to_remove.is_staff and not request.user.is_superuser:
+                messages.error(request, "You do not have permission to remove an admin user.")
+                return redirect('users:admin_manage_users')
+
+            if user_to_remove.is_superuser:
+                messages.error(request, "Superusers cannot be removed from this interface.")
+                return redirect('users:admin_manage_users')
+
+            username = user_to_remove.username
+            user_to_remove.delete()
+            messages.success(request, f"User '{username}' has been removed successfully.")
+
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+
+    return redirect('users:admin_manage_users')
+
+
+@staff_required
+def admin_moderate_reports_view(request):
+    """
+    Admin view to list reports awaiting approval.
+    """
+    reports_to_moderate = PetReport.objects.filter(is_approved=False).order_by('-date_reported')
+
+    context = {
+        'reports_to_moderate': reports_to_moderate
+    }
+    return render(request, 'admin/moderate_reports.html', context)
 
 
 @staff_required
 def admin_approve_report_view(request, report_id):
- """
- Admin action to approve a pet report, making it public.
- """
- if request.method == 'POST':
-  report = get_object_or_404(PetReport, pk=report_id)
+    """
+    Admin action to approve a pet report, making it public.
+    """
+    if request.method == 'POST':
+        report = get_object_or_404(PetReport, pk=report_id)
 
-  if report.is_approved:
-   messages.warning(request, f"Report #{report_id} is already approved.")
-   return redirect('users:admin_moderate_reports')
+        if report.is_approved:
+            messages.warning(request, f"Report #{report_id} is already approved.")
+            return redirect('users:admin_moderate_reports')
 
-  report.is_approved = True
-  report.save()
-  messages.success(request, f"Report #{report_id} ({report.report_type}) has been successfully approved and is now visible on the dashboard.")
-  return redirect('users:admin_moderate_reports')
- 
- messages.error(request, "Invalid request method.")
- return redirect('users:admin_moderate_reports')
+        report.is_approved = True
+        report.save()
+        messages.success(request,
+                         f"Report #{report_id} ({report.report_type}) has been successfully approved and is now visible on the dashboard.")
+        return redirect('users:admin_moderate_reports')
+
+    messages.error(request, "Invalid request method.")
+    return redirect('users:admin_moderate_reports')
+
+
+@staff_required
+def admin_reject_report_view(request, report_id):
+    """
+    Admin action to reject a pet report.
+    """
+    if request.method == 'POST':
+        report = get_object_or_404(PetReport, pk=report_id)
+
+        # You might want to add a check here to prevent rejecting already approved reports
+
+        # Delete the report
+        report.delete()
+        messages.success(request, f"Report #{report_id} ({report.report_type}) has been successfully rejected and deleted.")
+        return redirect('users:admin_moderate_reports')
+
+    messages.error(request, "Invalid request method.")
+    return redirect('users:admin_moderate_reports')
+
 
 @staff_required 
 def admin_manage_users_view(request):
@@ -508,13 +554,14 @@ def admin_promote_user_view(request, user_id):
   return redirect('users:admin_manage_users')
 
 
-@staff_required 
+@superuser_required 
 def admin_remove_user_view(request, user_id):
   if request.method == 'POST':
     try:
       user_to_remove = User.objects.get(pk=user_id)
 
 
+      # Only superusers can remove staff members
       if user_to_remove.is_staff and not request.user.is_superuser:
         messages.error(request, "You do not have permission to remove an admin user.")
         return redirect('users:admin_manage_users')
@@ -526,7 +573,7 @@ def admin_remove_user_view(request, user_id):
 
       username = user_to_remove.username
       user_to_remove.delete()
-      messages.success(request, f"User '' has been removed successfully.")
+      messages.success(request, f"User '{username}' has been removed successfully.")
 
     except User.DoesNotExist:
       messages.error(request, "User not found.")
@@ -607,3 +654,40 @@ def admin_put_for_adoption_view(request, report_id):
     'report': report,
   }
   return render(request, 'admin/put_for_adoption_form.html', context)
+
+@staff_required
+def admin_view_user_reports(request, user_id):
+    """
+    Admin view to display all reports submitted by a specific user.
+    """
+    try:
+        user = User.objects.get(pk=user_id)
+        reports = PetReport.objects.filter(reporter=user).order_by('-date_reported')
+
+        context = {
+            'user': user,
+            'reports': reports
+        }
+        return render(request, 'admin/user_reports.html', context)
+
+    except User.DoesNotExist:
+        messages.error(request, "User not found.")
+        return redirect('users:admin_manage_users')
+
+def user_report_history_view(request, user_id):
+    """
+    View to display the report history of a specific user.
+    """
+    try:
+        user = User.objects.get(pk=user_id)
+        reports = PetReport.objects.filter(reporter=user).order_by('-date_reported')
+
+        context = {
+            'user': user,
+            'reports': reports
+        }
+        return render(request, 'admin/user_report_history.html', context)
+
+    except User.DoesNotExist:
+        messages.error(request, "User not found.")
+        return redirect('users:admin_manage_users')

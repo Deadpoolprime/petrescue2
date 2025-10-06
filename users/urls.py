@@ -1,4 +1,3 @@
-
 from django.urls import path
 from .views import (
     login_view, logout_view, register_view,
@@ -11,7 +10,10 @@ from .views import (
     admin_put_for_adoption_view,
     admin_moderate_reports_view,
     admin_approve_report_view,
-    home_view 
+    home_view,
+    admin_reject_report_view,
+    admin_view_user_reports,
+    user_report_history_view
 )
 
 app_name = 'users' 
@@ -36,5 +38,11 @@ urlpatterns = [
     path('admin_dashboard/process-adoption/', admin_adoption_processing_view, name='admin_adoption_processing'),
     path('admin_dashboard/process-adoption/<int:report_id>/', admin_put_for_adoption_view, name='admin_put_for_adoption'),
     path('admin_dashboard/moderate-reports/', admin_moderate_reports_view, name='admin_moderate_reports'),
-    path('admin_dashboard/moderate-reports/approve/<int:report_id>/', admin_approve_report_view, name='admin_approve_report'),
+    path('admin_dashboard/moderate-reports/approve/<int:report_id>/', admin_approve_report_view,
+         name='admin_approve_report'),
+    path('admin_dashboard/moderate-reports/reject/<int:report_id>/', admin_reject_report_view,
+         name='admin_reject_report'),
+    path('admin_dashboard/manage-users/reports/<int:user_id>/', admin_view_user_reports,
+         name='admin_view_user_reports'),
+    path('manage-users/report-history/<int:user_id>/', user_report_history_view, name='user_report_history'),
 ]

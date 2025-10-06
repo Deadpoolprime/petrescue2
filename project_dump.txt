@@ -446,6 +446,15 @@ body.admin-page-background {
   background-attachment: fixed;
   position: relative;
 }
+
+body.new-background1 {
+  background-image: url('../images/newbg1.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  position: relative;
+}
+
 body.login-page-background header,
 body.login-page-background main,
 body.login-page-background footer,
@@ -2977,7 +2986,7 @@ File: .\users\templates\admin\dashboard.html
      <a href="{% url 'users:admin_adoption_processing' %}" class="btn btn-primary">Manage Pet Reports & Adoptions</a>
      
      {# NEW MODERATION BUTTON #}
-     <a href="{% url 'users:admin_moderate_reports' %}" class="btn btn-secondary" style="background-color: var(--accent-purple); color: white;">
+     <a href="{% url 'users:admin_moderate_reports' %}" class="btn btn-primary" style="background-color: var(--accent-purple); color: #333;">
        Moderate New Reports ({{ unapproved_reports_count }})
      </a>
    </div>
@@ -3524,7 +3533,7 @@ File: .\users\templates\users\create_pet_report.html
 {% load static %}
 
 {% block title %}{{ report_type }} Pet Report{% endblock %}
-
+{% block body_class %}new-background1{% endblock %}
 {% block content %}
 <section class="report-section">
   <div class="auth-box"> {# Reusing auth-box for form styling #}
@@ -3978,7 +3987,7 @@ File: .\users\templates\users\pet_report_detail.html
         {% if report.report_type == 'Lost' %}
           <span class="report-type-badge lost">🐾 Lost Since {{ report.event_date|date:"M d, Y" }}</span>
         {% else %}
-          <span class="report-type-badge found" style="background-color: var(--primary-warm); color: white;">🏡 Found On {{ report.event_date|date:"M d, Y" }}</span>
+          <span class="report-type-badge found" style="background-color: var(--primary-warm); color: rgb(0, 0, 0);">🏡 Found On {{ report.event_date|date:"M d, Y" }}</span>
         {% endif %}
       </div>
 
