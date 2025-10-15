@@ -1,45 +1,65 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+import datetime
 
 class Profile(models.Model):
-  ROLE_CHOICES = (('admin', 'Admin'), ('user', 'User'))
-  user = models.OneToOneField(User, on_delete=models.CASCADE)
-  role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
-  age = models.PositiveIntegerField(null=True, blank=True)
-  city = models.CharField(max_length=100, null=True, blank=True)
-  phone_number = models.CharField(max_length=20, null=True, blank=True)
-  profile_picture = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics/', null=True, blank=True)
-  def __str__(self): return f"{self.user.username} Profile"
+    ROLE_CHOICES = (('admin', 'Admin'), ('user', 'User'))
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
+    age = models.PositiveIntegerField(null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    profile_picture = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics/', null=True, blank=True)
+    def __str__(self): return f"{self.user.username} Profile"
 
 class PetReport(models.Model):
-  REPORT_TYPE_CHOICES = (('Lost', 'Lost pet'), ('Found', 'Found pet'))
-  STATUS_CHOICES = (('Open', 'Open'),('Pending Adoption', 'Pending Adoption'), ('Closed', 'Closed'))
-  GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown')) # Add gender choices here
+    REPORT_TYPE_CHOICES = (('Lost', 'Lost pet'), ('Found', 'Found pet'))
+    STATUS_CHOICES = (('Open', 'Open'),('Pending Adoption', 'Pending Adoption'), ('Closed', 'Closed'))
+    GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown')) # Add gender choices here
 
-  report_type = models.CharField(max_length=20, choices=REPORT_TYPE_CHOICES)
-  reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pet_reports')
+    report_type = models.CharField(max_length=20, choices=REPORT_TYPE_CHOICES)
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pet_reports')
 
-  name = models.CharField(max_length=100, blank=True, null=True, help_text="Pet's name (if known)") # Optional name
-  age = models.PositiveIntegerField(null=True, blank=True, help_text="Pet's age in years (if known)") # Optional age
-  gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown', help_text="Pet's gender") # Gender field
+    name = models.CharField(max_length=100, blank=True, null=True, help_text="Pet's name (if known)") # Optional name
+    age = models.PositiveIntegerField(null=True, blank=True, help_text="Pet's age in years (if known)") # Optional age
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown', help_text="Pet's gender") # Gender field
 
-  pet_type = models.CharField(max_length=50, help_text="e.g., Dog, Cat, Bird")
-  breed = models.CharField(max_length=100, blank=True, null=True)
-  color = models.CharField(max_length=50)
-  
-  health_information = models.TextField(blank=True, null=True, help_text="Any known health issues or required medication (Lost pet report).")
-  injury = models.TextField(blank=True, null=True, help_text="Describe any injuries observed on the pet (Found pet report).")
-  pet_image = models.ImageField(upload_to='pet_images/')
-  location = models.CharField(max_length=255, help_text="Area where the pet was lost or found.")
-  contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
-  status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
-  date_reported = models.DateTimeField(auto_now_add=True)
-  event_date = models.DateField(null=True, blank=True, help_text="Date the pet was lost or found.")
-  is_approved = models.BooleanField(default=False)
+    pet_type = models.CharField(max_length=50, help_text="e.g., Dog, Cat, Bird")
+    breed = models.CharField(max_length=100, blank=True, null=True)
+    color = models.CharField(max_length=50)
 
-  def __str__(self):
-    pet_name = self.name if self.name else "Unnamed Pet"
-    return f"{self.get_report_type_display()}: {pet_name} ({self.pet_type}) by {self.reporter.username}"
+    health_information = models.TextField(blank=True, null=True, help_text="Any known health issues or required medication (Lost pet report).")
+    injury = models.TextField(blank=True, null=True, help_text="Describe any injuries observed on the pet (Found pet report).")
+    pet_image = models.ImageField(upload_to='pet_images/')
+    location = models.CharField(max_length=255, help_text="Area where the pet was lost or found.")
+    contact_info = models.CharField(max_length=255, help_text="Your phone or email for contact.")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
+    date_reported = models.DateTimeField(default=timezone.now, editable=True)
+    event_date = models.DateField(null=True, blank=True, help_text="Date the pet was lost or found.")
+    is_approved = models.BooleanField(default=False)
+
+    @property
+    def days_remaining_for_adoption(self):
+        """
+        Calculates the number of days left until a 'Found' pet can be put up for adoption.
+        """
+        if self.report_type != 'Found' or self.status != 'Open':
+            return None # Not applicable
+
+        # 15-day holding period
+        deadline = self.date_reported + datetime.timedelta(days=15)
+        remaining_delta = deadline - timezone.now()
+        
+        if remaining_delta.total_seconds() <= 0:
+            return 0
+        
+        # Return the number of full days remaining, adding 1 to be inclusive
+        return remaining_delta.days + 1
+
+    def __str__(self):
+        pet_name = self.name if self.name else "Unnamed Pet"
+        return f"{self.get_report_type_display()}:  ({self.pet_type}) by {self.reporter.username}"
 
 class PetForAdoption(models.Model):
     GENDER_CHOICES = (('Male', 'Male'), ('Female', 'Female'), ('Unknown', 'Unknown'))

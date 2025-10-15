@@ -1,134 +1,213 @@
-
-{# users/templates/admin/process_adoption.html #}
 {% extends 'users/base.html' %}
 {% load static %}
+
 {% block title %}Manage Pet Reports{% endblock %}
 {% block body_class %}admin-page-background{% endblock %}
+
 {% block content %}
-<section class="manage-reports-section manage-users-section"> 
-    <div class="admin-nav">
-        <a href="{% url 'users:admin_dashboard' %}">&larr; Back to Admin Dashboard</a>
+<style>
+  .admin-card {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 25px 30px;
+    margin-bottom: 40px;
+    border-left: 5px solid var(--border);
+  }
+  .admin-card-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+  }
+  .admin-card-header .icon {
+    font-size: 2.5rem;
+  }
+  .admin-card-header .header-text h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.8em;
+  }
+  .admin-card-header .header-text p {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: 1em;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted-foreground);
+    font-style: italic;
+  }
+  
+  .card-ready { border-left-color: hsl(var(--success-green)); }
+  .card-ready .icon { color: hsl(var(--success-green)); }
+
+  .card-found { border-left-color: hsl(var(--primary-warm)); }
+  .card-found .icon { color: hsl(var(--primary-warm)); }
+
+  .card-lost { border-left-color: hsl(var(--accent-purple)); }
+  .card-lost .icon { color: hsl(var(--accent-purple)); }
+
+  .user-table-container table thead th { background-color: var(--input); }
+  .user-table-container table tbody tr:nth-child(even) { background-color: hsl(0, 0%, 98%); }
+  .reason-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: var(--card);
+  }
+  .reason-overdue { background-color: hsl(var(--success-green)); }
+  .reason-pending { background-color: hsl(var(--primary-warm)); }
+</style>
+
+<section class="manage-reports-section">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2 class="section-title" style="margin-bottom: 0;">Manage Pet Reports</h2>
+    <a href="{% url 'users:admin_dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+  </div>
+  
+  
+  
+  
+  <div class="admin-card card-ready">
+    <div class="admin-card-header">
+      <i class="fas fa-check-circle icon"></i>
+      <div class="header-text">
+        <h3>Ready for Adoption Listing</h3>
+        <p>These pets have passed the 15-day waiting period or were manually marked. Finalize their details to list them publicly.</p>
+      </div>
     </div>
-
-    {# ---------------------------------------------------------------------- #}
-    {# SECTION 1: Reports Ready for Adoption (Pending Status) #}
-    {# ---------------------------------------------------------------------- #}
-    <h3 class="section-title" style="margin-top: 40px; color: var(--success-green);">
-        Pets Ready for Listing (Pending Adoption Status)
-    </h3>
-    <p class="auth-subtitle">These reports have met the 15-day unclaimed period or were manually prioritized. Finalize their details to list them for adoption.</p>
-
-    <div class="user-table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Pet Type</th>
-                    <th>Reported On</th>
-                    <th>Location</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for report in pending_adoption_reports %}
-                <tr>
-                    <td>{{ report.id }}</td>
-                    <td>{{ report.pet_type }}</td>
-                    <td>{{ report.date_reported|date:"Y-m-d" }}</td>
-                    <td>{{ report.location }}</td>
-                    <td>
-                        <a href="{% url 'users:admin_put_for_adoption' report.id %}" class="btn btn-small btn-primary">Finalize Listing</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5">No pets currently in the Pending Adoption queue.</td>
-                </tr>
-                {% endfor %} {# <-- Closing tag for pending_adoption_reports #}
-            </tbody>
-        </table>
+    <div class="user-table-container" style="box-shadow: none; padding: 0;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pet Type</th>
+            <th>Reported On</th>
+            <th>Reason</th> {# NEW COLUMN FOR CLARITY #}
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in pets_ready_for_listing %}
+          <tr>
+            <td>{{ report.id }}</td>
+            <td>{{ report.pet_type }}</td>
+            <td>{{ report.date_reported|date:"Y-m-d" }}</td>
+            <td>
+              {% if report.status == 'Pending Adoption' %}
+                <span class="reason-badge reason-pending">Manual Status</span>
+              {% else %}
+                <span class="reason-badge reason-overdue">Over 15 Days</span>
+              {% endif %}
+            </td>
+            <td style="text-align: right;">
+              <a href="{% url 'users:admin_put_for_adoption' report.id %}" class="btn btn-small btn-primary">Finalize Listing</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">No pets are currently ready for adoption listing.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    {# ---------------------------------------------------------------------- #}
-    {# SECTION 2: Open Found Reports (Manual Override Option) #}
-    {# ---------------------------------------------------------------------- #}
-    <h3 class="section-title" style="margin-top: 60px; color: var(--primary-warm);">
-        Open Found Reports (Manual Processing)
-    </h3>
-    <p class="auth-subtitle">Found reports that are still in 'Open' status. You can manually push them to the adoption listing page if the waiting period is deemed unnecessary.</p>
-
-    <div class="user-table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Pet Type</th>
-                    <th>Reported On</th>
-                    <th>Location</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for report in open_found_reports %}
-                <tr>
-                    <td>{{ report.id }}</td>
-                    <td>{{ report.pet_type }}</td>
-                    <td>{{ report.date_reported|date:"Y-m-d" }}</td>
-                    <td>{{ report.location }}</td>
-                    <td>
-                        <a href="{% url 'users:admin_put_for_adoption' report.id %}" 
-                           class="btn btn-small btn-secondary" 
-                           onclick="return confirm('WARNING: Are you sure you want to bypass the waiting period and process this found pet for adoption now?');">
-                            Process for Adoption
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5">No open Found Reports awaiting action.</td>
-                </tr>
-                {% endfor %} {# <-- Closing tag for open_found_reports #}
-            </tbody>
-        </table>
+  
+  
+  
+  <div class="admin-card card-found">
+    <div class="admin-card-header">
+      <i class="fas fa-hourglass-half icon"></i>
+      <div class="header-text">
+        <h3>Monitoring: Open Found Reports</h3>
+        <p>These found pets are still within the 15-day waiting period.</p>
+      </div>
     </div>
-
-    {# ---------------------------------------------------------------------- #}
-    {# SECTION 3: Open Lost Reports (For Monitoring Only) #}
-    {# ---------------------------------------------------------------------- #}
-    <h3 class="section-title" style="margin-top: 60px; color: var(--accent-purple);">
-        Open Lost Reports (Monitoring)
-    </h3>
-    <p class="auth-subtitle">These pets are currently being sought by their owners. You can view the report details here.</p>
-
-    <div class="user-table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Pet Type</th>
-                    <th>Reported By</th>
-                    <th>Location</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for report in open_lost_reports %}
-                <tr>
-                    <td>{{ report.id }}</td>
-                    <td>{{ report.pet_type }}</td>
-                    <td>{{ report.reporter.username }}</td>
-                    <td>{{ report.location }}</td>
-                    <td>
-                        <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-map">View Details</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5">No open Lost Reports.</td>
-                </tr>
-                {% endfor %} {# <-- ADDED MISSING ENDFOR HERE #}
-            </tbody>
-        </table>
+    <div class="user-table-container" style="box-shadow: none; padding: 0;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pet Type</th>
+            <th>Days Remaining</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in open_found_reports %}
+          <tr>
+            <td>{{ report.id }}</td>
+            <td>{{ report.pet_type }}</td>
+            <td>
+              <strong style="color: var(--primary-warm);">
+                {{ report.days_remaining_for_adoption }} day{{ report.days_remaining_for_adoption|pluralize }}
+              </strong>
+            </td>
+            <td style="text-align: right;">
+              <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-map">View Details</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">No 'Open' found reports are currently being monitored.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
+
+  
+  
+  
+  <div class="admin-card card-lost">
+    <div class="admin-card-header">
+      <i class="fas fa-search icon"></i>
+      <div class="header-text">
+        <h3>Monitoring: Open Lost Reports</h3>
+        <p>Active reports for pets sought by their owners.</p>
+      </div>
+    </div>
+    <div class="user-table-container" style="box-shadow: none; padding: 0;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pet Type</th>
+            <th>Reported By</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in open_lost_reports %}
+          <tr>
+            <td>{{ report.id }}</td>
+            <td>{{ report.pet_type }}</td>
+            <td>{{ report.reporter.username }}</td>
+            <td style="text-align: right;">
+              <a href="{% url 'users:pet_report_detail' report.id %}" class="btn btn-small btn-map">View Details</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">No 'Open' lost reports are currently active.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </section>
 {% endblock %}
