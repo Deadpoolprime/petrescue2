@@ -340,42 +340,23 @@ def pet_report_detail_view(request, report_id):
     return render(request, "users/pet_report_detail.html", context)
 
 
-# -----------------------
-# Admin / staff views
-# -----------------------
 @staff_required
 def admin_adoption_processing_view(request):
-    """
-    Dynamically lists pets ready for adoption.
-    A pet is ready if its status is 'Pending Adoption' OR if it's a 'Found'
-    report that is older than 15 days.
-    """
-    # 1. Define the 15-day threshold
     threshold_date = timezone.now() - datetime.timedelta(days=15)
-
-    # 2. Define the conditions for a pet to be "Ready for Listing"
-    # Condition A: The status is already 'Pending Adoption'
     pending_status_q = Q(status='Pending Adoption')
-    # Condition B: The report is 'Found', 'Open', approved, AND older than 15 days
     overdue_q = Q(
         report_type='Found',
         status='Open',
         is_approved=True,
         date_reported__lt=threshold_date
     )
-
-    # Combine the conditions with an OR operator
     pets_ready_for_listing = PetReport.objects.filter(pending_status_q | overdue_q).distinct().order_by('-date_reported')
-
-    # 3. Get 'Open Found' reports that are NOT overdue for the monitoring section
     open_found_reports = PetReport.objects.filter(
         report_type='Found',
         status='Open',
         is_approved=True,
-        date_reported__gte=threshold_date  # GTE = Greater than or equal to (i.e., not overdue)
+        date_reported__gte=threshold_date  
     ).order_by('-date_reported')
-
-    # 4. Get 'Open Lost' reports for monitoring
     open_lost_reports = PetReport.objects.filter(
         report_type='Lost',
         status='Open',
@@ -383,7 +364,7 @@ def admin_adoption_processing_view(request):
     ).order_by('-date_reported')
 
     context = {
-        'pets_ready_for_listing': pets_ready_for_listing, # Renamed for clarity
+        'pets_ready_for_listing': pets_ready_for_listing, 
         'open_found_reports': open_found_reports,
         'open_lost_reports': open_lost_reports,
     }
