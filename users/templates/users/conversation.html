@@ -6,118 +6,121 @@
 
 {% block content %}
 <style>
-    /* Custom styles for chat interface */
-    .chat-container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: var(--card);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-warm);
-        display: flex;
-        flex-direction: column;
-        height: 70vh;
-        min-height: 500px;
-    }
-    .chat-header {
-        padding: 15px 20px;
-        border-bottom: 1px solid var(--border);
-        background-color: var(--primary-soft);
-        font-size: 1.5em;
-        font-weight: bold;
-        border-top-left-radius: var(--radius);
-        border-top-right-radius: var(--radius);
-        color: var(--foreground);
-    }
-    .chat-messages {
-        flex-grow: 1;
-        padding: 20px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        background-color: var(--background);
-    }
-    .message-bubble {
-        max-width: 70%;
-        margin-bottom: 10px;
-        padding: 10px 15px;
-        border-radius: 15px;
-        word-wrap: break-word;
-        font-size: 0.95em;
-    }
-    .message-bubble.sender {
-        align-self: flex-end;
-        background-color: var(--primary);
-        color: white;
-        border-bottom-right-radius: 5px;
-    }
-    .message-bubble.recipient {
-        align-self: flex-start;
-        background-color: var(--input);
-        color: var(--foreground);
-        border-bottom-left-radius: 5px;
-    }
-    .message-time {
-        display: block;
-        font-size: 0.75em;
-        margin-top: 5px;
-        opacity: 0.8;
-        text-align: right;
-    }
-    .chat-input {
-        padding: 15px 20px;
-        border-top: 1px solid var(--border);
-    }
-    .chat-input textarea {
-        resize: none;
-        margin-bottom: 10px;
-    }
+  /* Custom styles for chat interface */
+  .chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-warm);
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    min-height: 500px;
+  }
+  .chat-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--primary-soft);
+    font-size: 1.5em;
+    font-weight: bold;
+    border-top-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    color: var(--foreground);
+  }
+  .chat-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background);
+  }
+  .message-bubble {
+    max-width: 70%;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    /* Setting a base border-radius */
+    word-wrap: break-word;
+    font-size: 0.95em;
+  }
+  .message-bubble.sender {
+    align-self: flex-end;
+    background-color: var(--primary);
+    color: white;
+    /* WhatsApp style: Top Left (15), Top Right (15), Bottom Right (5 - near sender), Bottom Left (15) */
+    border-radius: 15px 15px 5px 15px;
+  }
+  .message-bubble.recipient {
+    align-self: flex-start;
+    background-color: var(--input);
+    color: var(--foreground);
+    /* WhatsApp style: Top Left (15), Top Right (15), Bottom Right (15), Bottom Left (5 - near recipient) */
+    border-radius: 15px 15px 15px 5px;
+  }
+  .message-time {
+    /* Change display from block to inline to flow with text */
+    display: inline;
+    font-size: 0.7em;
+    /* Add a small separation margin */
+    margin-left: 8px;
+    opacity: 0.8;
+    /* Remove text-align: right and margin-top as they relied on display: block */
+  }
+  .chat-input {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .chat-input textarea {
+    resize: none;
+    margin-bottom: 10px;
+  }
 </style>
 
 <div class="chat-container">
-    <div class="chat-header">
-        <a href="{% url 'users:inbox' %}" style="color: var(--foreground); text-decoration: none;">&larr;</a>
-        Chat with {{ participant.username }} 
-        {% if participant.is_staff %}<span class="role-admin">Admin</span>{% endif %}
-    </div>
+  <div class="chat-header">
+    <a href="{% url 'users:inbox' %}" style="color: var(--foreground); text-decoration: none;">&larr;</a>
+    Chat with {{ participant.username }} 
+    {% if participant.is_staff %}<span class="role-admin">Admin</span>{% endif %}
+  </div>
 
-    <div class="chat-messages" id="chat-messages">
-        {% for message in messages %}
-            {% if message.sender == user %}
-                <div class="message-bubble sender">
-                    {{ message.content }}
-                    <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
-                </div>
-            {% else %}
-                <div class="message-bubble recipient">
-                    {{ message.content }}
-                    <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
-                </div>
-            {% endif %}
-        {% empty %}
-            <p style="text-align: center; color: var(--muted-foreground); margin: auto;">Start a conversation!</p>
-        {% endfor %}
-    </div>
+  <div class="chat-messages" id="chat-messages">
+    {% for message in messages %}
+      {% if message.sender == user %}
+        <div class="message-bubble sender">
+          {{ message.content }}
+          <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
+        </div>
+      {% else %}
+        <div class="message-bubble recipient">
+          {{ message.content }}
+          <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
+        </div>
+      {% endif %}
+    {% empty %}
+      <p style="text-align: center; color: var(--muted-foreground); margin: auto;">Start a conversation!</p>
+    {% endfor %}
+  </div>
 
-    <div class="chat-input">
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group" style="margin-bottom: 0;">
-                {# Display the content field of the MessageForm #}
-                {{ form.content }}
-            </div>
-            <button type="submit" class="btn btn-primary btn-small">Send Message</button>
-        </form>
-    </div>
+  <div class="chat-input">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom: 0;">
+        {# Display the content field of the MessageForm #}
+        {{ form.content }}
+      </div>
+      <button type="submit" class="btn btn-primary btn-small">Send Message</button>
+    </form>
+  </div>
 </div>
 
 <script>
-    // Auto-scroll chat window to the bottom on load
-    document.addEventListener('DOMContentLoaded', function() {
-        const chatMessages = document.getElementById('chat-messages');
-        if (chatMessages) {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    });
+  // Auto-scroll chat window to the bottom on load
+  document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chat-messages');
+    if (chatMessages) {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  });
 </script>
 {% endblock %}
-
