@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.utils import timezone
 import datetime
+import random
 from django.db.models import Q 
 
 from .decorators import staff_required, superuser_required
@@ -420,15 +421,14 @@ def conversation_view(request, participant_id):
 
 @login_required
 def start_admin_chat_view(request):
-    """Allows a normal user to easily initiate a chat with the first available admin."""
-    # Find the first available admin (staff user)
-    admin_user = User.objects.filter(is_staff=True).exclude(pk=request.user.pk).first()
-    
-    if admin_user:
-        return redirect('users:conversation', participant_id=admin_user.id)
-    else:
-        messages.warning(request, "No administrators are currently available to start a chat.")
-        return redirect('users:dashboard')
+  admin_pool = User.objects.filter(is_staff=True).exclude(pk=request.user.pk)
+  if admin_pool.exists():
+    random_index = random.randint(0, admin_pool.count() - 1)
+    admin_user = admin_pool[random_index]
+    return redirect('users:conversation', participant_id=admin_user.id)
+  else:
+    messages.warning(request, "No administrators are currently available to start a chat.")
+    return redirect('users:dashboard')
 
 
 @staff_required
