@@ -751,6 +751,38 @@ main {
  align-items: center;
 }
 
+/* Styling for multi-column layout */
+.input-grid {
+    display: grid;
+    gap: 20px; /* Space between fields */
+    margin-bottom: 20px;
+}
+
+/* Two-column layout for desktop */
+.input-grid.two-column {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Ensure form groups within the grid still look good */
+.input-grid .form-group {
+    margin-bottom: 0; /* Remove redundant bottom margin from individual groups */
+}
+
+/* Add media query for responsiveness */
+@media (max-width: 768px) {
+    /* Stack columns back into a single column on smaller screens/mobile */
+    .input-grid.two-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Optional: Make the auth-box wider to support the two columns better */
+.auth-box {
+    max-width: 500px; /* Existing width? */
+    /* If you want it wider: */
+    /* max-width: 800px; */
+}
+
 .report-box {
  background: var(--card);
  backdrop-filter: blur(8px);
