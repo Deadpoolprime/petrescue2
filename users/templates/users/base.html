@@ -20,7 +20,7 @@
           {# --- Conditional Navigation Links --- #}
           {% if user.is_authenticated %}
             {# Links for ALL logged-in users #}
-            <li><a href="{% url 'users:dashboard' %}">My Dashboard</a></li>
+            <li><a href="{% url 'users:dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'users:pets_list' %}">Pets for Adoption</a></li>
 
             {# --- ADMIN-ONLY LINK --- #}
