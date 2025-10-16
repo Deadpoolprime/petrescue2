@@ -1,0 +1,65 @@
+
+
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Inbox{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+  <h2 class="section-title">Inbox</h2>
+  <p class="auth-subtitle">Your private conversations with other users.</p>
+
+  {% if not user.is_staff and user.is_authenticated %}
+  <div style="margin-bottom: 30px; text-align: center;">
+    <a href="{% url 'users:start_admin_chat' %}" class="btn btn-primary">Start Chat with Admin</a>
+  </div>
+  {% endif %}
+
+  <div class="user-table-container">
+    {% if conversations %}
+    <table>
+      <thead>
+        <tr>
+          <th>Participant</th>
+          <th>Last Message</th>
+          <th>Time</th>
+          <th>Unread</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for conv in conversations %}
+        <tr data-href="{% url 'users:conversation' conv.participant.id %}" 
+            onclick="window.location.href = this.dataset.href" 
+            style="cursor: pointer;">
+          <td>
+            <strong>{{ conv.participant.username }}</strong>
+            {% if conv.participant.is_staff %}<span class="role-admin">Admin</span>{% endif %}
+          </td>
+          <td>{{ conv.last_message.content|truncatechars:70 }}</td>
+          <td>{{ conv.last_message.timestamp|date:"M d, H:i" }}</td>
+          <td>
+            {% if conv.unread_count > 0 %}
+              {# Using existing styling for visual feedback #}
+              <span class="reason-pending" style="padding: 4px 8px; border-radius: 12px; background-color: var(--primary-warm); color: white;">{{ conv.unread_count }} New</span>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      {% if user.is_staff %}
+        You have no active conversations.
+      {% else %}
+        You have no active conversations. Start a chat with an admin above.
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

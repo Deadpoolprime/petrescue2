@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, PetReport, PetForAdoption, Notification
+from .models import Profile, PetReport, PetForAdoption, Notification,  Message
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,4 +27,12 @@ class PetForAdoptionSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
+        fields = '__all__'
+        
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender = UserSerializer(read_only=True)
+    recipient = UserSerializer(read_only=True)
+    class Meta:
+        model = Message
         fields = '__all__'

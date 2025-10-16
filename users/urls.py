@@ -13,7 +13,10 @@ from .views import (
     home_view,
     admin_reject_report_view,
     admin_view_user_reports,
-    user_report_history_view
+    user_report_history_view,
+     inbox_view,
+   conversation_view,
+   start_admin_chat_view,
 )
 
 app_name = 'users' 
@@ -45,4 +48,8 @@ urlpatterns = [
     path('admin_dashboard/manage-users/reports/<int:user_id>/', admin_view_user_reports,
          name='admin_view_user_reports'),
     path('manage-users/report-history/<int:user_id>/', user_report_history_view, name='user_report_history'),
+    path('inbox/', inbox_view, name='inbox'),
+   path('inbox/<int:participant_id>/', conversation_view, name='conversation'),
+   path('chat/admin/', start_admin_chat_view, name='start_admin_chat'),
+
 ]

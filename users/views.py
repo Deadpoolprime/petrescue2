@@ -11,7 +11,7 @@ import datetime
 from django.db.models import Q 
 
 from .decorators import staff_required, superuser_required
-from .models import Profile, PetReport, PetForAdoption, Notification
+from .models import Profile, PetReport, PetForAdoption, Notification, Message 
 from .serializers import (
     ProfileSerializer,
     PetReportSerializer,
@@ -174,6 +174,8 @@ class PutForAdoptionForm(forms.ModelForm):
             "description": "Adoption Profile Description",
         }
 
+class MessageForm(forms.Form):
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Type your message here...'}), required=True, label="")
 
 # -----------------------
 # Public views
@@ -338,6 +340,95 @@ def pet_report_detail_view(request, report_id):
     report = get_object_or_404(PetReport, pk=report_id)
     context = {"report": report}
     return render(request, "users/pet_report_detail.html", context)
+
+@login_required
+def inbox_view(request):
+    # Identify unique users involved in conversations with the current user
+    senders = User.objects.filter(sent_messages__recipient=request.user).distinct()
+    recipients = User.objects.filter(received_messages__sender=request.user).distinct()
+    
+    participants = (senders | recipients).exclude(pk=request.user.pk)
+    
+    # Non-staff users can only chat with staff/admins
+    if not request.user.is_staff:
+        participants = participants.filter(is_staff=True)
+        
+    conversations = []
+    for participant in participants:
+        last_message = Message.objects.filter(
+            Q(sender=request.user, recipient=participant) | 
+            Q(sender=participant, recipient=request.user)
+        ).latest('timestamp')
+        
+        unread_count = Message.objects.filter(
+            recipient=request.user, sender=participant, is_read=False
+        ).count()
+        
+        conversations.append({
+            'participant': participant,
+            'last_message': last_message,
+            'unread_count': unread_count
+        })
+
+    conversations.sort(key=lambda x: x['last_message'].timestamp, reverse=True)
+    
+    context = {'conversations': conversations}
+    return render(request, 'users/inbox.html', context)
+
+
+@login_required
+def conversation_view(request, participant_id):
+    participant = get_object_or_404(User, pk=participant_id)
+    
+    if request.user == participant:
+        messages.error(request, "Cannot message yourself.")
+        return redirect('users:inbox')
+
+    # Authorization check: Normal users can only maintain conversations with admins
+    if not request.user.is_staff and not participant.is_staff:
+         messages.error(request, "You can only maintain conversations with administrative users.")
+         return redirect('users:inbox')
+
+    messages_qs = Message.objects.filter(
+        Q(sender=request.user, recipient=participant) | 
+        Q(sender=participant, recipient=request.user)
+    ).order_by('timestamp')
+    
+    # Mark incoming messages as read
+    Message.objects.filter(recipient=request.user, sender=participant, is_read=False).update(is_read=True)
+    
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            Message.objects.create(
+                sender=request.user,
+                recipient=participant,
+                content=content
+            )
+            return redirect('users:conversation', participant_id=participant_id)
+    else:
+        form = MessageForm()
+        
+    context = {
+        'participant': participant,
+        'messages': messages_qs,
+        'form': form
+    }
+    return render(request, 'users/conversation.html', context)
+
+
+@login_required
+def start_admin_chat_view(request):
+    """Allows a normal user to easily initiate a chat with the first available admin."""
+    # Find the first available admin (staff user)
+    admin_user = User.objects.filter(is_staff=True).exclude(pk=request.user.pk).first()
+    
+    if admin_user:
+        return redirect('users:conversation', participant_id=admin_user.id)
+    else:
+        messages.warning(request, "No administrators are currently available to start a chat.")
+        return redirect('users:dashboard')
 
 
 @staff_required

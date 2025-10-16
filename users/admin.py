@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, PetReport, PetForAdoption, Notification
+from .models import Profile, PetReport, PetForAdoption, Notification,  Message
 
 
 class PetReportAdmin(admin.ModelAdmin):
@@ -29,8 +29,17 @@ class NotificationAdmin(admin.ModelAdmin):
         return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
     message_summary.short_description = 'Message'
 
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'recipient', 'content_summary', 'timestamp', 'is_read')
+    list_filter = ('is_read', 'timestamp')
+    search_fields = ('sender__username', 'recipient__username', 'content')
+
+    def content_summary(self, obj):
+        return obj.content[:50] + '...' if len(obj.content) > 50 else obj.content
+    content_summary.short_description = 'Content'
 
 admin.site.register(PetReport, PetReportAdmin)
 admin.site.register(PetForAdoption, PetForAdoptionAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Notification, NotificationAdmin)
+admin.site.register(Message, MessageAdmin)

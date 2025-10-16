@@ -1749,7 +1749,7 @@ File: .\users\admin.py
 ================================================================================
 
 from django.contrib import admin
-from .models import Profile, PetReport, PetForAdoption, Notification
+from .models import Profile, PetReport, PetForAdoption, Notification,  Message
 
 
 class PetReportAdmin(admin.ModelAdmin):
@@ -1779,11 +1779,20 @@ class NotificationAdmin(admin.ModelAdmin):
         return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
     message_summary.short_description = 'Message'
 
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'recipient', 'content_summary', 'timestamp', 'is_read')
+    list_filter = ('is_read', 'timestamp')
+    search_fields = ('sender__username', 'recipient__username', 'content')
+
+    def content_summary(self, obj):
+        return obj.content[:50] + '...' if len(obj.content) > 50 else obj.content
+    content_summary.short_description = 'Content'
 
 admin.site.register(PetReport, PetReportAdmin)
 admin.site.register(PetForAdoption, PetForAdoptionAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Notification, NotificationAdmin)
+admin.site.register(Message, MessageAdmin)
 
 
 ================================================================================
@@ -1914,6 +1923,19 @@ class Notification(models.Model):
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self): return f"Notification for {self.recipient.username}: {self.message[:30]}..."
+    
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"From {self.sender.username} to {self.recipient.username}: {self.content[:50]}"
 
 
 ================================================================================
@@ -1921,7 +1943,7 @@ File: .\users\serializers.py
 ================================================================================
 
 from rest_framework import serializers
-from .models import Profile, PetReport, PetForAdoption, Notification
+from .models import Profile, PetReport, PetForAdoption, Notification,  Message
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -1949,6 +1971,14 @@ class PetForAdoptionSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
+        fields = '__all__'
+        
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender = UserSerializer(read_only=True)
+    recipient = UserSerializer(read_only=True)
+    class Meta:
+        model = Message
         fields = '__all__'
 
 
@@ -1978,7 +2008,10 @@ from .views import (
     home_view,
     admin_reject_report_view,
     admin_view_user_reports,
-    user_report_history_view
+    user_report_history_view,
+     inbox_view,
+   conversation_view,
+   start_admin_chat_view,
 )
 
 app_name = 'users' 
@@ -2010,6 +2043,10 @@ urlpatterns = [
     path('admin_dashboard/manage-users/reports/<int:user_id>/', admin_view_user_reports,
          name='admin_view_user_reports'),
     path('manage-users/report-history/<int:user_id>/', user_report_history_view, name='user_report_history'),
+    path('inbox/', inbox_view, name='inbox'),
+   path('inbox/<int:participant_id>/', conversation_view, name='conversation'),
+   path('chat/admin/', start_admin_chat_view, name='start_admin_chat'),
+
 ]
 
 
@@ -2193,6 +2230,8 @@ class PutForAdoptionForm(forms.ModelForm):
             "description": "Adoption Profile Description",
         }
 
+class MessageForm(forms.Form):
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Type your message here...'}), required=True, label="")
 
 # -----------------------
 # Public views
@@ -2357,6 +2396,95 @@ def pet_report_detail_view(request, report_id):
     report = get_object_or_404(PetReport, pk=report_id)
     context = {"report": report}
     return render(request, "users/pet_report_detail.html", context)
+
+@login_required
+def inbox_view(request):
+    # Identify unique users involved in conversations with the current user
+    senders = User.objects.filter(sent_messages__recipient=request.user).distinct()
+    recipients = User.objects.filter(received_messages__sender=request.user).distinct()
+    
+    participants = (senders | recipients).exclude(pk=request.user.pk)
+    
+    # Non-staff users can only chat with staff/admins
+    if not request.user.is_staff:
+        participants = participants.filter(is_staff=True)
+        
+    conversations = []
+    for participant in participants:
+        last_message = Message.objects.filter(
+            Q(sender=request.user, recipient=participant) | 
+            Q(sender=participant, recipient=request.user)
+        ).latest('timestamp')
+        
+        unread_count = Message.objects.filter(
+            recipient=request.user, sender=participant, is_read=False
+        ).count()
+        
+        conversations.append({
+            'participant': participant,
+            'last_message': last_message,
+            'unread_count': unread_count
+        })
+
+    conversations.sort(key=lambda x: x['last_message'].timestamp, reverse=True)
+    
+    context = {'conversations': conversations}
+    return render(request, 'users/inbox.html', context)
+
+
+@login_required
+def conversation_view(request, participant_id):
+    participant = get_object_or_404(User, pk=participant_id)
+    
+    if request.user == participant:
+        messages.error(request, "Cannot message yourself.")
+        return redirect('users:inbox')
+
+    # Authorization check: Normal users can only maintain conversations with admins
+    if not request.user.is_staff and not participant.is_staff:
+         messages.error(request, "You can only maintain conversations with administrative users.")
+         return redirect('users:inbox')
+
+    messages_qs = Message.objects.filter(
+        Q(sender=request.user, recipient=participant) | 
+        Q(sender=participant, recipient=request.user)
+    ).order_by('timestamp')
+    
+    # Mark incoming messages as read
+    Message.objects.filter(recipient=request.user, sender=participant, is_read=False).update(is_read=True)
+    
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            Message.objects.create(
+                sender=request.user,
+                recipient=participant,
+                content=content
+            )
+            return redirect('users:conversation', participant_id=participant_id)
+    else:
+        form = MessageForm()
+        
+    context = {
+        'participant': participant,
+        'messages': messages_qs,
+        'form': form
+    }
+    return render(request, 'users/conversation.html', context)
+
+
+@login_required
+def start_admin_chat_view(request):
+    """Allows a normal user to easily initiate a chat with the first available admin."""
+    # Find the first available admin (staff user)
+    admin_user = User.objects.filter(is_staff=True).exclude(pk=request.user.pk).first()
+    
+    if admin_user:
+        return redirect('users:conversation', participant_id=admin_user.id)
+    else:
+        messages.warning(request, "No administrators are currently available to start a chat.")
+        return redirect('users:dashboard')
 
 
 @staff_required
@@ -3668,6 +3796,7 @@ File: .\users\templates\users\base.html
             {# Links for ALL logged-in users #}
             <li><a href="{% url 'users:dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'users:pets_list' %}">Pets for Adoption</a></li>
+            <li><a href="{% url 'users:inbox' %}">Inbox</a></li> 
 
             {# --- ADMIN-ONLY LINK --- #}
             {% if user.is_staff %}
@@ -3759,6 +3888,136 @@ File: .\users\templates\users\contact.html
 
 </section>
 {% endblock %}
+
+
+================================================================================
+File: .\users\templates\users\conversation.html
+================================================================================
+
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Chat with {{ participant.username }}{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styles for chat interface */
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-warm);
+        display: flex;
+        flex-direction: column;
+        height: 70vh;
+        min-height: 500px;
+    }
+    .chat-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border);
+        background-color: var(--primary-soft);
+        font-size: 1.5em;
+        font-weight: bold;
+        border-top-left-radius: var(--radius);
+        border-top-right-radius: var(--radius);
+        color: var(--foreground);
+    }
+    .chat-messages {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--background);
+    }
+    .message-bubble {
+        max-width: 70%;
+        margin-bottom: 10px;
+        padding: 10px 15px;
+        border-radius: 15px;
+        word-wrap: break-word;
+        font-size: 0.95em;
+    }
+    .message-bubble.sender {
+        align-self: flex-end;
+        background-color: var(--primary);
+        color: white;
+        border-bottom-right-radius: 5px;
+    }
+    .message-bubble.recipient {
+        align-self: flex-start;
+        background-color: var(--input);
+        color: var(--foreground);
+        border-bottom-left-radius: 5px;
+    }
+    .message-time {
+        display: block;
+        font-size: 0.75em;
+        margin-top: 5px;
+        opacity: 0.8;
+        text-align: right;
+    }
+    .chat-input {
+        padding: 15px 20px;
+        border-top: 1px solid var(--border);
+    }
+    .chat-input textarea {
+        resize: none;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <a href="{% url 'users:inbox' %}" style="color: var(--foreground); text-decoration: none;">&larr;</a>
+        Chat with {{ participant.username }} 
+        {% if participant.is_staff %}<span class="role-admin">Admin</span>{% endif %}
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+        {% for message in messages %}
+            {% if message.sender == user %}
+                <div class="message-bubble sender">
+                    {{ message.content }}
+                    <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
+                </div>
+            {% else %}
+                <div class="message-bubble recipient">
+                    {{ message.content }}
+                    <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p style="text-align: center; color: var(--muted-foreground); margin: auto;">Start a conversation!</p>
+        {% endfor %}
+    </div>
+
+    <div class="chat-input">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 0;">
+                {# Display the content field of the MessageForm #}
+                {{ form.content }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-small">Send Message</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Auto-scroll chat window to the bottom on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    });
+</script>
+{% endblock %}
+
+
 
 
 ================================================================================
@@ -4065,6 +4324,73 @@ File: .\users\templates\users\home.html
 {% endblock %}
 
 
+
+
+================================================================================
+File: .\users\templates\users\inbox.html
+================================================================================
+
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Inbox{% endblock %}
+{% block body_class %}admin-page-background{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <h2 class="section-title">Inbox</h2>
+    <p class="auth-subtitle">Your private conversations with other users.</p>
+
+    {% if not user.is_staff and user.is_authenticated %}
+    <div style="margin-bottom: 30px; text-align: center;">
+        <a href="{% url 'users:start_admin_chat' %}" class="btn btn-primary">Start Chat with Admin</a>
+    </div>
+    {% endif %}
+
+    <div class="user-table-container">
+        {% if conversations %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Participant</th>
+                    <th>Last Message</th>
+                    <th>Time</th>
+                    <th>Unread</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conv in conversations %}
+                <tr onclick="window.location='{% url 'users:conversation' participant_id=conv.participant.id %}'" style="cursor: pointer;">
+                    <td>
+                        <strong>{{ conv.participant.username }}</strong>
+                        {% if conv.participant.is_staff %}<span class="role-admin">Admin</span>{% endif %}
+                    </td>
+                    <td>{{ conv.last_message.content|truncatechars:70 }}</td>
+                    <td>{{ conv.last_message.timestamp|date:"M d, H:i" }}</td>
+                    <td>
+                        {% if conv.unread_count > 0 %}
+                            {# Using existing styling for visual feedback #}
+                            <span class="reason-pending" style="padding: 4px 8px; border-radius: 12px; background-color: var(--primary-warm); color: white;">{{ conv.unread_count }} New</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            {% if user.is_staff %}
+                You have no active conversations.
+            {% else %}
+                You have no active conversations. Start a chat with an admin above.
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
 
 
 ================================================================================
